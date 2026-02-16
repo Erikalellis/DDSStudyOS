@@ -40,6 +40,8 @@ Observacao: o script cria projeto do tipo `enterprise` com idioma principal `pt_
 Observacao: o script tambem aplica automaticamente o EULA PT-BR (`/SetEula`) no dialogo de licenca.
 Observacao: o script cria automaticamente atalhos no `Menu Iniciar` e na `Area de Trabalho`.
 Observacao: o script aplica automaticamente o icone de `src/DDSStudyOS.App/Assets/DDSStudyOS.ico` no produto e no `Setup.exe`.
+Observacao: o script adiciona automaticamente o pre-requisito `.NET Desktop Runtime 8 (x64)` para baixar/instalar quando estiver faltando.
+Observacao: para desabilitar esse comportamento em um caso especifico, use `-EnableDotNetDesktopPrerequisite 0`.
 
 ## 3) Abrir projeto no Advanced Installer e Build
 1. Abrir `installer/advanced-installer/DDSStudyOS.aip`
@@ -104,3 +106,12 @@ Se desejar instalar certificado no fim do setup:
 2. Confirme no `.aip`:
    - `LicenseAgreementDlg` presente em `FragmentComponent`
    - `AgreementText` apontando para `..\legal\EULA.pt-BR.rtf`
+
+## 13) Troubleshooting rapido (popup pedindo .NET Runtime)
+1. Gere novamente o pacote de entrada e o instalador:
+   - `.\scripts\prepare-installer-input.ps1`
+   - `.\scripts\create-advanced-installer-project.ps1 -Force -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
+2. Confirme no `.aip` que existem:
+   - `PreReqComponent` com `.NET Desktop Runtime 8 (x64)`
+   - `PreReqSearchComponent` para `HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App`
+3. Compile e distribua somente o setup novo em `artifacts/installer-output/DDSStudyOS-Setup.exe`.

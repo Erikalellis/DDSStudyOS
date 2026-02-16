@@ -57,6 +57,46 @@ function Resolve-MsBuildPath {
     throw "MSBuild nao encontrado. Instale Visual Studio 2022/2026 com workload de desktop Windows."
 }
 
+function Assert-PublishOutput {
+    param(
+        [string]$PublishPath,
+        [bool]$SelfContainedRequested
+    )
+
+    if (-not (Test-Path $PublishPath)) {
+        throw "Pasta de publish nao encontrada: $PublishPath"
+    }
+
+    if (-not $SelfContainedRequested) {
+        return
+    }
+
+    $requiredFiles = @(
+        "DDSStudyOS.App.exe",
+        "hostfxr.dll",
+        "hostpolicy.dll",
+        "coreclr.dll"
+    )
+
+    foreach ($required in $requiredFiles) {
+        $fullPath = Join-Path $PublishPath $required
+        if (-not (Test-Path $fullPath)) {
+            throw "Publish invalido: arquivo obrigatorio de self-contained nao encontrado: $fullPath"
+        }
+    }
+
+    $runtimeConfigPath = Join-Path $PublishPath "DDSStudyOS.App.runtimeconfig.json"
+    if (-not (Test-Path $runtimeConfigPath)) {
+        throw "Publish invalido: runtimeconfig nao encontrado: $runtimeConfigPath"
+    }
+
+    $runtimeConfig = Get-Content -Path $runtimeConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    $includedFrameworks = $runtimeConfig.runtimeOptions.includedFrameworks
+    if (-not $includedFrameworks -or $includedFrameworks.Count -eq 0) {
+        throw "Publish invalido: expected 'includedFrameworks' para build self-contained em $runtimeConfigPath."
+    }
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $solutionPath = Join-Path $repoRoot "DDSStudyOS.sln"
 $projectPath = Join-Path $repoRoot "src\DDSStudyOS.App\DDSStudyOS.App.csproj"
@@ -95,6 +135,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $publishPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier\publish"
+Assert-PublishOutput -PublishPath $publishPath -SelfContainedRequested $selfContainedValue
 Write-Host ""
 Write-Host "Publish concluido em: $publishPath"
 Write-Host "Observacao: o publish recria o EXE. Assine novamente com scripts/sign-release.ps1."

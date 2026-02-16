@@ -21,6 +21,10 @@ param(
     [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
+    [string]$EnableDotNetDesktopPrerequisite = "true",
+    [string]$DotNetDesktopPrerequisiteName = ".NET Desktop Runtime 8 (x64)",
+    [string]$DotNetDesktopRuntimeUrl = "https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe",
+    [string]$DotNetDesktopMinVersion = "8.0.0",
     [bool]$AddDesktopShortcut = $true,
     [bool]$AddStartMenuShortcut = $true,
     [switch]$Force
@@ -149,6 +153,7 @@ $iconPath = if ([System.IO.Path]::IsPathRooted($AppIconPath)) { $AppIconPath } e
 $appInputFolder = Join-Path $installerInput "app"
 $selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfContained"
 $windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
+$enableDotNetDesktopPrereq = ConvertTo-BoolValue -Value $EnableDotNetDesktopPrerequisite -Name "EnableDotNetDesktopPrerequisite"
 $eulaCandidates = @(
     (Join-Path $repoRoot "installer\legal\EULA.pt-BR.rtf"),
     (Join-Path $installerInput "legal\EULA.pt-BR.rtf")
@@ -265,6 +270,32 @@ if (Test-Path $iconPath) {
     }
     catch {
         Write-Warning "Nao foi possivel definir o icone do Setup.exe automaticamente."
+    }
+}
+
+if ($enableDotNetDesktopPrereq) {
+    if ([string]::IsNullOrWhiteSpace($DotNetDesktopRuntimeUrl)) {
+        throw "Parametro DotNetDesktopRuntimeUrl nao pode ser vazio quando EnableDotNetDesktopPrerequisite=true."
+    }
+
+    Write-Host "==> Configurando pre-requisito automatico do .NET Desktop Runtime"
+    $dotNetPrereqArgs = @(
+        "-setup_location", "UrlBased",
+        "-prereq_path", $DotNetDesktopRuntimeUrl,
+        "-cmd_line", "/install /quiet /norestart",
+        "-target_os", "Win64",
+        "-search_type", "RegSubValuesEnumVersion",
+        "-search_path", "HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App",
+        "-minversion", $DotNetDesktopMinVersion,
+        "-64bit"
+    )
+
+    try {
+        Invoke-Ai -AiCli $aiCli -Arguments (@("/edit", $aipPath, "/UpdatePrerequisite", $DotNetDesktopPrerequisiteName) + $dotNetPrereqArgs)
+    }
+    catch {
+        Write-Warning "Pre-requisito ainda nao existe no projeto. Criando..."
+        Invoke-Ai -AiCli $aiCli -Arguments (@("/edit", $aipPath, "/NewPrerequisite", $DotNetDesktopPrerequisiteName, "-type", "PreInstall") + $dotNetPrereqArgs)
     }
 }
 
