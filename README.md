@@ -51,6 +51,7 @@ Consulte `docs/MSIX_CICD.md` para estratégia de MSIX/CI e checklist de assinatu
 - `scripts/sign-release.ps1`: assinatura de artefatos com `.pfx` ou certificado do store por thumbprint
 - `scripts/install-internal-cert.ps1`: instalação robusta do certificado interno
 - `scripts/Instalar_DDS.bat`: launcher simples para instalação em ambiente interno
+- `scripts/publish-github.ps1`: cria/publica repositório no GitHub e atualiza links de suporte/update
 
 ## Observação de release
 Após cada `publish`, assine novamente o executável com `scripts/sign-release.ps1`, pois o arquivo é recriado durante o publish.
