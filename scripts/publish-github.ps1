@@ -8,6 +8,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue) {
+    $PSNativeCommandUseErrorActionPreference = $false
+}
 
 function Resolve-GhPath {
     $paths = @(
@@ -25,7 +28,7 @@ function Resolve-GhPath {
 function Ensure-GhAuth {
     param([string]$GhPath)
 
-    & $GhPath auth status 1>$null 2>$null
+    cmd /c "`"$GhPath`" auth status >nul 2>nul"
     if ($LASTEXITCODE -ne 0) {
         throw "Nao autenticado no GitHub. Rode: gh auth login --hostname github.com --git-protocol https --web"
     }
