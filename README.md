@@ -37,6 +37,9 @@ Consulte `docs/MSIX_CICD.md` para estratégia de MSIX/CI e checklist de assinatu
 
 ## Documentação (GitHub)
 - Guia de release e empacotamento: `docs/MSIX_CICD.md`
+- Guia de setup no Advanced Installer: `docs/ADVANCED_INSTALLER_SETUP.md`
+- Projeto do instalador (Advanced Installer): `installer/advanced-installer/README.md`
+- Arquivos legais do instalador: `installer/legal/`
 - Informações de atualização (feeds/links): `docs/UPDATE_INFO.md`
 - Changelog técnico: `CHANGELOG.md`
 - Suporte: `SUPPORT.md`
@@ -52,6 +55,8 @@ Consulte `docs/MSIX_CICD.md` para estratégia de MSIX/CI e checklist de assinatu
 - `scripts/install-internal-cert.ps1`: instalação robusta do certificado interno
 - `scripts/Instalar_DDS.bat`: launcher simples para instalação em ambiente interno
 - `scripts/publish-github.ps1`: cria/publica repositório no GitHub e atualiza links de suporte/update
+- `scripts/prepare-installer-input.ps1`: gera pasta pronta para importar no Advanced Installer
+- `scripts/create-advanced-installer-project.ps1`: cria e preenche automaticamente o projeto `.aip`
 
 ## Observação de release
 Após cada `publish`, assine novamente o executável com `scripts/sign-release.ps1`, pois o arquivo é recriado durante o publish.

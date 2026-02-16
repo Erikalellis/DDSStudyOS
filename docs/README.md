@@ -2,6 +2,9 @@
 
 ## Guias principais
 - Release/empacotamento: `docs/MSIX_CICD.md`
+- Setup de instalador: `docs/ADVANCED_INSTALLER_SETUP.md`
+- Projeto do instalador: `installer/advanced-installer/README.md`
+- Arquivos legais do instalador: `installer/legal/`
 - Configuracao de updates: `docs/UPDATE_INFO.md`
 - Suporte tecnico: `SUPPORT.md`
 

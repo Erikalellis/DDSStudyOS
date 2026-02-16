@@ -16,6 +16,11 @@
 xaml_stdout.txt
 xaml_stderr.txt
 
+# Local installer/build artifacts
+artifacts/
+installer/advanced-installer/*-cache/
+installer/advanced-installer/*.back*.aip
+
 # Local config
 .idea/
 .vscode/
