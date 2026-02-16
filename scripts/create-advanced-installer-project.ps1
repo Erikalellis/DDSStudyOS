@@ -1,5 +1,6 @@
 param(
     [string]$Configuration = "Release",
+    [string]$Platform = "x64",
     [string]$RuntimeIdentifier = "win10-x64",
     [string]$ProjectPath = "installer\advanced-installer\DDSStudyOS.aip",
     [string]$InstallerInputPath = "artifacts\installer-input",
@@ -13,14 +14,42 @@ param(
     [string]$UpdateInfoUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md",
     [string]$ReleaseNotesUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
     [string]$SetupFileName = "DDSStudyOS-Setup.exe",
+    [string]$AppIconPath = "src\DDSStudyOS.App\Assets\DDSStudyOS.ico",
     [string]$Version = "",
     [switch]$PrepareInput,
     [switch]$SignExecutable,
     [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
+    [string]$SelfContained = "true",
+    [string]$WindowsAppSDKSelfContained = "true",
+    [bool]$AddDesktopShortcut = $true,
+    [bool]$AddStartMenuShortcut = $true,
     [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
+
+function ConvertTo-BoolValue {
+    param(
+        [string]$Value,
+        [string]$Name
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        throw "Parametro '$Name' nao pode ser vazio."
+    }
+
+    switch ($Value.Trim().ToLowerInvariant()) {
+        "1" { return $true }
+        "true" { return $true }
+        "yes" { return $true }
+        "y" { return $true }
+        "0" { return $false }
+        "false" { return $false }
+        "no" { return $false }
+        "n" { return $false }
+        default { throw "Valor invalido para '$Name': $Value. Use true/false ou 1/0." }
+    }
+}
 
 function Resolve-AiCliPath {
     param([string]$PathOverride)
@@ -116,7 +145,15 @@ $installerInput = if ([System.IO.Path]::IsPathRooted($InstallerInputPath)) { $In
 $outputLocation = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
 $aipPath = if ([System.IO.Path]::IsPathRooted($ProjectPath)) { $ProjectPath } else { Join-Path $repoRoot $ProjectPath }
 $aipDirectory = Split-Path -Parent $aipPath
+$iconPath = if ([System.IO.Path]::IsPathRooted($AppIconPath)) { $AppIconPath } else { Join-Path $repoRoot $AppIconPath }
 $appInputFolder = Join-Path $installerInput "app"
+$selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfContained"
+$windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
+$eulaCandidates = @(
+    (Join-Path $repoRoot "installer\legal\EULA.pt-BR.rtf"),
+    (Join-Path $installerInput "legal\EULA.pt-BR.rtf")
+)
+$eulaPath = $eulaCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 $aiCli = Resolve-AiCliPath -PathOverride $AdvancedInstallerPath
 
 if ($PrepareInput) {
@@ -126,13 +163,18 @@ if ($PrepareInput) {
     }
 
     Write-Host "==> Gerando pasta de entrada do instalador"
+    $selfContainedArg = if ($selfContainedValue) { "1" } else { "0" }
+    $windowsAppSdkSelfContainedArg = if ($windowsAppSdkSelfContainedValue) { "1" } else { "0" }
     $prepareArgs = @(
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
         "-File", $prepareScript,
         "-Configuration", $Configuration,
+        "-Platform", $Platform,
         "-RuntimeIdentifier", $RuntimeIdentifier,
-        "-OutputDirectory", $installerInput
+        "-OutputDirectory", $installerInput,
+        "-SelfContained", $selfContainedArg,
+        "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
     )
 
     if ($SignExecutable) {
@@ -150,6 +192,9 @@ if ($PrepareInput) {
 
 if (-not (Test-Path $appInputFolder)) {
     throw "Pasta de entrada nao encontrada: $appInputFolder. Rode com -PrepareInput ou execute scripts/prepare-installer-input.ps1."
+}
+if ([string]::IsNullOrWhiteSpace($eulaPath)) {
+    throw "Arquivo de EULA nao encontrado. Caminhos testados: $($eulaCandidates -join '; ')"
 }
 
 if (-not (Test-Path $aipDirectory)) {
@@ -183,6 +228,10 @@ Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetProperty", "ARPURLI
 Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetProperty", "ARPHELPLINK=$SupportUrl")
 Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetProperty", "ARPURLUPDATEINFO=$UpdateInfoUrl")
 Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetProperty", "ARPCOMMENTS=Release notes: $ReleaseNotesUrl")
+Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetEula", "-rtf", $eulaPath)
+if (Test-Path $iconPath) {
+    Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetIcon", "-icon", $iconPath)
+}
 
 Write-Host "==> Aplicando configuracoes de pacote"
 Invoke-AiWithFallback -AiCli $aiCli `
@@ -210,9 +259,37 @@ catch {
 Invoke-AiWithFallback -AiCli $aiCli `
     -PrimaryArguments @("/edit", $aipPath, "/SetOutputLocation", "-buildname", $BuildName, "-path", $outputLocation) `
     -FallbackArguments @("/edit", $aipPath, "/SetOutputLocation", $outputLocation)
+if (Test-Path $iconPath) {
+    try {
+        Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/SetOutputExeIcon", "-buildname", $BuildName, "-iconpath", $iconPath, "-iconindex", "0")
+    }
+    catch {
+        Write-Warning "Nao foi possivel definir o icone do Setup.exe automaticamente."
+    }
+}
 
 Write-Host "==> Adicionando arquivos do aplicativo"
 Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/AddFolder", "APPDIR", $appInputFolder)
+
+if ($AddStartMenuShortcut) {
+    Write-Host "==> Criando atalho no Menu Iniciar"
+    try {
+        Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/NewShortcut", "-name", $ProductName, "-dir", "SHORTCUTDIR", "-target", "APPDIR\app\DDSStudyOS.App.exe", "-wkdir", "APPDIR\app")
+    }
+    catch {
+        Write-Warning "Atalho do Menu Iniciar ja existente ou nao foi possivel criar automaticamente."
+    }
+}
+
+if ($AddDesktopShortcut) {
+    Write-Host "==> Criando atalho na Area de Trabalho"
+    try {
+        Invoke-Ai -AiCli $aiCli -Arguments @("/edit", $aipPath, "/NewShortcut", "-name", $ProductName, "-dir", "DesktopFolder", "-target", "APPDIR\app\DDSStudyOS.App.exe", "-wkdir", "APPDIR\app")
+    }
+    catch {
+        Write-Warning "Atalho da Area de Trabalho ja existente ou nao foi possivel criar automaticamente."
+    }
+}
 
 Write-Host ""
 Write-Host "Projeto do instalador criado com sucesso."

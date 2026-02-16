@@ -9,6 +9,9 @@ Execute:
 .\scripts\prepare-installer-input.ps1 -SignExecutable
 ```
 
+Observacao: por padrao o publish agora roda em `SelfContained=true` e `WindowsAppSDKSelfContained=true` para evitar erro de app nao abrir em maquina sem runtime.
+Observacao: por padrao a plataforma usada no publish e `x64`.
+
 Saida esperada:
 - `artifacts/installer-input/app` (arquivos da aplicacao)
 - `artifacts/installer-input/scripts` (certificado e scripts)
@@ -34,6 +37,9 @@ Saida esperada:
 - `artifacts/installer-output/` (pasta de destino do setup)
 
 Observacao: o script cria projeto do tipo `enterprise` com idioma principal `pt_BR`.
+Observacao: o script tambem aplica automaticamente o EULA PT-BR (`/SetEula`) no dialogo de licenca.
+Observacao: o script cria automaticamente atalhos no `Menu Iniciar` e na `Area de Trabalho`.
+Observacao: o script aplica automaticamente o icone de `src/DDSStudyOS.App/Assets/DDSStudyOS.ico` no produto e no `Setup.exe`.
 
 ## 3) Abrir projeto no Advanced Installer e Build
 1. Abrir `installer/advanced-installer/DDSStudyOS.aip`
@@ -85,3 +91,16 @@ Se desejar instalar certificado no fim do setup:
 3. Testar backup export/import.
 4. Testar lembrete e notificacao.
 5. Validar links de suporte e changelog.
+
+## 11) Personalizar icone (PNG -> ICO)
+1. Gerar o `.ico`:
+   - `.\scripts\convert-png-to-ico.ps1 -SourceImage "C:\Users\robso\Downloads\dds icone.png" -OutputIco ".\src\DDSStudyOS.App\Assets\DDSStudyOS.ico"`
+2. Recriar o `.aip`:
+   - `.\scripts\create-advanced-installer-project.ps1 -Force -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
+
+## 12) Troubleshooting rapido (licenca vazia)
+1. Se a janela de licenca abrir sem texto, recrie o `.aip`:
+   - `.\scripts\create-advanced-installer-project.ps1 -Force -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
+2. Confirme no `.aip`:
+   - `LicenseAgreementDlg` presente em `FragmentComponent`
+   - `AgreementText` apontando para `..\legal\EULA.pt-BR.rtf`

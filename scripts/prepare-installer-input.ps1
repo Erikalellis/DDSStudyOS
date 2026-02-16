@@ -1,12 +1,38 @@
 param(
     [string]$Configuration = "Release",
+    [string]$Platform = "x64",
     [string]$RuntimeIdentifier = "win10-x64",
     [string]$OutputDirectory = "",
+    [string]$SelfContained = "true",
+    [string]$WindowsAppSDKSelfContained = "true",
     [switch]$SignExecutable,
     [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422"
 )
 
 $ErrorActionPreference = "Stop"
+
+function ConvertTo-BoolValue {
+    param(
+        [string]$Value,
+        [string]$Name
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        throw "Parametro '$Name' nao pode ser vazio."
+    }
+
+    switch ($Value.Trim().ToLowerInvariant()) {
+        "1" { return $true }
+        "true" { return $true }
+        "yes" { return $true }
+        "y" { return $true }
+        "0" { return $false }
+        "false" { return $false }
+        "no" { return $false }
+        "n" { return $false }
+        default { throw "Valor invalido para '$Name': $Value. Use true/false ou 1/0." }
+    }
+}
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
@@ -15,7 +41,7 @@ if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
 
 $publishScript = Join-Path $PSScriptRoot "build-release.ps1"
 $signScript = Join-Path $PSScriptRoot "sign-release.ps1"
-$publishDir = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier\publish"
+$publishDir = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier\publish"
 $exePath = Join-Path $publishDir "DDSStudyOS.App.exe"
 
 if (-not (Test-Path $publishScript)) {
@@ -23,7 +49,11 @@ if (-not (Test-Path $publishScript)) {
 }
 
 Write-Host "==> Build/Publish"
-powershell -NoProfile -ExecutionPolicy Bypass -File $publishScript -Configuration $Configuration -RuntimeIdentifier $RuntimeIdentifier
+$selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfContained"
+$windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
+$selfContainedArg = if ($selfContainedValue) { "1" } else { "0" }
+$windowsAppSdkSelfContainedArg = if ($windowsAppSdkSelfContainedValue) { "1" } else { "0" }
+powershell -NoProfile -ExecutionPolicy Bypass -File $publishScript -Configuration $Configuration -Platform $Platform -RuntimeIdentifier $RuntimeIdentifier -SelfContained $selfContainedArg -WindowsAppSDKSelfContained $windowsAppSdkSelfContainedArg
 if ($LASTEXITCODE -ne 0) {
     throw "Falha no build/publish."
 }
@@ -75,7 +105,10 @@ $manifest = [pscustomobject]@{
     Company = "Deep Darkness Studios"
     Version = $versionInfo.ProductVersion
     BuildTimeUtc = (Get-Date).ToUniversalTime().ToString("o")
+    Platform = $Platform
     RuntimeIdentifier = $RuntimeIdentifier
+    SelfContained = [bool]$selfContainedValue
+    WindowsAppSDKSelfContained = [bool]$windowsAppSdkSelfContainedValue
     Signed = [bool]$SignExecutable
     MainExecutable = "app\\DDSStudyOS.App.exe"
     EulaPtBrPath = "legal\\EULA.pt-BR.rtf"

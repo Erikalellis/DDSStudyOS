@@ -1,12 +1,37 @@
 param(
     [string]$Configuration = "Release",
+    [string]$Platform = "x64",
     [string]$RuntimeIdentifier = "win10-x64",
-    [bool]$WindowsAppSDKSelfContained = $false,
+    [string]$SelfContained = "true",
+    [string]$WindowsAppSDKSelfContained = "true",
     [switch]$SkipSolutionBuild,
     [string]$MsBuildPath = ""
 )
 
 $ErrorActionPreference = "Stop"
+
+function ConvertTo-BoolValue {
+    param(
+        [string]$Value,
+        [string]$Name
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        throw "Parametro '$Name' nao pode ser vazio."
+    }
+
+    switch ($Value.Trim().ToLowerInvariant()) {
+        "1" { return $true }
+        "true" { return $true }
+        "yes" { return $true }
+        "y" { return $true }
+        "0" { return $false }
+        "false" { return $false }
+        "no" { return $false }
+        "n" { return $false }
+        default { throw "Valor invalido para '$Name': $Value. Use true/false ou 1/0." }
+    }
+}
 
 function Resolve-MsBuildPath {
     if (-not [string]::IsNullOrWhiteSpace($MsBuildPath)) {
@@ -44,10 +69,14 @@ if (-not (Test-Path $projectPath)) {
 }
 
 $resolvedMsBuild = Resolve-MsBuildPath
+$selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfContained"
+$windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
 Write-Host "MSBuild: $resolvedMsBuild"
 Write-Host "Configuration: $Configuration"
+Write-Host "Platform: $Platform"
 Write-Host "RuntimeIdentifier: $RuntimeIdentifier"
-Write-Host "WindowsAppSDKSelfContained: $WindowsAppSDKSelfContained"
+Write-Host "SelfContained: $selfContainedValue"
+Write-Host "WindowsAppSDKSelfContained: $windowsAppSdkSelfContainedValue"
 
 if (-not $SkipSolutionBuild) {
     Write-Host ""
@@ -60,12 +89,12 @@ if (-not $SkipSolutionBuild) {
 
 Write-Host ""
 Write-Host "==> Publish do app"
-& $resolvedMsBuild $projectPath /t:Publish /p:Configuration=$Configuration /p:RuntimeIdentifier=$RuntimeIdentifier /p:WindowsAppSDKSelfContained=$WindowsAppSDKSelfContained /m /nologo
+& $resolvedMsBuild $projectPath /t:Publish /p:Configuration=$Configuration /p:Platform=$Platform /p:RuntimeIdentifier=$RuntimeIdentifier /p:SelfContained=$selfContainedValue /p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue /m /nologo
 if ($LASTEXITCODE -ne 0) {
     throw "Falha no publish do app."
 }
 
-$publishPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier\publish"
+$publishPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier\publish"
 Write-Host ""
 Write-Host "Publish concluido em: $publishPath"
 Write-Host "Observacao: o publish recria o EXE. Assine novamente com scripts/sign-release.ps1."
