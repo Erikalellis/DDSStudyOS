@@ -13,6 +13,8 @@
 *.log
 *.tmp
 *.bak
+xaml_stdout.txt
+xaml_stderr.txt
 
 # Local config
 .idea/
