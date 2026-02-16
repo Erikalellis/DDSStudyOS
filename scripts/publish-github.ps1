@@ -48,7 +48,7 @@ function Update-LinkPlaceholders {
 
     foreach ($file in $targets) {
         if (-not (Test-Path $file)) { continue }
-        $content = Get-Content $file -Raw
+        $content = Get-Content $file -Raw -Encoding UTF8
         $updated = $content.Replace("<OWNER>", $OwnerName).Replace("<REPO>", $Repository)
         if ($updated -ne $content) {
             Set-Content -Path $file -Value $updated -NoNewline -Encoding UTF8
@@ -94,7 +94,7 @@ try {
 
     Update-LinkPlaceholders -RepoRoot $repoRoot -OwnerName $ownerName.Trim() -Repository $repoName.Trim()
 
-    git add ".github/ISSUE_TEMPLATE/config.yml" "docs/README.md" 2>$null
+    git -c core.safecrlf=false add ".github/ISSUE_TEMPLATE/config.yml" "docs/README.md" 2>$null
     if (-not [string]::IsNullOrWhiteSpace((git status --porcelain))) {
         git commit -m "docs: bind GitHub support/update links to repository URL"
         git push
