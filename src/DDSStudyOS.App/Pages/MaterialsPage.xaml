@@ -1,0 +1,48 @@
+<Page
+    x:Class="DDSStudyOS.App.Pages.MaterialsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="16" RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,*">
+        <TextBlock Text="Materiais &amp; Certificados" FontSize="24" FontWeight="SemiBold" Grid.ColumnSpan="2" />
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="8" Margin="0,12,12,0">
+            <ComboBox x:Name="CourseCombo" Header="Vincular ao curso (opcional)" />
+
+            <TextBox x:Name="FileNameBox" Header="Nome" PlaceholderText="Ex: certificado_csharp.pdf" />
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBox x:Name="FilePathBox" Header="Caminho do arquivo ou URL" Width="420" PlaceholderText="C:\\...\\arquivo.pdf ou https://..." />
+                <Button Content="Procurar" VerticalAlignment="Bottom" Click="Browse_Click" />
+            </StackPanel>
+
+            <TextBox x:Name="FileTypeBox" Header="Tipo (opcional)" PlaceholderText="PDF / Certificado / Vídeo / Docs ..." />
+            <CheckBox x:Name="ManagedCopyCheck" Content="Copiar arquivo para a biblioteca interna do DDS StudyOS" />
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Salvar (novo)" Click="Create_Click" />
+                <Button Content="Atualizar selecionado" Click="Update_Click" />
+                <Button Content="Excluir selecionado" Click="Delete_Click" />
+                <Button Content="Abrir arquivo" Click="Open_Click" />
+                <Button Content="Limpar" Click="Clear_Click" />
+            </StackPanel>
+
+            <TextBlock x:Name="MsgText" Text="" Opacity="0.8" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Spacing="8" Margin="12,12,0,0">
+            <TextBlock Text="Cadastrados" FontWeight="SemiBold" />
+            <ListView x:Name="MaterialsList" SelectionChanged="MaterialsList_SelectionChanged" Height="420" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Recarregar" Click="Reload_Click" />
+                <Button Content="Filtrar por curso" Click="FilterByCourse_Click" />
+                <Button Content="Ver todos" Click="ShowAll_Click" />
+            </StackPanel>
+        </StackPanel>
+
+        <InfoBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Title="Nota" Message="Você pode registrar caminho local, URL ou salvar uma cópia gerenciada no DDS StudyOS. Em conteúdos com bloqueio da plataforma, use o link da aula/material." IsOpen="True" Severity="Informational" Margin="0,12,0,0" />
+    </Grid>
+</Page>

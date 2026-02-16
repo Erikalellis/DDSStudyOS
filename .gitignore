@@ -1,0 +1,23 @@
+# Build
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+
+# Local config
+.idea/
+.vscode/
+
+# Certificates and secrets (keep public .cer only if needed)
+*.pfx
+*.snk

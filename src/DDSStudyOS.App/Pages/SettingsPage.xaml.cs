@@ -1,0 +1,196 @@
+using DDSStudyOS.App.Services;
+using Microsoft.UI.Xaml.Controls;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage.Pickers;
+
+namespace DDSStudyOS.App.Pages;
+
+public sealed partial class SettingsPage : Page
+{
+    private readonly DatabaseService _db = new();
+    private readonly BackupService _backup;
+
+    public SettingsPage()
+    {
+        this.InitializeComponent();
+        _backup = new BackupService(_db);
+        Loaded += SettingsPage_Loaded;
+    }
+
+    private void SettingsPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var defaultPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+            "studyos-backup.json"); // Updated filename
+        PathBox.Text = defaultPath;
+        DiagPathBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+        VersionText.Text = $"Versão {AppReleaseInfo.VersionString}";
+        CompanyText.Text = $"Desenvolvido por {AppReleaseInfo.CompanyName}";
+        DownloadsToggle.IsOn = SettingsService.DownloadsOrganizerEnabled;
+    }
+
+    private void DownloadsToggle_Toggled(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        SettingsService.DownloadsOrganizerEnabled = DownloadsToggle.IsOn;
+        MsgText.Text = DownloadsToggle.IsOn
+            ? "Organização automática de downloads: ativada."
+            : "Organização automática de downloads: desativada.";
+    }
+
+    private async void ClearCache_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (AppState.WebViewInstance == null)
+        {
+            MsgText.Text = "O navegador ainda não foi iniciado. Abra a aba 'Navegador' para inicializar o motor antes de limpar.";
+            return;
+        }
+
+        try
+        {
+            // Limpa tudo (Cookies, Cache, Storage)
+            await AppState.WebViewInstance.Profile.ClearBrowsingDataAsync();
+            MsgText.Text = "Cache e dados de navegação limpos com sucesso!";
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Erro ao limpar cache: " + ex.Message;
+        }
+    }
+
+    private async void Export_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        try
+        {
+            await _db.EnsureCreatedAsync();
+            var path = PathBox.Text.Trim();
+            var mp = string.IsNullOrWhiteSpace(MasterPassBox.Password) ? null : MasterPassBox.Password;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                MsgText.Text = "Informe um caminho de arquivo válido para exportar.";
+                return;
+            }
+            
+            // Ensure .json extension
+            if (mp == null && !path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) path += ".json";
+            if (mp != null && !path.EndsWith(".ddsbackup", StringComparison.OrdinalIgnoreCase)) path += ".ddsbackup";
+
+            await _backup.ExportToJsonAsync(path, mp);
+            MsgText.Text = mp is null
+                ? "Exportado com sucesso: " + path
+                : "Exportado (Criptografado) com sucesso: " + path;
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Erro ao exportar: " + ex.Message;
+        }
+    }
+
+    private async void Import_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        try
+        {
+            var file = await PickBackupFileAsync();
+            if (file is null) return;
+
+            await _db.EnsureCreatedAsync();
+            var mp = string.IsNullOrWhiteSpace(MasterPassBox.Password) ? null : MasterPassBox.Password;
+            await _backup.ImportFromJsonAsync(file.Path, mp);
+
+            MsgText.Text = mp is null
+                ? "Backup restaurado com sucesso!"
+                : "Backup descriptografado e restaurado com sucesso!";
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Erro ao importar: " + ex.Message;
+        }
+    }
+
+    private async void ValidateBackup_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        try
+        {
+            var file = await PickBackupFileAsync();
+            if (file is null) return;
+
+            var mp = string.IsNullOrWhiteSpace(MasterPassBox.Password) ? null : MasterPassBox.Password;
+            var validation = await _backup.ValidateBackupFileAsync(file.Path, mp);
+
+            MsgText.Text =
+                $"Backup válido ({validation.AppName} {validation.AppVersion}) - " +
+                $"Cursos: {validation.CourseCount}, Materiais: {validation.MaterialCount}, Lembretes: {validation.ReminderCount}.";
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Falha na validação do backup: " + ex.Message;
+        }
+    }
+
+    private async void RunDiagnostics_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        try
+        {
+            var report = await DiagnosticsService.CreateReportAsync(_db);
+            DiagSummaryText.Text = FormatDiagnosticsSummary(report);
+            MsgText.Text = report.AllChecksOk
+                ? "Diagnóstico concluído: tudo OK para release."
+                : "Diagnóstico concluído com alertas. Revise os detalhes acima.";
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Falha ao executar diagnóstico: " + ex.Message;
+        }
+    }
+
+    private async void ExportDiagnostics_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        try
+        {
+            var folder = string.IsNullOrWhiteSpace(DiagPathBox.Text)
+                ? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+                : DiagPathBox.Text.Trim();
+
+            var bundlePath = await DiagnosticsService.ExportBundleAsync(_db, folder);
+            MsgText.Text = "Diagnóstico exportado: " + bundlePath;
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Falha ao exportar diagnóstico: " + ex.Message;
+        }
+    }
+
+    private static string FormatDiagnosticsSummary(DiagnosticsReport report)
+    {
+        var failed = report.Checks.Where(c => !c.IsOk).Select(c => $"{c.Name}: {c.Message}").ToList();
+        if (failed.Count == 0)
+        {
+            return $"Status: OK | WebView2: {report.WebView2Version ?? "indisponível"} | Banco: {report.DatabaseIntegrity}";
+        }
+
+        return "Alertas encontrados: " + string.Join(" | ", failed);
+    }
+
+    private async Task<Windows.Storage.StorageFile?> PickBackupFileAsync()
+    {
+        var picker = new FileOpenPicker();
+        picker.FileTypeFilter.Add(".json");
+        picker.FileTypeFilter.Add(".ddsbackup");
+
+        var window = AppState.MainWindow;
+        if (window is null)
+        {
+            MsgText.Text = "Erro interno: Janela principal não encontrada.";
+            return null;
+        }
+
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+        return await picker.PickSingleFileAsync();
+    }
+}

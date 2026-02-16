@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <UseRidGraph>true</UseRidGraph>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win10-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+
+    <!-- WinUI 3 / Windows App SDK -->
+    <UseWinUI>true</UseWinUI>
+    <!-- Framework-dependent em dev evita matriz de RIDs legada (win10-*) no .NET 8 CLI -->
+    <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <RootNamespace>DDSStudyOS.App</RootNamespace>
+    <AssemblyName>DDSStudyOS.App</AssemblyName>
+    <Product>DDS StudyOS</Product>
+    <Company>Deep Darkness Studios</Company>
+    <Description>Plataforma desktop de gestão de estudos, cursos, materiais e lembretes.</Description>
+    <Version>2.1.0</Version>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
+    <InformationalVersion>2.1.0</InformationalVersion>
+    <NeutralLanguage>pt-BR</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Data\schema.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

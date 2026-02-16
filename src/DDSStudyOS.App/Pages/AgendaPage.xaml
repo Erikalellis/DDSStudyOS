@@ -1,0 +1,46 @@
+
+<Page
+    x:Class="DDSStudyOS.App.Pages.AgendaPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="16" RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,*">
+        <TextBlock Text="Agenda &amp; Lembretes" FontSize="24" FontWeight="SemiBold" Grid.ColumnSpan="2" />
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="8" Margin="0,12,12,0">
+            <ComboBox x:Name="CourseCombo" Header="Vincular ao curso (opcional)" />
+            <TextBox x:Name="TitleBox" Header="Título" PlaceholderText="Ex: Entregar projeto final" />
+
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <DatePicker x:Name="DueDatePicker" Header="Data" />
+                <TimePicker x:Name="DueTimePicker" Header="Hora" />
+            </StackPanel>
+
+            <TextBox x:Name="NotesBox" Header="Notas (opcional)" AcceptsReturn="True" TextWrapping="Wrap" Height="80" />
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Salvar (novo)" Click="Create_Click" />
+                <Button Content="Atualizar selecionado" Click="Update_Click" />
+                <Button Content="Excluir selecionado" Click="Delete_Click" />
+                <Button Content="Limpar" Click="Clear_Click" />
+            </StackPanel>
+
+            <TextBlock x:Name="MsgText" Text="" Opacity="0.8" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Spacing="8" Margin="12,12,0,0">
+            <TextBlock Text="Próximos" FontWeight="SemiBold" />
+            <ListView x:Name="RemindersList" SelectionChanged="RemindersList_SelectionChanged" Height="420" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Recarregar" Click="Reload_Click" />
+                <Button Content="Filtrar por curso" Click="FilterByCourse_Click" />
+                <Button Content="Ver todos" Click="ShowAll_Click" />
+            </StackPanel>
+        </StackPanel>
+
+        <InfoBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Title="Dica" Message="No MVP, a notificação é simples: o app avisa quando estiver aberto e houver lembretes próximos/vencidos." IsOpen="True" Severity="Informational" Margin="0,12,0,0" />
+    </Grid>
+</Page>

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Suporte
+    url: https://github.com/<OWNER>/<REPO>/blob/main/SUPPORT.md
+    about: Canal oficial de suporte e troubleshooting.
+  - name: Documentação de Update
+    url: https://github.com/<OWNER>/<REPO>/blob/main/docs/UPDATE_INFO.md
+    about: Links e parâmetros de atualização para instalador/updater.
