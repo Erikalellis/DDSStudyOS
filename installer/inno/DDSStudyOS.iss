@@ -111,7 +111,7 @@ begin
 
   ExtractTemporaryFile('install-prereqs.ps1');
   ScriptPath := ExpandConstant('{tmp}\install-prereqs.ps1');
-  LogPath := ExpandConstant('{tmp}\{#MyPrereqLogName}');
+  LogPath := ExpandConstant('{localappdata}\Temp\{#MyPrereqLogName}');
   PowerShellExe := GetPowerShellExePath();
 
   Params :=
