@@ -1,7 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$Platform = "x64",
-    [string]$RuntimeIdentifier = "win10-x64",
+    [string]$RuntimeIdentifier = "win-x64",
     [string]$OutputDirectory = "",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
@@ -127,3 +127,4 @@ Write-Host "Pacote para instalador gerado com sucesso."
 Write-Host "Pasta: $OutputDirectory"
 Write-Host "Executavel: $exePath"
 Write-Host "Manifesto: $manifestPath"
+

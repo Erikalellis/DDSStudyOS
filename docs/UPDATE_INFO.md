@@ -1,6 +1,6 @@
 # Update Info - DDS StudyOS
 
-Este documento centraliza as URLs usadas no Advanced Installer e no suporte do produto.
+Este documento centraliza as URLs usadas no release do instalador oficial (Inno Setup) e no suporte do produto.
 
 ## Repositorio oficial
 - GitHub: `https://github.com/Erikalellis/DDSStudyOS`
@@ -15,9 +15,10 @@ Este documento centraliza as URLs usadas no Advanced Installer e no suporte do p
 - `Release Notes URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
 - `Support URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
 
-## Observacao sobre auto-update do Advanced Installer
+## Observacao sobre auto-update
 - O arquivo acima e informativo.
-- Se for usar o Updater nativo do Advanced Installer, publicar tambem o feed especifico gerado pelo proprio Advanced Installer e configurar a URL dele no projeto `.aip`.
+- O fluxo oficial de distribuicao usa Inno Setup com release no GitHub.
+- Se for usar Advanced Installer em contingencia, publique tambem o feed especifico do updater dele.
 
 ## Versionamento
 - Formato: `MAJOR.MINOR.PATCH` (exemplo: `2.1.0`)
@@ -31,6 +32,7 @@ Este documento centraliza as URLs usadas no Advanced Installer e no suporte do p
 
 ## Checklist rapido
 1. Gerar build/publish: `scripts/build-release.ps1`
-2. Assinar artefatos apos publish.
-3. Atualizar release notes e update info no GitHub.
-4. Validar upgrade em maquina limpa.
+2. Gerar setup oficial: `scripts/build-inno-installer.ps1 -InstallWebView2 1 -InstallDotNetDesktopRuntime 0`
+3. Assinar artefatos apos publish.
+4. Atualizar release notes e update info no GitHub.
+5. Validar upgrade em maquina limpa.

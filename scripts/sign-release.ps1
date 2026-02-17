@@ -41,7 +41,7 @@ function Resolve-DefaultTargets {
         return $TargetPaths
     }
 
-    $defaultExe = Join-Path $PSScriptRoot "..\src\DDSStudyOS.App\bin\Release\net8.0-windows10.0.19041.0\win10-x64\publish\DDSStudyOS.App.exe"
+    $defaultExe = Join-Path $PSScriptRoot "..\src\DDSStudyOS.App\bin\Release\net8.0-windows10.0.19041.0\win-x64\publish\DDSStudyOS.App.exe"
     return @($defaultExe)
 }
 
@@ -152,3 +152,4 @@ foreach ($target in $targets) {
 }
 
 Write-Host "Assinatura concluida."
+

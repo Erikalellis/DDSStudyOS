@@ -4,20 +4,19 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <WindowsPackageType>None</WindowsPackageType>
     <Platforms>x64</Platforms>
     <PlatformTarget>x64</PlatformTarget>
-    <UseRidGraph>true</UseRidGraph>
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win10-x64</RuntimeIdentifier>
-    <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 
     <!-- WinUI 3 / Windows App SDK -->
     <UseWinUI>true</UseWinUI>
-    <!-- Framework-dependent em dev evita matriz de RIDs legada (win10-*) no .NET 8 CLI -->
-    <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+    <!-- Mantem runtime do Windows App SDK embutido para evitar dependencia externa no cliente -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\DDSStudyOS.ico</ApplicationIcon>
@@ -37,6 +36,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" />
     <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="LiteDB" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" />
   </ItemGroup>
 

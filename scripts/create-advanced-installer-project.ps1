@@ -1,7 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$Platform = "x64",
-    [string]$RuntimeIdentifier = "win10-x64",
+    [string]$RuntimeIdentifier = "win-x64",
     [string]$ProjectPath = "installer\advanced-installer\DDSStudyOS.aip",
     [string]$InstallerInputPath = "artifacts\installer-input",
     [string]$OutputPath = "artifacts\installer-output",
@@ -21,10 +21,11 @@ param(
     [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
-    [string]$EnableDotNetDesktopPrerequisite = "true",
+    [string]$EnableDotNetDesktopPrerequisite = "false",
     [string]$DotNetDesktopPrerequisiteName = ".NET Desktop Runtime 8 (x64)",
     [string]$DotNetDesktopRuntimeUrl = "https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe",
     [string]$DotNetDesktopMinVersion = "8.0.0",
+    [string]$DotNetDesktopSearchPath = "",
     [bool]$AddDesktopShortcut = $true,
     [bool]$AddStartMenuShortcut = $true,
     [switch]$Force
@@ -142,6 +143,29 @@ function Invoke-AiWithFallback {
         Write-Warning "Comando primario falhou, tentando fallback..."
         Invoke-Ai -AiCli $AiCli -Arguments $FallbackArguments
     }
+}
+
+function Resolve-DotNetDesktopSearchPath {
+    param([string]$PathOverride)
+
+    if (-not [string]::IsNullOrWhiteSpace($PathOverride)) {
+        return $PathOverride
+    }
+
+    $candidates = @(
+        "HKLM\SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App",
+        "HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App"
+    )
+
+    foreach ($candidate in $candidates) {
+        $registryPath = "Registry::$candidate"
+        if (Test-Path $registryPath) {
+            return $candidate
+        }
+    }
+
+    # Fallback padrao para bootstrapper 32-bit do Advanced Installer.
+    return $candidates[0]
 }
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
@@ -279,13 +303,15 @@ if ($enableDotNetDesktopPrereq) {
     }
 
     Write-Host "==> Configurando pre-requisito automatico do .NET Desktop Runtime"
+    $resolvedDotNetDesktopSearchPath = Resolve-DotNetDesktopSearchPath -PathOverride $DotNetDesktopSearchPath
+    Write-Host "    SearchPath: $resolvedDotNetDesktopSearchPath"
     $dotNetPrereqArgs = @(
         "-setup_location", "UrlBased",
         "-prereq_path", $DotNetDesktopRuntimeUrl,
         "-cmd_line", "/install /quiet /norestart",
         "-target_os", "Win64",
         "-search_type", "RegSubValuesEnumVersion",
-        "-search_path", "HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App",
+        "-search_path", $resolvedDotNetDesktopSearchPath,
         "-minversion", $DotNetDesktopMinVersion,
         "-64bit"
     )
@@ -330,3 +356,4 @@ Write-Host "Output Setup: $outputLocation"
 Write-Host "Versao: $resolvedVersion"
 Write-Host ""
 Write-Host "Proximo passo: abrir o .aip no Advanced Installer e compilar o Setup."
+

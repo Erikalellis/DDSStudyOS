@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <NavigationView
             x:Name="NavView"
             PaneDisplayMode="Left"
@@ -26,6 +26,14 @@
 
             <NavigationView.PaneFooter>
                 <StackPanel Spacing="8" Padding="12" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="0,1,0,0">
+                    <Border Background="#221D4ED8" CornerRadius="8" Padding="10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Perfil ativo" FontSize="11" Opacity="0.8" />
+                            <TextBlock x:Name="UserGreetingText" Text="Olá, estudante!" FontWeight="SemiBold" FontSize="14" />
+                            <TextBlock x:Name="UserSubtitleText" Text="Configure seu cadastro inicial." FontSize="11" Opacity="0.8" />
+                        </StackPanel>
+                    </Border>
+
                     <TextBlock Text="Pomodoro Focus" FontWeight="SemiBold" FontSize="12" Opacity="0.8"/>
                     <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
                         <TextBlock x:Name="PomoTimerText" Text="25:00" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Consolas"/>
@@ -41,5 +49,78 @@
 
             <Frame x:Name="ContentFrame" />
         </NavigationView>
+
+        <Grid x:Name="SplashOverlay" Opacity="1">
+            <Grid.Background>
+                <ImageBrush
+                    ImageSource="ms-appx:///Assets/SplashBackground.png"
+                    Stretch="UniformToFill"
+                    AlignmentX="Center"
+                    AlignmentY="Center" />
+            </Grid.Background>
+
+            <Rectangle Fill="#B5121725" />
+
+            <Border
+                x:Name="SplashCard"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="680"
+                MaxWidth="900"
+                Padding="28"
+                CornerRadius="18"
+                Background="#66070A12"
+                BorderBrush="#4DF0F4FF"
+                BorderThickness="1"
+                Opacity="0">
+
+                <StackPanel Spacing="14">
+                    <StackPanel Spacing="2">
+                        <TextBlock
+                            x:Name="SplashTitleText"
+                            Text="DDS StudyOS"
+                            FontSize="34"
+                            FontWeight="SemiBold"
+                            HorizontalAlignment="Center" />
+                        <TextBlock
+                            Text="Deep Darkness Studios"
+                            FontSize="14"
+                            Opacity="0.86"
+                            HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Name="SplashStatusText"
+                        Text="Iniciando plataforma..."
+                        FontSize="15"
+                        FontWeight="SemiBold" />
+
+                    <ProgressBar
+                        x:Name="SplashProgressBar"
+                        Minimum="0"
+                        Maximum="100"
+                        Value="3"
+                        Height="8" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="SplashDetailText"
+                            Text="Carregando componentes do sistema..."
+                            Opacity="0.82" />
+
+                        <TextBlock
+                            x:Name="SplashProgressText"
+                            Grid.Column="1"
+                            Text="3%"
+                            FontWeight="SemiBold" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

@@ -43,6 +43,71 @@
                     </Border>
                 </StackPanel>
 
+                <!-- DDS Vault -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Cofre DDS (Logins &amp; Senhas)" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <InfoBar x:Name="VaultInfoBar"
+                                     Title="Importação segura"
+                                     Message="Importe CSV exportado do navegador. O cofre usa DPAPI local (Windows) para proteger os dados."
+                                     IsOpen="True"
+                                     Severity="Informational"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                <Ellipse x:Name="ChromeStatusDot" Width="10" Height="10"/>
+                                <TextBlock x:Name="ChromeStatusText" Text="Status do Chrome: verificando..." VerticalAlignment="Center"/>
+                                <Button Content="Atualizar status" Click="RefreshChromeStatus_Click"/>
+                            </StackPanel>
+
+                            <ComboBox x:Name="VaultBrowserCombo" Header="Origem da importação (CSV exportado)"/>
+                            <TextBox x:Name="VaultImportPathBox" Header="Arquivo CSV" PlaceholderText="C:\...\senhas-exportadas.csv"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Selecionar CSV" Click="PickVaultCsv_Click"/>
+                                <Button Content="Importar para o Cofre DDS" Click="ImportVaultCsv_Click" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="Atualizar lista" Click="RefreshVaultList_Click"/>
+                            </StackPanel>
+
+                            <ProgressBar x:Name="VaultProgressBar" Visibility="Collapsed" IsIndeterminate="True" Height="6"/>
+                            <TextBlock x:Name="VaultSummaryText" Text="Nenhuma importação realizada ainda." Opacity="0.85" TextWrapping="Wrap"/>
+
+                            <TextBlock Text="Credenciais salvas" FontWeight="SemiBold"/>
+                            <ListView x:Name="VaultListView" Height="220" SelectionMode="Single">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="4" ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Spacing="2">
+                                                <TextBlock Text="{Binding Domain}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding Url}" Opacity="0.7" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock Text="{Binding Username}" />
+                                                <TextBlock Text="{Binding SourceBrowser}" Opacity="0.7" FontSize="12"/>
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="2" Text="{Binding UpdatedAtDisplay}" Opacity="0.75" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Abrir no navegador e preencher" Click="OpenBrowserWithSelectedCredential_Click"/>
+                                <Button Content="Excluir selecionado" Click="DeleteVaultEntry_Click"/>
+                                <Button Content="Limpar cofre" Click="ClearVault_Click" Foreground="Red" BorderBrush="Red"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
                 <!-- Diagnostics -->
                 <StackPanel Spacing="12">
                     <TextBlock Text="Diagnóstico de Release" Style="{StaticResource SubtitleTextBlockStyle}"/>

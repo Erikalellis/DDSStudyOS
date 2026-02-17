@@ -1,7 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$Platform = "x64",
-    [string]$RuntimeIdentifier = "win10-x64",
+    [string]$RuntimeIdentifier = "win-x64",
     [string]$ProjectPath = "installer\advanced-installer\DDSStudyOS.aip",
     [string]$OutputPath = "artifacts\installer-output",
     [string]$BuildName = "DefaultBuild",
@@ -11,10 +11,11 @@ param(
     [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
-    [string]$EnableDotNetDesktopPrerequisite = "true",
+    [string]$EnableDotNetDesktopPrerequisite = "false",
     [string]$DotNetDesktopPrerequisiteName = ".NET Desktop Runtime 8 (x64)",
     [string]$DotNetDesktopRuntimeUrl = "https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe",
-    [string]$DotNetDesktopMinVersion = "8.0.0"
+    [string]$DotNetDesktopMinVersion = "8.0.0",
+    [string]$DotNetDesktopSearchPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -84,6 +85,10 @@ $createArgs = @(
     "-AdvancedInstallerPath", $aiCli
 )
 
+if (-not [string]::IsNullOrWhiteSpace($DotNetDesktopSearchPath)) {
+    $createArgs += @("-DotNetDesktopSearchPath", $DotNetDesktopSearchPath)
+}
+
 if ($SignExecutable) {
     $createArgs += "-SignExecutable"
     if (-not [string]::IsNullOrWhiteSpace($CertThumbprint)) {
@@ -121,3 +126,4 @@ if (-not (Test-Path $setupPath)) {
 Write-Host ""
 Write-Host "Setup gerado com sucesso:"
 Write-Host $setupPath
+

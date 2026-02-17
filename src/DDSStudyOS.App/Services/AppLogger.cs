@@ -58,7 +58,7 @@ public static class AppLogger
         var timestamp = DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.fff zzz");
         var line = ex is null
             ? $"{timestamp} [{level}] {context}"
-            : $"{timestamp} [{level}] {context} | {ex.GetType().Name}: {ex.Message}{Environment.NewLine}{ex.StackTrace}";
+            : $"{timestamp} [{level}] {context}{Environment.NewLine}{ex}";
 
         Debug.WriteLine(line);
 

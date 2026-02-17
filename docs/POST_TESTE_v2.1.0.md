@@ -4,17 +4,17 @@
 Estamos liberando a nova versao de testes do **DDS StudyOS v2.1.0**.
 
 Principais melhorias desta build:
-- Instalador mais robusto e em portugues (pt-BR).
-- Correcao de casos onde o app instalava, mas nao abria.
+- Instalador oficial em Inno Setup, mais robusto e em portugues (pt-BR).
+- Correcao de cenarios onde o app instalava, mas nao iniciava.
 - Atalho no Desktop e no Menu Iniciar.
-- Verificacao automatica de pre-requisito com download/instalacao do `.NET Desktop Runtime 8 (x64)` quando necessario.
-- Atualizacoes de estrutura para deixar as proximas releases mais estaveis.
+- Verificacao automatica de pre-requisito WebView2 durante o setup.
+- Base de release padronizada para os proximos ciclos de atualizacao.
 
 Baixar para teste:
 https://github.com/Erikalellis/DDSStudyOS/releases/tag/v2.1.0
 
 Download direto do instalador:
-https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup.exe
+https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup-Inno.exe
 
 Canal de suporte:
 https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md
@@ -31,4 +31,4 @@ Se encontrar qualquer erro, envie:
 - Foto 4: Tela do instalador em portugues com logo oficial.
 
 ## Legenda curta alternativa
-Novo teste no ar: **DDS StudyOS v2.1.0** com instalador mais estavel, atalhos automáticos e pre-requisito .NET resolvido no setup. Feedbacks sao bem-vindos.
+Novo teste no ar: **DDS StudyOS v2.1.0** com instalador Inno oficial, atalhos automaticos e validacao de pre-requisitos no setup. Feedbacks sao bem-vindos.

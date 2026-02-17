@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="23.4" version="23.4" Modules="enterprise" RootPath="." Language="pt_BR" Id="{D833DA18-080B-4C20-9B3D-261A4C33B25A}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="23.4" version="23.4" Modules="enterprise" RootPath="." Language="pt_BR" Id="{DB3E0ECF-D580-41AF-988B-2A26FCE68082}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Selecione o pacote de instalação para [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
@@ -11,12 +11,12 @@
     <ROW Property="ARPURLINFOABOUT" Value="https://177.71.165.60/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md"/>
     <ROW Property="Manufacturer" Value="Deep Darkness Studios"/>
-    <ROW Property="ProductCode" Value="1046:{59CCA02F-4C34-4867-841B-9CD95F8A4153} " Type="16"/>
+    <ROW Property="ProductCode" Value="1046:{4F41BE83-B8A9-449D-9726-54E7B8E01B59} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1046"/>
     <ROW Property="ProductName" Value="DDS StudyOS"/>
     <ROW Property="ProductVersion" Value="2.1.0" Options="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
-    <ROW Property="UpgradeCode" Value="{F10CBB24-C132-4BCA-B70D-86DE82C08398}"/>
+    <ROW Property="UpgradeCode" Value="{28530413-E84C-4B70-B938-10FE42578A35}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
@@ -125,344 +125,344 @@
     <ROW Directory="zhTW_Dir" Directory_Parent="app_Dir" DefaultDir="zh-TW" DirectoryOptions="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SideBySideGuidComponent">
-    <ROW Component="APPDIR" Value="{61CF24B0-50AF-42BF-AFBD-4D915235EF4F}"/>
-    <ROW Component="ProductInformation" Value="{A3E9E55A-D23C-4423-B2A3-C2DDA720507E}"/>
+    <ROW Component="APPDIR" Value="{48A2F85E-3C0E-4D64-864C-4C20C739BA45}"/>
+    <ROW Component="ProductInformation" Value="{24F63346-C525-4C08-B8A3-388D5EF99D4D}"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_ExePath" ComponentId="{6F5FBC9C-146F-4C0F-8515-D06DDA6A2E5E}" Directory_="APPDIR" Attributes="260" KeyPath="AI_ExePath"/>
-    <ROW Component="APPDIR" ComponentId="{61CF24B0-50AF-42BF-AFBD-4D915235EF4F}" Directory_="APPDIR" Attributes="0"/>
-    <ROW Component="CoreMessagingXP.dll" ComponentId="{A6D0AB3C-3B13-402C-8A3E-4917E3742729}" Directory_="app_Dir" Attributes="256" KeyPath="CoreMessagingXP.dll"/>
-    <ROW Component="DDSStudyOS.App.deps.json" ComponentId="{E6D8DB1B-D0EA-445C-BBF3-3BF55DEAE2D9}" Directory_="app_Dir" Attributes="0" KeyPath="DDSStudyOS.App.deps.json" Type="0"/>
-    <ROW Component="DDSStudyOS.App.dll" ComponentId="{F303EC55-CDF8-4D8A-BB84-4F5847831388}" Directory_="app_Dir" Attributes="256" KeyPath="DDSStudyOS.App.dll"/>
-    <ROW Component="DDSStudyOS.App.exe" ComponentId="{0CD4F9C6-0A54-444E-A9B4-AA4EE47D28A3}" Directory_="app_Dir" Attributes="256" KeyPath="DDSStudyOS.App.exe"/>
-    <ROW Component="DWriteCore.dll" ComponentId="{F63BC811-CC58-4617-ADE9-4DF11A78417D}" Directory_="app_Dir" Attributes="256" KeyPath="DWriteCore.dll"/>
-    <ROW Component="DwmSceneI.dll" ComponentId="{2758CB57-2149-4E36-B913-734A18EF50C8}" Directory_="app_Dir" Attributes="256" KeyPath="DwmSceneI.dll"/>
-    <ROW Component="MRM.dll" ComponentId="{A07157F8-EFDE-4FBD-AC2B-AA0C7B5070E4}" Directory_="app_Dir" Attributes="256" KeyPath="MRM.dll"/>
-    <ROW Component="Microsoft.CSharp.dll" ComponentId="{73A364FA-5F6F-449B-9F67-15478085B2C5}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.CSharp.dll"/>
-    <ROW Component="Microsoft.Data.Sqlite.dll" ComponentId="{07904092-1E33-4371-B9FD-956E8C5D29D4}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Data.Sqlite.dll"/>
-    <ROW Component="Microsoft.DiaSymReader.Native.amd64.dll" ComponentId="{219BD7CF-154A-42A2-9F18-40108F8BB612}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.DiaSymReader.Native.amd64.dll"/>
-    <ROW Component="Microsoft.DirectManipulation.dll" ComponentId="{45A8FC37-3D8B-449D-B278-EC717B402EF6}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.DirectManipulation.dll"/>
-    <ROW Component="Microsoft.Graphics.Display.dll" ComponentId="{4130716A-7937-4FF3-8850-E9D3CC35E17B}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Graphics.Display.dll"/>
-    <ROW Component="Microsoft.InputStateManager.dll" ComponentId="{D8F5D9DE-DD4A-46A4-A7A0-F301B65D6F90}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.InputStateManager.dll"/>
-    <ROW Component="Microsoft.InteractiveExperiences.Projection.dll" ComponentId="{C62C5C45-1C72-4D4A-AF07-8CADF74FD0FA}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.InteractiveExperiences.Projection.dll"/>
-    <ROW Component="Microsoft.Internal.FrameworkUdk.dll" ComponentId="{1FF61ABD-C166-4E2B-A5D7-8197CBB1B281}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Internal.FrameworkUdk.dll"/>
-    <ROW Component="Microsoft.UI.Composition.OSSupport.dll" ComponentId="{6C3ED35D-912C-47FC-BDB1-B2C498D26657}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Composition.OSSupport.dll"/>
-    <ROW Component="Microsoft.UI.Input.dll" ComponentId="{BB14A49A-7740-47E3-9B18-63AAA9F429ED}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Input.dll"/>
-    <ROW Component="Microsoft.UI.Windowing.Core.dll" ComponentId="{41ADA1FE-A8A0-48DC-8B26-2CA5CA856235}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Windowing.Core.dll"/>
-    <ROW Component="Microsoft.UI.Windowing.dll" ComponentId="{B6730ADF-060C-4723-9AF6-A59BA32D72F8}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Windowing.dll"/>
-    <ROW Component="Microsoft.UI.Xaml.Controls.dll" ComponentId="{13F61755-8BED-4337-AEAB-27237268C2F7}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Xaml.Controls.dll"/>
-    <ROW Component="Microsoft.UI.Xaml.Internal.dll" ComponentId="{7747640A-0992-4ED1-8D19-19AAA84327E2}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Xaml.Internal.dll"/>
-    <ROW Component="Microsoft.UI.Xaml.Phone.dll" ComponentId="{859A02F0-0E09-4A68-8759-0A9A0CAAAAA1}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Xaml.Phone.dll"/>
-    <ROW Component="Microsoft.UI.dll" ComponentId="{67C09759-3F8E-47F9-869D-37221D9F54E9}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.dll"/>
-    <ROW Component="Microsoft.VisualBasic.Core.dll" ComponentId="{B34693BD-EBD9-467D-AD08-23DD5D53FBEC}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.VisualBasic.Core.dll"/>
-    <ROW Component="Microsoft.VisualBasic.dll" ComponentId="{A2AF7D73-5321-48F1-BA10-5FCB1CCAE111}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.VisualBasic.dll"/>
-    <ROW Component="Microsoft.Web.WebView2.Core.dll" ComponentId="{B65366AD-4AF7-4D52-A2E3-6D40872F531A}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Web.WebView2.Core.dll"/>
-    <ROW Component="Microsoft.Win32.Primitives.dll" ComponentId="{27A33581-D6B1-4767-AB2A-7F2263456641}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Win32.Primitives.dll"/>
-    <ROW Component="Microsoft.Win32.Registry.dll" ComponentId="{2DD36F7C-04E8-49DE-A7AB-C6A19389266A}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Win32.Registry.dll"/>
-    <ROW Component="Microsoft.WinUI.dll" ComponentId="{63BB25B6-0120-4B86-9213-8F7EE956C5B5}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.WinUI.dll"/>
-    <ROW Component="Microsoft.Windows.AppLifecycle.Projection.dll" ComponentId="{BCB25BBF-49B6-45B5-B5E0-589612D2E127}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.AppLifecycle.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.AppNotifications.Builder.Projection.dll" ComponentId="{5AC7D341-111A-4B49-9434-D79897B9FBA7}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.AppNotifications.Builder.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.AppNotifications.Projection.dll" ComponentId="{C46D79F8-6939-42BF-B162-5A1D6F07CC8E}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.AppNotifications.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll" ComponentId="{7C8E0510-A737-4C82-9495-4C548B88F6E9}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.ApplicationModel.Resources.dll" ComponentId="{4B48F5B7-EB8D-43BC-926A-6909FFF73318}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Windows.ApplicationModel.Resources.dll"/>
-    <ROW Component="Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll" ComponentId="{B1C98979-9B3F-44FC-A663-51644631EC6B}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.ApplicationModel_1_.Resources.Projection.dll" ComponentId="{44064724-E7EF-4EE6-A503-ECACD6410615}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.ApplicationModel.Resources.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.Management.Deployment.Projection.dll" ComponentId="{6C43193C-4957-4D8F-A920-6B1DA48526A1}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.Management.Deployment.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.PushNotifications.Projection.dll" ComponentId="{92B09D4D-7797-4EFD-B9A4-B5F78F425957}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.PushNotifications.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.SDK.NET.dll" ComponentId="{BF640554-C8B6-4284-8DDF-C6A4024AD85F}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.SDK.NET.dll"/>
-    <ROW Component="Microsoft.Windows.Security.AccessControl.Projection.dll" ComponentId="{D34046F9-C9ED-4BCA-BEAE-06D7EEC2942B}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.Security.AccessControl.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.System.Power.Projection.dll" ComponentId="{1B092F7D-F3B7-4888-8383-993EECD09163}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.System.Power.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.System.Projection.dll" ComponentId="{B5ED4EA0-3164-40E9-8362-9D75AFE95B0A}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.System.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.Widgets.Projection.dll" ComponentId="{2164E99F-51C3-4D0C-9352-8B699B3C568F}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.Widgets.Projection.dll"/>
-    <ROW Component="Microsoft.Windows.Widgets.dll" ComponentId="{CFDDDFC7-10FA-4C27-888F-A469E24E51E3}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Windows.Widgets.dll"/>
-    <ROW Component="Microsoft.WindowsAppRuntime.Bootstrap.Net.dll" ComponentId="{BB3BE6A7-BCB2-4C78-965E-FA0AD571C041}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.WindowsAppRuntime.Bootstrap.Net.dll"/>
-    <ROW Component="Microsoft.WindowsAppRuntime.Bootstrap.dll" ComponentId="{B88FC479-5907-42B7-94E6-387149338E36}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.WindowsAppRuntime.Bootstrap.dll"/>
-    <ROW Component="Microsoft.WindowsAppRuntime.Insights.Resource.dll" ComponentId="{5D14E29F-BF84-4EC2-BB79-E5850B964AD3}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.WindowsAppRuntime.Insights.Resource.dll"/>
-    <ROW Component="Microsoft.WindowsAppRuntime.dll" ComponentId="{D828D514-466D-431B-8A1E-7A12A09A22FD}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.WindowsAppRuntime.dll"/>
-    <ROW Component="Microsoft.ui.xaml.dll" ComponentId="{10948FC8-56E2-4099-8064-8997D3A8F332}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.dll"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui" ComponentId="{665F13DB-1735-4284-A94D-A31CCDF3B2D7}" Directory_="afZA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_1" ComponentId="{12A3E6DD-39FB-4DB5-976A-04EE64DC8F4D}" Directory_="amET_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_1" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_10" ComponentId="{FDA4B744-B636-4816-B04B-50BB203CFA1A}" Directory_="csCZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_10" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_11" ComponentId="{D4FE3007-28B0-4E81-8235-0E42CA70FC6B}" Directory_="cyGB_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_11" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_12" ComponentId="{0C01FA21-72CE-4D89-B867-A6A78CF220E6}" Directory_="daDK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_12" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_13" ComponentId="{FDD5A666-C162-4C71-B60C-269E7E8A957D}" Directory_="deDE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_13" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_14" ComponentId="{4EDACEF2-F2F8-4664-A5BB-8CB0EED30F46}" Directory_="elGR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_14" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_15" ComponentId="{7798272A-D026-42FE-982E-338251435148}" Directory_="enGB_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_15" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_16" ComponentId="{48DD26A0-9DF2-4CBE-BC7B-DB9A270A7514}" Directory_="enus_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.dll.mui_16" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_17" ComponentId="{3E48297A-A9DD-40EC-87D1-226D9A02D3C5}" Directory_="esES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_17" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_18" ComponentId="{4B2B051C-A4B3-4D6F-8048-7CC1AB58FC5C}" Directory_="esMX_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_18" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_19" ComponentId="{7461E295-A788-48D3-B557-075A8704FF7A}" Directory_="etEE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_19" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_2" ComponentId="{52FB8EBB-D67C-48C2-88D2-3CB73D788832}" Directory_="arSA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_2" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_20" ComponentId="{A3BFDCF8-08EB-4BD2-A8DC-2AAB612180F0}" Directory_="euES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_20" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_21" ComponentId="{440DF6A7-5E43-48E6-AFDD-00A40B351F11}" Directory_="faIR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_21" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_22" ComponentId="{EDCA56E7-63DF-41F7-8D49-03351274BFD0}" Directory_="fiFI_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_22" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_23" ComponentId="{CDD2FC47-F1B8-4110-8215-743E196431C7}" Directory_="filPH_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_23" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_24" ComponentId="{D980BA6E-AAB1-4239-81CC-95CF48A85284}" Directory_="frCA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_24" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_25" ComponentId="{02474A6E-FA86-4E28-88B9-5A12CF58316F}" Directory_="frFR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_25" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_26" ComponentId="{37633045-08D6-488F-9432-9789E5262081}" Directory_="gaIE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_26" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_27" ComponentId="{9DEADCD5-C86B-4A5F-9165-1A5E5FAC6C8E}" Directory_="gdgb_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_27" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_28" ComponentId="{979BA5AE-8599-4774-B248-D5AFD3E48A2F}" Directory_="glES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_28" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_29" ComponentId="{9F8CF9BC-9F0C-4D3B-A3A3-205EAE01A7AC}" Directory_="guIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_29" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_3" ComponentId="{9024E3EF-B96A-4CA1-A667-65FFAE1665BD}" Directory_="asIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_3" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_30" ComponentId="{8B6EE9F1-BE51-4628-BE54-9E2FD123BB58}" Directory_="heIL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_30" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_31" ComponentId="{68214B1A-BC2D-4116-A148-FDF421A2FD95}" Directory_="hiIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_31" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_32" ComponentId="{677CBD3F-2949-4C46-BA6E-2D9C39412E12}" Directory_="hrHR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_32" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_33" ComponentId="{6369486F-D7EA-4828-BDC7-0EDB04D94D82}" Directory_="huHU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_33" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_34" ComponentId="{C0E6634C-0514-4D5B-A2CC-5575AC77210C}" Directory_="hyAM_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_34" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_35" ComponentId="{A642EDB9-0BF6-4550-9784-198A3A5A3CB9}" Directory_="idID_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_35" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_36" ComponentId="{7844BDE5-249C-4FF8-8902-2BCF8E401552}" Directory_="isIS_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_36" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_37" ComponentId="{3F037409-E402-47CB-B178-C0CD5A088897}" Directory_="itIT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_37" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_38" ComponentId="{BBF8F240-2EC9-4A8F-89B6-E461D720F49D}" Directory_="jaJP_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_38" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_39" ComponentId="{2D8EF8C4-80DB-408D-B47B-C370D67FAF3E}" Directory_="kaGE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_39" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_4" ComponentId="{52372A2D-E445-4980-B751-54F8D36C883A}" Directory_="azLatnAZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_4" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_40" ComponentId="{97353D4D-7B7B-44A1-B732-F14B08C1669C}" Directory_="kkKZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_40" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_41" ComponentId="{6E7A7ED7-D0FB-423D-A15B-476850DCDD2A}" Directory_="kmKH_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_41" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_42" ComponentId="{1FFF5B11-1B98-40CD-875E-C62F04A2CA35}" Directory_="knIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_42" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_43" ComponentId="{FD11687A-CEC8-4D45-BF1D-6572AB0159AC}" Directory_="koKR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_43" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_44" ComponentId="{00DBACB1-C379-4ED4-A051-4E1D5CA843A7}" Directory_="kokIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_44" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_45" ComponentId="{85D7E787-F8FC-4C50-9960-7968E4F75DD8}" Directory_="lbLU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_45" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_46" ComponentId="{4E242092-D6FD-4619-8065-C6DA18CE62F1}" Directory_="loLA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_46" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_47" ComponentId="{ADCBCAC1-096D-40CB-BBC1-D77AFFFD9ABD}" Directory_="ltLT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_47" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_48" ComponentId="{AB77A4F5-F48C-420D-982D-EE9119665D4B}" Directory_="lvLV_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_48" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_49" ComponentId="{9E0C18FB-5955-482F-BB17-A3C307099695}" Directory_="miNZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_49" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_5" ComponentId="{7B0D53FB-A8B0-4CAC-8405-6B31D46075A2}" Directory_="bgBG_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_5" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_50" ComponentId="{EDA7AB1C-32C8-4364-92ED-FAB3A279CCE7}" Directory_="mkMK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_50" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_51" ComponentId="{CA0F58E1-8CEC-477D-9E63-DB3BDFA64720}" Directory_="mlIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_51" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_52" ComponentId="{C8279E8F-90AE-4C0B-BFE2-28D6C1A3AF4A}" Directory_="mrIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_52" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_53" ComponentId="{954AAE0B-53E4-4DBD-9AF4-CE5606479522}" Directory_="msMY_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_53" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_54" ComponentId="{AB108970-B34D-445E-9FF8-4A072E048429}" Directory_="mtMT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_54" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_55" ComponentId="{6B39D968-9FAB-4EC9-BAB3-35AD01024333}" Directory_="nbNO_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_55" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_56" ComponentId="{2B2AF345-7645-4E6F-882D-ED0B01D2B0BF}" Directory_="neNP_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_56" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_57" ComponentId="{361B6755-C676-4854-8DCC-F0FF4AC72B85}" Directory_="nlNL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_57" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_58" ComponentId="{252EB06F-51BC-4E3A-B3E2-20663038134C}" Directory_="nnNO_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_58" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_59" ComponentId="{A0B77956-E1E6-41C9-ACAF-924710183035}" Directory_="orIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_59" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_6" ComponentId="{9BE4D071-9343-41B5-AF77-F8C890EE556D}" Directory_="bnIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_6" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_60" ComponentId="{226C59EE-DFFC-4B6B-B7F4-6B2D1D730EC9}" Directory_="paIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_60" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_61" ComponentId="{421B28D7-F2E5-4FB3-A1C5-8F58ADCF0203}" Directory_="plPL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_61" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_62" ComponentId="{3960EBCE-0F86-4441-9C16-FA9890A35E37}" Directory_="ptBR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_62" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_63" ComponentId="{0401109B-847E-4AEC-B7A6-2209617EB1F1}" Directory_="ptPT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_63" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_64" ComponentId="{A155F489-B044-4F47-B010-D7D4546BFD0F}" Directory_="quzPE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_64" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_65" ComponentId="{4B4B44F3-FC2C-436E-AC0E-F8366A6B5982}" Directory_="roRO_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_65" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_66" ComponentId="{53469E62-0CC7-4F8E-8FDE-7AB219043FEA}" Directory_="ruRU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_66" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_67" ComponentId="{5DB371E0-90B4-4BA3-9C8C-A2A5D454F412}" Directory_="skSK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_67" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_68" ComponentId="{C99E66EC-7D08-41EF-8A58-372E9C38AF12}" Directory_="slSI_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_68" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_69" ComponentId="{3D9433CB-57E1-4D8B-848A-758A115C8D5B}" Directory_="sqAL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_69" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_7" ComponentId="{9F40A013-C466-443F-90B1-9BADB5575C14}" Directory_="bsLatnBA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_7" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_70" ComponentId="{F90B5E13-3906-41B1-B186-2EEA727DB676}" Directory_="srCyrlBA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_70" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_71" ComponentId="{8AB728C9-73EE-4CA6-9F18-376974502E3F}" Directory_="srCyrlRS_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_71" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_72" ComponentId="{50A30D21-221E-4465-B068-8A6E556453C3}" Directory_="srLatnRS_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_72" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_73" ComponentId="{EBBD2232-80B7-4B87-B287-D25F7E046221}" Directory_="svSE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_73" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_74" ComponentId="{AC0F18E3-B00F-4D9B-964D-56BEA750FA10}" Directory_="taIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_74" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_75" ComponentId="{F1BE328C-F91A-4FC9-ADA6-9801CD43CA5F}" Directory_="teIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_75" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_76" ComponentId="{E5DC2429-BD2B-4E8E-8CC7-9316A5766316}" Directory_="thTH_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_76" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_77" ComponentId="{CB41927D-32FE-4BE8-BC1E-F34CC2F7F8DA}" Directory_="trTR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_77" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_78" ComponentId="{B41B784C-9369-4C05-9C99-68D6F93991D2}" Directory_="ttRU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_78" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_79" ComponentId="{BC6BDCC8-038B-4B3B-B3EA-BC57E1944352}" Directory_="ugCN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_79" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_8" ComponentId="{A00AB06B-46B9-4878-9F42-10F192B3F008}" Directory_="caES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_8" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_80" ComponentId="{9F2F1428-C4E8-4B2E-948B-99A36EF2E476}" Directory_="ukUA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_80" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_81" ComponentId="{9313240F-5CF2-4F7A-90DE-475DF8BE4EA5}" Directory_="urPK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_81" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_82" ComponentId="{F8F2F072-D1AA-46A5-AFB3-3FEB93A686BA}" Directory_="uzLatnUZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_82" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_83" ComponentId="{C70FEAE7-9C43-4967-929A-52474770C9F9}" Directory_="viVN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_83" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_84" ComponentId="{124EA785-E9B8-4F04-B1B9-B709F49B7A88}" Directory_="zhCN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_84" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_85" ComponentId="{3D6CB137-0E15-42D8-8A16-EC3392DD91A1}" Directory_="zhTW_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_85" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.dll.mui_9" ComponentId="{DC8D754A-302D-483D-A180-94EA26792BC0}" Directory_="caEsVALENCIA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_9" Type="0"/>
-    <ROW Component="Microsoft.ui.xaml.resources.19h1.dll" ComponentId="{4BD2F35C-7852-4D79-A1E1-390739436458}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.resources.19h1.dll"/>
-    <ROW Component="Microsoft.ui.xaml.resources.common.dll" ComponentId="{99F367B8-91C7-4413-92D3-3CD36D8DADF9}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.resources.common.dll"/>
-    <ROW Component="ProductInformation" ComponentId="{A3E9E55A-D23C-4423-B2A3-C2DDA720507E}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="PushNotificationsLongRunningTask.ProxyStub.dll" ComponentId="{7920467B-EF44-4E22-89E9-4919F2D627A0}" Directory_="app_Dir" Attributes="256" KeyPath="PushNotificationsLongRunningTask.ProxyStub.dll"/>
-    <ROW Component="RestartAgent.exe" ComponentId="{0C8888E5-7B3C-4832-8448-119A87E9797A}" Directory_="app_Dir" Attributes="256" KeyPath="RestartAgent.exe"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{3D70B112-07EF-4E85-A288-78C0C6AF1985}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="SQLitePCLRaw.batteries_v2.dll" ComponentId="{ECB47BFF-7BBB-4EC1-AC29-EB6D2AA954DE}" Directory_="app_Dir" Attributes="0" KeyPath="SQLitePCLRaw.batteries_v2.dll"/>
-    <ROW Component="SQLitePCLRaw.core.dll" ComponentId="{F4421B94-C2CE-4CB4-88B1-CA2D349F93D4}" Directory_="app_Dir" Attributes="0" KeyPath="SQLitePCLRaw.core.dll"/>
-    <ROW Component="SQLitePCLRaw.provider.e_sqlite3.dll" ComponentId="{90356DBF-E06B-42EF-AD1F-56A2320DE2E6}" Directory_="app_Dir" Attributes="0" KeyPath="SQLitePCLRaw.provider.e_sqlite3.dll"/>
-    <ROW Component="System.AppContext.dll" ComponentId="{D5D8453B-8F53-4E9D-BB47-754577DAA0A9}" Directory_="app_Dir" Attributes="0" KeyPath="System.AppContext.dll"/>
-    <ROW Component="System.Buffers.dll" ComponentId="{95723735-13A9-404D-A1E4-1593C9B31178}" Directory_="app_Dir" Attributes="0" KeyPath="System.Buffers.dll"/>
-    <ROW Component="System.Collections.Concurrent.dll" ComponentId="{DE5A869E-20EA-4635-A156-575DC6AD8A9B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.Concurrent.dll"/>
-    <ROW Component="System.Collections.Immutable.dll" ComponentId="{E37C0E5D-C6B4-450F-972B-8DB42C5775C1}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.Immutable.dll"/>
-    <ROW Component="System.Collections.NonGeneric.dll" ComponentId="{221FAE8B-34D5-48A2-A2F4-A11B3FB46373}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.NonGeneric.dll"/>
-    <ROW Component="System.Collections.Specialized.dll" ComponentId="{51CAB0FB-44BC-4F86-A166-E34264C577F1}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.Specialized.dll"/>
-    <ROW Component="System.Collections.dll" ComponentId="{65B724AD-240D-43D2-8CCA-2C3E0B49ABCE}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.dll"/>
-    <ROW Component="System.ComponentModel.Annotations.dll" ComponentId="{AFCBFB3D-5BCF-4BD5-A124-865E902F8D5B}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.Annotations.dll"/>
-    <ROW Component="System.ComponentModel.DataAnnotations.dll" ComponentId="{3E743AFB-C48B-48FD-B231-C8967F12A3EF}" Directory_="app_Dir" Attributes="0" KeyPath="System.ComponentModel.DataAnnotations.dll"/>
-    <ROW Component="System.ComponentModel.EventBasedAsync.dll" ComponentId="{1D14F896-B166-4ACE-94D3-E95404BC5D14}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.EventBasedAsync.dll"/>
-    <ROW Component="System.ComponentModel.Primitives.dll" ComponentId="{95801EDC-ED5E-471C-81B8-309FA5246C59}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.Primitives.dll"/>
-    <ROW Component="System.ComponentModel.TypeConverter.dll" ComponentId="{14A05CD7-E6B9-4EC5-AE1F-860A4138F76A}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.TypeConverter.dll"/>
-    <ROW Component="System.ComponentModel.dll" ComponentId="{BD9BEB33-57E6-4940-9FB0-C2FDE2D9DB3C}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.dll"/>
-    <ROW Component="System.Configuration.dll" ComponentId="{BBBC7359-2C53-4B97-B196-E17ADC2FCCBC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Configuration.dll"/>
-    <ROW Component="System.Console.dll" ComponentId="{12CAD4F2-6177-4619-9721-FA762EDFAFD5}" Directory_="app_Dir" Attributes="256" KeyPath="System.Console.dll"/>
-    <ROW Component="System.Core.dll" ComponentId="{49AD83CD-A079-41E1-8656-8F39ED15E241}" Directory_="app_Dir" Attributes="0" KeyPath="System.Core.dll"/>
-    <ROW Component="System.Data.Common.dll" ComponentId="{B9C3BE9D-9BCB-4B92-81DE-85DF912DC46F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Data.Common.dll"/>
-    <ROW Component="System.Data.DataSetExtensions.dll" ComponentId="{3C1D3A95-6901-4613-8FA8-F5BF2407C82A}" Directory_="app_Dir" Attributes="0" KeyPath="System.Data.DataSetExtensions.dll"/>
-    <ROW Component="System.Data.dll" ComponentId="{4CA2413C-C0BB-4869-98CC-3702E22F210B}" Directory_="app_Dir" Attributes="0" KeyPath="System.Data.dll"/>
-    <ROW Component="System.Diagnostics.Contracts.dll" ComponentId="{86342A62-9985-41A5-B917-AD20200B2B30}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Contracts.dll"/>
-    <ROW Component="System.Diagnostics.Debug.dll" ComponentId="{2D7C9F37-0AB4-4BBF-8E19-A079A41F45DF}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Debug.dll"/>
-    <ROW Component="System.Diagnostics.DiagnosticSource.dll" ComponentId="{9168BEC8-89C0-4B17-90C8-B4BB0DC0C5C6}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.DiagnosticSource.dll"/>
-    <ROW Component="System.Diagnostics.FileVersionInfo.dll" ComponentId="{7FD3DBB7-44C6-486C-8FE6-50690F2D938E}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.FileVersionInfo.dll"/>
-    <ROW Component="System.Diagnostics.Process.dll" ComponentId="{C980C85B-4251-48DE-B23B-585CD9819BC5}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.Process.dll"/>
-    <ROW Component="System.Diagnostics.StackTrace.dll" ComponentId="{A75B92F3-1CDE-4D9E-A953-166EFC7CE05D}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.StackTrace.dll"/>
-    <ROW Component="System.Diagnostics.TextWriterTraceListener.dll" ComponentId="{D9535FFB-FF9D-468D-B4D7-4BA81D2F0FC0}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.TextWriterTraceListener.dll"/>
-    <ROW Component="System.Diagnostics.Tools.dll" ComponentId="{9A87B50F-75D6-4FF1-9C87-DB0BACF88BA6}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Tools.dll"/>
-    <ROW Component="System.Diagnostics.TraceSource.dll" ComponentId="{CB25821B-F773-40E3-8DD4-F81FF4CFA4D2}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.TraceSource.dll"/>
-    <ROW Component="System.Diagnostics.Tracing.dll" ComponentId="{9FC777ED-FAE0-40DC-8FE7-6D9C68448DAA}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Tracing.dll"/>
-    <ROW Component="System.Drawing.Primitives.dll" ComponentId="{920BA849-C555-434A-8E4F-EEE2EB0D5C9E}" Directory_="app_Dir" Attributes="256" KeyPath="System.Drawing.Primitives.dll"/>
-    <ROW Component="System.Drawing.dll" ComponentId="{4C32A0AC-A5E3-4394-A1D5-9420B1CC84F7}" Directory_="app_Dir" Attributes="0" KeyPath="System.Drawing.dll"/>
-    <ROW Component="System.Dynamic.Runtime.dll" ComponentId="{C6F61585-2D70-4B52-9043-D5B9CF542328}" Directory_="app_Dir" Attributes="0" KeyPath="System.Dynamic.Runtime.dll"/>
-    <ROW Component="System.Formats.Asn1.dll" ComponentId="{8818CA78-E930-4835-B83F-A24916C08345}" Directory_="app_Dir" Attributes="256" KeyPath="System.Formats.Asn1.dll"/>
-    <ROW Component="System.Formats.Tar.dll" ComponentId="{70347111-B2E9-4269-9248-DD710EF33C0D}" Directory_="app_Dir" Attributes="256" KeyPath="System.Formats.Tar.dll"/>
-    <ROW Component="System.Globalization.Calendars.dll" ComponentId="{BDA13764-08E3-428F-AF44-46E3409D7D2D}" Directory_="app_Dir" Attributes="0" KeyPath="System.Globalization.Calendars.dll"/>
-    <ROW Component="System.Globalization.Extensions.dll" ComponentId="{41CBCC4A-22C5-4755-AD64-7947687B5C60}" Directory_="app_Dir" Attributes="0" KeyPath="System.Globalization.Extensions.dll"/>
-    <ROW Component="System.Globalization.dll" ComponentId="{8796CE59-BE6D-4B70-9EE6-108034D1547D}" Directory_="app_Dir" Attributes="0" KeyPath="System.Globalization.dll"/>
-    <ROW Component="System.IO.Compression.Brotli.dll" ComponentId="{9FDD3494-0ECC-41EB-97D8-DA090689DA25}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.Brotli.dll"/>
-    <ROW Component="System.IO.Compression.FileSystem.dll" ComponentId="{5B20B233-9DBF-470A-AEC0-DF28665A88C6}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.Compression.FileSystem.dll"/>
-    <ROW Component="System.IO.Compression.Native.dll" ComponentId="{1328B251-32B9-44DB-81BD-2B9B2E4A9A67}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.Native.dll"/>
-    <ROW Component="System.IO.Compression.ZipFile.dll" ComponentId="{58725016-3DB6-498E-84D6-46F747A9847C}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.ZipFile.dll"/>
-    <ROW Component="System.IO.Compression.dll" ComponentId="{61F9F629-1D2B-4AB7-9A59-B6A02EF3E7F4}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.dll"/>
-    <ROW Component="System.IO.FileSystem.AccessControl.dll" ComponentId="{BDCF096B-C37A-43E7-9813-FECC37BBF36D}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.FileSystem.AccessControl.dll"/>
-    <ROW Component="System.IO.FileSystem.DriveInfo.dll" ComponentId="{BFF920A8-2274-410F-AAD8-571A8A4948AE}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.FileSystem.DriveInfo.dll"/>
-    <ROW Component="System.IO.FileSystem.Primitives.dll" ComponentId="{D4CFB0D3-BDC8-441C-9B2C-8E9D9C11A47B}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.FileSystem.Primitives.dll"/>
-    <ROW Component="System.IO.FileSystem.Watcher.dll" ComponentId="{37E7C7AA-0DE3-468F-BBA8-60BF0EC9157F}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.FileSystem.Watcher.dll"/>
-    <ROW Component="System.IO.FileSystem.dll" ComponentId="{D22329B6-BE8D-4A58-9709-EC3036558762}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.FileSystem.dll"/>
-    <ROW Component="System.IO.IsolatedStorage.dll" ComponentId="{70471FDC-257B-4E5E-92CE-42D3F5001752}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.IsolatedStorage.dll"/>
-    <ROW Component="System.IO.MemoryMappedFiles.dll" ComponentId="{A346E628-7E53-4E51-B216-72571690682A}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.MemoryMappedFiles.dll"/>
-    <ROW Component="System.IO.Pipes.AccessControl.dll" ComponentId="{C70DF352-A606-45EE-97B5-09E268253F9A}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.Pipes.AccessControl.dll"/>
-    <ROW Component="System.IO.Pipes.dll" ComponentId="{2A632CB7-35F6-45D2-AB7B-A3DAFE9F7B86}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Pipes.dll"/>
-    <ROW Component="System.IO.UnmanagedMemoryStream.dll" ComponentId="{64A35D07-D81D-41E9-8C6D-C3D870826871}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.UnmanagedMemoryStream.dll"/>
-    <ROW Component="System.IO.dll" ComponentId="{DD7CF3E0-F12E-4A68-A4AE-E650B3AB4E96}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.dll"/>
-    <ROW Component="System.Linq.Expressions.dll" ComponentId="{5E850E6E-1588-430D-B1A7-7602D8C968EB}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.Expressions.dll"/>
-    <ROW Component="System.Linq.Parallel.dll" ComponentId="{5DC499B3-BC8F-4890-9E02-CE129F7AFB04}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.Parallel.dll"/>
-    <ROW Component="System.Linq.Queryable.dll" ComponentId="{119CDC20-1171-4FBC-A6EF-4A5CE2438BA8}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.Queryable.dll"/>
-    <ROW Component="System.Linq.dll" ComponentId="{00F42BF1-B527-44F8-8B7E-54DFBE770F8F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.dll"/>
-    <ROW Component="System.Memory.dll" ComponentId="{8B90EAD7-DC50-4183-B421-EAEF6721BC8C}" Directory_="app_Dir" Attributes="256" KeyPath="System.Memory.dll"/>
-    <ROW Component="System.Net.Http.Json.dll" ComponentId="{1E4DC9EF-A680-408B-9F84-299AAFDB8639}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Http.Json.dll"/>
-    <ROW Component="System.Net.Http.dll" ComponentId="{AA92554F-EB3D-4259-955E-3405478D0D46}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Http.dll"/>
-    <ROW Component="System.Net.HttpListener.dll" ComponentId="{E62C5DB1-399E-4CD9-A948-165507F18F71}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.HttpListener.dll"/>
-    <ROW Component="System.Net.Mail.dll" ComponentId="{7B7EFAD6-4C0C-4D65-BA91-BEDA2327C693}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Mail.dll"/>
-    <ROW Component="System.Net.NameResolution.dll" ComponentId="{E7509EE6-4767-4E92-AA17-831FBFBAD039}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.NameResolution.dll"/>
-    <ROW Component="System.Net.NetworkInformation.dll" ComponentId="{A65785D6-71B3-4354-BE72-1CE713A3F775}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.NetworkInformation.dll"/>
-    <ROW Component="System.Net.Ping.dll" ComponentId="{8958C6C0-25C2-45D6-BF26-B63DAB633768}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Ping.dll"/>
-    <ROW Component="System.Net.Primitives.dll" ComponentId="{EC241A69-8622-49F7-A3AD-B6E7C2F2B857}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Primitives.dll"/>
-    <ROW Component="System.Net.Quic.dll" ComponentId="{BE35612A-E679-4398-8802-7854AFB0ABB5}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Quic.dll"/>
-    <ROW Component="System.Net.Requests.dll" ComponentId="{EB8AF43E-7967-4CDA-940C-C49D95F2C42B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Requests.dll"/>
-    <ROW Component="System.Net.Security.dll" ComponentId="{31828640-0889-4BCC-8930-8B1CD63026DF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Security.dll"/>
-    <ROW Component="System.Net.ServicePoint.dll" ComponentId="{3E12218E-2066-4491-AC5F-3766C882AE46}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.ServicePoint.dll"/>
-    <ROW Component="System.Net.Sockets.dll" ComponentId="{DD68C045-5970-4EF2-9224-626BC5EA9A15}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Sockets.dll"/>
-    <ROW Component="System.Net.WebClient.dll" ComponentId="{9B3EF1D8-F092-4E15-B1B0-B544BD8B536C}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebClient.dll"/>
-    <ROW Component="System.Net.WebHeaderCollection.dll" ComponentId="{EE9E9F91-B39B-499E-B92B-4CDE023F7A1B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebHeaderCollection.dll"/>
-    <ROW Component="System.Net.WebProxy.dll" ComponentId="{37297C01-47B2-4CA0-991D-E359284DE95A}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebProxy.dll"/>
-    <ROW Component="System.Net.WebSockets.Client.dll" ComponentId="{F46486D0-9A0F-4786-BD2B-C7C8B1FE3D50}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebSockets.Client.dll"/>
-    <ROW Component="System.Net.WebSockets.dll" ComponentId="{3E7CCE5E-0CB0-44E8-B49C-2819B245D591}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebSockets.dll"/>
-    <ROW Component="System.Net.dll" ComponentId="{35CC7119-2287-4900-A811-1BDDB97B82D0}" Directory_="app_Dir" Attributes="0" KeyPath="System.Net.dll"/>
-    <ROW Component="System.Numerics.Vectors.dll" ComponentId="{AF1139E1-CBE1-462E-A7E9-4FF0CBB05F9B}" Directory_="app_Dir" Attributes="0" KeyPath="System.Numerics.Vectors.dll"/>
-    <ROW Component="System.Numerics.dll" ComponentId="{2098E6CB-C0D5-479B-BE4B-A1CF4C77AAE6}" Directory_="app_Dir" Attributes="0" KeyPath="System.Numerics.dll"/>
-    <ROW Component="System.ObjectModel.dll" ComponentId="{0ABC6062-3B2D-4CAA-919C-93889D79CCF9}" Directory_="app_Dir" Attributes="256" KeyPath="System.ObjectModel.dll"/>
-    <ROW Component="System.Private.CoreLib.dll" ComponentId="{246CEF05-53B1-4FC3-B483-65A5A3BC4339}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.CoreLib.dll"/>
-    <ROW Component="System.Private.DataContractSerialization.dll" ComponentId="{70D562FB-F83F-4055-888C-76A02B92AA2F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.DataContractSerialization.dll"/>
-    <ROW Component="System.Private.Uri.dll" ComponentId="{51C29339-D8E8-4D76-86B3-640DF55D5A49}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.Uri.dll"/>
-    <ROW Component="System.Private.Xml.Linq.dll" ComponentId="{0E376CEA-96B9-427A-84D8-0BA6F9346704}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.Xml.Linq.dll"/>
-    <ROW Component="System.Private.Xml.dll" ComponentId="{C760B566-7E5B-44DC-AB32-04B89AA94C83}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.Xml.dll"/>
-    <ROW Component="System.Reflection.DispatchProxy.dll" ComponentId="{3A5C84E9-1B70-44D5-8177-3C37F8532724}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.DispatchProxy.dll"/>
-    <ROW Component="System.Reflection.Emit.ILGeneration.dll" ComponentId="{D43C02CA-B06D-413D-8767-61ADBE633F7D}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Emit.ILGeneration.dll"/>
-    <ROW Component="System.Reflection.Emit.Lightweight.dll" ComponentId="{A0EEB1D1-BA60-4E86-A216-94C27E8CB18B}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Emit.Lightweight.dll"/>
-    <ROW Component="System.Reflection.Emit.dll" ComponentId="{71E0A056-4721-4F6C-94AD-EC849AE01801}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.Emit.dll"/>
-    <ROW Component="System.Reflection.Extensions.dll" ComponentId="{98D77C2B-3AEE-48C9-B2D1-B46355D75A54}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Extensions.dll"/>
-    <ROW Component="System.Reflection.Metadata.dll" ComponentId="{2650DB9D-88F6-4163-9110-49A1BA764457}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.Metadata.dll"/>
-    <ROW Component="System.Reflection.Primitives.dll" ComponentId="{C227584F-4811-4663-B895-043AB6ECC7DC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Primitives.dll"/>
-    <ROW Component="System.Reflection.TypeExtensions.dll" ComponentId="{17481D52-ABB2-4FC0-A445-DA51796C2F90}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.TypeExtensions.dll"/>
-    <ROW Component="System.Reflection.dll" ComponentId="{B84C5C26-52D8-468A-85CA-9E885FA9B970}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.dll"/>
-    <ROW Component="System.Resources.Reader.dll" ComponentId="{317DCB59-1C94-4D5E-A6CB-D6BAFE6D5139}" Directory_="app_Dir" Attributes="0" KeyPath="System.Resources.Reader.dll"/>
-    <ROW Component="System.Resources.ResourceManager.dll" ComponentId="{F5E71216-2511-4CBF-86C7-2526224411E2}" Directory_="app_Dir" Attributes="0" KeyPath="System.Resources.ResourceManager.dll"/>
-    <ROW Component="System.Resources.Writer.dll" ComponentId="{448B4B58-5C0E-4ACA-93A8-055642F81AF7}" Directory_="app_Dir" Attributes="256" KeyPath="System.Resources.Writer.dll"/>
-    <ROW Component="System.Runtime.CompilerServices.Unsafe.dll" ComponentId="{C56C58B6-E4A9-40B7-8939-ECCD7657F5CF}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.CompilerServices.Unsafe.dll"/>
-    <ROW Component="System.Runtime.CompilerServices.VisualC.dll" ComponentId="{602512E6-C2EA-4C3C-9072-695E399911E9}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.CompilerServices.VisualC.dll"/>
-    <ROW Component="System.Runtime.Extensions.dll" ComponentId="{E102D1E1-03FA-4010-81C8-E1884D56B3B0}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Extensions.dll"/>
-    <ROW Component="System.Runtime.Handles.dll" ComponentId="{11388724-4F07-430E-BA55-FA3C3E7B43E2}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Handles.dll"/>
-    <ROW Component="System.Runtime.InteropServices.JavaScript.dll" ComponentId="{9299F2E9-5DF3-455C-A03A-201DCA2AC179}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.InteropServices.JavaScript.dll"/>
-    <ROW Component="System.Runtime.InteropServices.RuntimeInformation.dll" ComponentId="{92951A2C-5445-4990-9109-66E3EF5D1636}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.InteropServices.RuntimeInformation.dll"/>
-    <ROW Component="System.Runtime.InteropServices.dll" ComponentId="{16D6BD7D-E562-46D7-8FE1-65483573C3B1}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.InteropServices.dll"/>
-    <ROW Component="System.Runtime.Intrinsics.dll" ComponentId="{66110C4E-F3CD-4255-BEA8-1662CE316635}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Intrinsics.dll"/>
-    <ROW Component="System.Runtime.Loader.dll" ComponentId="{4B907DCB-02CC-4E94-95B9-5B5070D51ECF}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Loader.dll"/>
-    <ROW Component="System.Runtime.Numerics.dll" ComponentId="{E2878517-F915-4F99-B530-7CB939839C73}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.Numerics.dll"/>
-    <ROW Component="System.Runtime.Serialization.Formatters.dll" ComponentId="{0406E179-2F12-4805-B85D-058E75757941}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.Serialization.Formatters.dll"/>
-    <ROW Component="System.Runtime.Serialization.Json.dll" ComponentId="{EA5A04ED-088F-43FA-A46E-DB18F2833172}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Serialization.Json.dll"/>
-    <ROW Component="System.Runtime.Serialization.Primitives.dll" ComponentId="{BD365176-6E51-4516-B60A-91BDEED035ED}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.Serialization.Primitives.dll"/>
-    <ROW Component="System.Runtime.Serialization.Xml.dll" ComponentId="{B0587FE4-7189-4876-B560-4DDBDC6E4EC8}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Serialization.Xml.dll"/>
-    <ROW Component="System.Runtime.Serialization.dll" ComponentId="{AABB3EE0-AA8A-405F-BCCF-6EC1B50346A8}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Serialization.dll"/>
-    <ROW Component="System.Runtime.dll" ComponentId="{AF471418-CB7B-43BB-AB29-EC20933354EF}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.dll"/>
-    <ROW Component="System.Security.AccessControl.dll" ComponentId="{29F1E721-2807-49AD-B715-9E8417FF490D}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.AccessControl.dll"/>
-    <ROW Component="System.Security.Claims.dll" ComponentId="{ABD56155-8C81-4F30-B0AD-B248DB1E744E}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.Claims.dll"/>
-    <ROW Component="System.Security.Cryptography.Algorithms.dll" ComponentId="{9D0889AA-D5D9-4750-8704-3100370C52F4}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Algorithms.dll"/>
-    <ROW Component="System.Security.Cryptography.Cng.dll" ComponentId="{5A2BDC7E-47C6-4475-B6EF-36537890F2C9}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Cng.dll"/>
-    <ROW Component="System.Security.Cryptography.Csp.dll" ComponentId="{4F736135-E12E-41EF-A456-3318E5AA7D1A}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Csp.dll"/>
-    <ROW Component="System.Security.Cryptography.Encoding.dll" ComponentId="{FB2D3CD2-D2CF-4C3C-87A2-4DF84B4430AD}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Encoding.dll"/>
-    <ROW Component="System.Security.Cryptography.OpenSsl.dll" ComponentId="{182F200A-7BC3-40E2-82D3-DA6F857EBA87}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.OpenSsl.dll"/>
-    <ROW Component="System.Security.Cryptography.Primitives.dll" ComponentId="{368B24B0-BE27-441D-94E0-EA05118FAEFB}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Primitives.dll"/>
-    <ROW Component="System.Security.Cryptography.ProtectedData.dll" ComponentId="{C1A67D03-578C-4A3D-BAB8-BC628DD06B22}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.ProtectedData.dll"/>
-    <ROW Component="System.Security.Cryptography.X509Certificates.dll" ComponentId="{5B6092D2-C5BD-4CAE-979F-B7D8982E7C00}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.X509Certificates.dll"/>
-    <ROW Component="System.Security.Cryptography.dll" ComponentId="{6A637816-FDD0-4828-B330-D7CF841753DF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.Cryptography.dll"/>
-    <ROW Component="System.Security.Principal.Windows.dll" ComponentId="{93486093-40D5-4E59-9ECB-3933751170B0}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.Principal.Windows.dll"/>
-    <ROW Component="System.Security.Principal.dll" ComponentId="{8475B326-0A34-48DB-9417-49D85E02FD0F}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Principal.dll"/>
-    <ROW Component="System.Security.SecureString.dll" ComponentId="{D3A6CC7D-6221-4EED-867F-6FEF5999270E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.SecureString.dll"/>
-    <ROW Component="System.Security.dll" ComponentId="{9D6ED2B5-482C-4071-B89F-0AA860A068BC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.dll"/>
-    <ROW Component="System.ServiceModel.Web.dll" ComponentId="{4E2F3D8F-64D1-42EB-B23C-1FABF6AB8CB9}" Directory_="app_Dir" Attributes="0" KeyPath="System.ServiceModel.Web.dll"/>
-    <ROW Component="System.ServiceProcess.dll" ComponentId="{3A8B26BD-22E0-41F7-93B0-0822C8CBA75C}" Directory_="app_Dir" Attributes="0" KeyPath="System.ServiceProcess.dll"/>
-    <ROW Component="System.Text.Encoding.CodePages.dll" ComponentId="{F5B24C06-0E70-41E8-BE93-26AFBA96C064}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.Encoding.CodePages.dll"/>
-    <ROW Component="System.Text.Encoding.Extensions.dll" ComponentId="{89B2AD79-1ED6-4F74-A888-E6CE85089578}" Directory_="app_Dir" Attributes="0" KeyPath="System.Text.Encoding.Extensions.dll"/>
-    <ROW Component="System.Text.Encoding.dll" ComponentId="{74C2E458-38D7-4392-9788-32EEC25C1BC8}" Directory_="app_Dir" Attributes="0" KeyPath="System.Text.Encoding.dll"/>
-    <ROW Component="System.Text.Encodings.Web.dll" ComponentId="{28534716-66C1-45DD-8625-27B67C30A15E}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.Encodings.Web.dll"/>
-    <ROW Component="System.Text.Json.dll" ComponentId="{8C7D9762-491A-4C0B-9CF2-5728E0656507}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.Json.dll"/>
-    <ROW Component="System.Text.RegularExpressions.dll" ComponentId="{ABACB225-B348-4B7E-BAC1-3D286A4C8448}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.RegularExpressions.dll"/>
-    <ROW Component="System.Threading.Channels.dll" ComponentId="{2638AF10-D310-4881-9EEE-3DD77F5A798D}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.Channels.dll"/>
-    <ROW Component="System.Threading.Overlapped.dll" ComponentId="{D16CE166-0E6C-4EE9-A4E3-61CB2976C477}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Overlapped.dll"/>
-    <ROW Component="System.Threading.Tasks.Dataflow.dll" ComponentId="{5556E614-82A8-48D5-BD5F-E1A7E298D1A2}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.Tasks.Dataflow.dll"/>
-    <ROW Component="System.Threading.Tasks.Extensions.dll" ComponentId="{9BFD9BA2-441F-4F9D-8278-7F832EB2C0C8}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Tasks.Extensions.dll"/>
-    <ROW Component="System.Threading.Tasks.Parallel.dll" ComponentId="{85C7928B-6A4A-42F1-88BC-108A2F5783CB}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.Tasks.Parallel.dll"/>
-    <ROW Component="System.Threading.Tasks.dll" ComponentId="{00DD830C-7193-48BB-8529-F0157CCAED45}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Tasks.dll"/>
-    <ROW Component="System.Threading.Thread.dll" ComponentId="{B4F92F0C-FDFC-4835-9EE1-8042A9F83D38}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Thread.dll"/>
-    <ROW Component="System.Threading.ThreadPool.dll" ComponentId="{30225057-8A8A-4CCA-9D37-FEE9B2372294}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.ThreadPool.dll"/>
-    <ROW Component="System.Threading.Timer.dll" ComponentId="{7F6435DC-6079-4159-825F-744C4FCFA575}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Timer.dll"/>
-    <ROW Component="System.Threading.dll" ComponentId="{F37B7C12-B483-48EE-B2F2-2AA2C6BE15CF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.dll"/>
-    <ROW Component="System.Transactions.Local.dll" ComponentId="{8AAC2042-7C5F-4ED1-B9E7-138BA389380F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Transactions.Local.dll"/>
-    <ROW Component="System.Transactions.dll" ComponentId="{092EA231-8C13-4CF2-ACD1-39E206160457}" Directory_="app_Dir" Attributes="0" KeyPath="System.Transactions.dll"/>
-    <ROW Component="System.ValueTuple.dll" ComponentId="{596F969D-A767-4514-9BBD-3CE347FE2F4B}" Directory_="app_Dir" Attributes="0" KeyPath="System.ValueTuple.dll"/>
-    <ROW Component="System.Web.HttpUtility.dll" ComponentId="{6CE8C8EC-7372-4B94-A500-BD86E001A0C9}" Directory_="app_Dir" Attributes="256" KeyPath="System.Web.HttpUtility.dll"/>
-    <ROW Component="System.Web.dll" ComponentId="{6B3D2687-A957-433E-95AF-B6DEC3A3F30E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Web.dll"/>
-    <ROW Component="System.Windows.dll" ComponentId="{8E134691-6C9D-4624-9B69-52C1FA9AB31E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Windows.dll"/>
-    <ROW Component="System.Xml.Linq.dll" ComponentId="{49716DAA-6363-40B8-8811-9194B181C47E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.Linq.dll"/>
-    <ROW Component="System.Xml.ReaderWriter.dll" ComponentId="{3E368CEF-B391-4968-95AC-B866EBE114E2}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.ReaderWriter.dll"/>
-    <ROW Component="System.Xml.Serialization.dll" ComponentId="{9B5667BA-4532-45B4-BD8B-3942A965881E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.Serialization.dll"/>
-    <ROW Component="System.Xml.XDocument.dll" ComponentId="{5D8B2533-89ED-47B7-BA6A-443A57141426}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XDocument.dll"/>
-    <ROW Component="System.Xml.XPath.XDocument.dll" ComponentId="{FB942400-33E9-47F1-A2BB-4E73613F7C2E}" Directory_="app_Dir" Attributes="256" KeyPath="System.Xml.XPath.XDocument.dll"/>
-    <ROW Component="System.Xml.XPath.dll" ComponentId="{DC520739-0DCE-414E-A992-D3373FE0A7D3}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XPath.dll"/>
-    <ROW Component="System.Xml.XmlDocument.dll" ComponentId="{5C24F5FF-40D0-45F9-BE15-F37F4F947EE5}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XmlDocument.dll"/>
-    <ROW Component="System.Xml.XmlSerializer.dll" ComponentId="{7C131B3C-568D-4BB8-B484-0C46B534F90E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XmlSerializer.dll"/>
-    <ROW Component="System.Xml.dll" ComponentId="{87FA6169-C1D4-4540-A546-5C18C29EA3FA}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.dll"/>
-    <ROW Component="System.dll" ComponentId="{34551BCA-115C-4E84-B359-BC644B119EE5}" Directory_="app_Dir" Attributes="0" KeyPath="System.dll"/>
-    <ROW Component="WinRT.Runtime.dll" ComponentId="{BAA626E1-70AF-4792-B935-B0CA5BE9B102}" Directory_="app_Dir" Attributes="0" KeyPath="WinRT.Runtime.dll"/>
-    <ROW Component="WinUIEdit.dll" ComponentId="{762BB20D-60CE-4DA8-B6C7-A197518C04FA}" Directory_="app_Dir" Attributes="256" KeyPath="WinUIEdit.dll"/>
-    <ROW Component="WindowsAppSdk.AppxDeploymentExtens_1_ions.Desktop.dll" ComponentId="{8431F712-30AB-4E47-B48E-49C3CC3C9583}" Directory_="app_Dir" Attributes="256" KeyPath="WindowsAppSdk.AppxDeploymentExtensions.Desktop.dll"/>
-    <ROW Component="WindowsAppSdk.AppxDeploymentExtensions.DesktopEventLogInstrumentation.dl" ComponentId="{57F29E59-B292-458C-882F-79333FE0FD4F}" Directory_="app_Dir" Attributes="256" KeyPath="WindowsAppSdk.AppxDeploymentExtensions.DesktopEventLogInstrumentation"/>
-    <ROW Component="WindowsBase.dll" ComponentId="{537257B7-2067-4967-8CA8-0340F03B42EF}" Directory_="app_Dir" Attributes="0" KeyPath="WindowsBase.dll"/>
-    <ROW Component="clretwrc.dll" ComponentId="{1D2839B1-D54E-4795-B9AF-C1949CE3322A}" Directory_="app_Dir" Attributes="256" KeyPath="clretwrc.dll"/>
-    <ROW Component="clrgc.dll" ComponentId="{629B5F64-9FDC-43C9-8339-5DC941B6EB2F}" Directory_="app_Dir" Attributes="256" KeyPath="clrgc.dll"/>
-    <ROW Component="clrjit.dll" ComponentId="{E8F67D0C-64E5-4387-A741-48388F49BE54}" Directory_="app_Dir" Attributes="256" KeyPath="clrjit.dll"/>
-    <ROW Component="coreclr.dll" ComponentId="{8F4E9D5B-E10F-4369-8DE9-44E0BCD51EF0}" Directory_="app_Dir" Attributes="256" KeyPath="coreclr.dll"/>
-    <ROW Component="createdump.exe" ComponentId="{6817A1DA-CD95-44B2-8518-1BCBE1EF8662}" Directory_="app_Dir" Attributes="256" KeyPath="createdump.exe"/>
-    <ROW Component="dcompi.dll" ComponentId="{8E13FEBC-ECC3-4D46-956C-CD1A8E0D4B7C}" Directory_="app_Dir" Attributes="256" KeyPath="dcompi.dll"/>
-    <ROW Component="dwmcorei.dll" ComponentId="{3E3B9AD3-CFA6-4EBF-A088-E43C45150E2D}" Directory_="app_Dir" Attributes="256" KeyPath="dwmcorei.dll"/>
-    <ROW Component="e_sqlite3.dll" ComponentId="{085C2F6F-57DF-441D-9E29-A231D7FE56ED}" Directory_="app_Dir" Attributes="256" KeyPath="e_sqlite3.dll"/>
-    <ROW Component="hostfxr.dll" ComponentId="{E85BDBB2-5272-49A0-86BE-BA92E6F2C062}" Directory_="app_Dir" Attributes="256" KeyPath="hostfxr.dll"/>
-    <ROW Component="hostpolicy.dll" ComponentId="{99C567B2-D42E-4CE1-8D24-59F62827B7CB}" Directory_="app_Dir" Attributes="256" KeyPath="hostpolicy.dll"/>
-    <ROW Component="map.html" ComponentId="{8168B017-621E-490E-B6E3-4788A2E7854E}" Directory_="Assets_Dir" Attributes="0" KeyPath="map.html" Type="0"/>
-    <ROW Component="marshal.dll" ComponentId="{5E4DB72E-44D4-4067-9527-79CFA6D74309}" Directory_="app_Dir" Attributes="256" KeyPath="marshal.dll"/>
-    <ROW Component="mscordaccore.dll" ComponentId="{4AF94A76-F3A6-4AC7-9245-B075AB5C5E67}" Directory_="app_Dir" Attributes="256" KeyPath="mscordaccore.dll"/>
-    <ROW Component="mscordaccore_amd64_amd64_8.0.2426.7010.dll" ComponentId="{AB9A2D56-8A0B-45B2-B22D-04AF18F9CE08}" Directory_="app_Dir" Attributes="256" KeyPath="mscordaccore_amd64_amd64_8.0.2426.7010.dll"/>
-    <ROW Component="mscordbi.dll" ComponentId="{BCF1B999-1CDE-4873-A9F7-28BBDAF0D1FE}" Directory_="app_Dir" Attributes="256" KeyPath="mscordbi.dll"/>
-    <ROW Component="mscorlib.dll" ComponentId="{DACE2127-4170-4B6D-9432-4AA99C2D3FED}" Directory_="app_Dir" Attributes="0" KeyPath="mscorlib.dll"/>
-    <ROW Component="mscorrc.dll" ComponentId="{5EB9CF23-872E-48CF-8984-67198FCA64A1}" Directory_="app_Dir" Attributes="256" KeyPath="mscorrc.dll"/>
-    <ROW Component="msquic.dll" ComponentId="{AC363F2B-247A-4A37-B3E4-51B9380F2FAF}" Directory_="app_Dir" Attributes="256" KeyPath="msquic.dll"/>
-    <ROW Component="netstandard.dll" ComponentId="{070B6EB2-6A29-41DA-BE4C-D7CF3DD9516E}" Directory_="app_Dir" Attributes="0" KeyPath="netstandard.dll"/>
-    <ROW Component="schema.sql" ComponentId="{53B47F70-B485-4DA7-B6BB-1DF65DC8CF99}" Directory_="Data_Dir" Attributes="0" KeyPath="schema.sql" Type="0"/>
-    <ROW Component="wuceffectsi.dll" ComponentId="{684BECC6-F8EF-4FF3-8DC0-A7C07748D574}" Directory_="app_Dir" Attributes="256" KeyPath="wuceffectsi.dll"/>
+    <ROW Component="AI_ExePath" ComponentId="{4FD2198B-2FE2-4E92-B163-BE1BF4B8EDFF}" Directory_="APPDIR" Attributes="260" KeyPath="AI_ExePath"/>
+    <ROW Component="APPDIR" ComponentId="{48A2F85E-3C0E-4D64-864C-4C20C739BA45}" Directory_="APPDIR" Attributes="0"/>
+    <ROW Component="CoreMessagingXP.dll" ComponentId="{67105953-FB39-4101-A063-3F2E241AA30D}" Directory_="app_Dir" Attributes="256" KeyPath="CoreMessagingXP.dll"/>
+    <ROW Component="DDSStudyOS.App.deps.json" ComponentId="{862901D3-9426-4C90-B913-55DA94BA6A1E}" Directory_="app_Dir" Attributes="0" KeyPath="DDSStudyOS.App.deps.json" Type="0"/>
+    <ROW Component="DDSStudyOS.App.dll" ComponentId="{30180762-AD05-44D7-ADE8-0DB4A821A1A7}" Directory_="app_Dir" Attributes="256" KeyPath="DDSStudyOS.App.dll"/>
+    <ROW Component="DDSStudyOS.App.exe" ComponentId="{D9884780-EB6C-4419-ADE9-C5CDE336061F}" Directory_="app_Dir" Attributes="256" KeyPath="DDSStudyOS.App.exe"/>
+    <ROW Component="DWriteCore.dll" ComponentId="{55F0C965-6252-4EF1-821B-E208E9457602}" Directory_="app_Dir" Attributes="256" KeyPath="DWriteCore.dll"/>
+    <ROW Component="DwmSceneI.dll" ComponentId="{14132381-665B-454B-8713-C36119243EAA}" Directory_="app_Dir" Attributes="256" KeyPath="DwmSceneI.dll"/>
+    <ROW Component="MRM.dll" ComponentId="{750DBFA5-8AF0-419B-B759-8D5C1EC2A621}" Directory_="app_Dir" Attributes="256" KeyPath="MRM.dll"/>
+    <ROW Component="Microsoft.CSharp.dll" ComponentId="{591610F7-53C4-4133-BB8D-5F080C457CB6}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.CSharp.dll"/>
+    <ROW Component="Microsoft.Data.Sqlite.dll" ComponentId="{38BF1E24-E6B6-48D4-B4F1-1213CB5D8719}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Data.Sqlite.dll"/>
+    <ROW Component="Microsoft.DiaSymReader.Native.amd64.dll" ComponentId="{AA959905-B602-4719-8353-36F174C789FE}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.DiaSymReader.Native.amd64.dll"/>
+    <ROW Component="Microsoft.DirectManipulation.dll" ComponentId="{2260409B-E012-47E1-BF62-AC9DA979AF57}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.DirectManipulation.dll"/>
+    <ROW Component="Microsoft.Graphics.Display.dll" ComponentId="{EFF97029-2245-4B4A-B825-4961E7AE387D}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Graphics.Display.dll"/>
+    <ROW Component="Microsoft.InputStateManager.dll" ComponentId="{AEA8F1D2-086F-479B-9EE5-B3DA85D31967}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.InputStateManager.dll"/>
+    <ROW Component="Microsoft.InteractiveExperiences.Projection.dll" ComponentId="{B0FD0955-7499-4139-B19E-18651526C449}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.InteractiveExperiences.Projection.dll"/>
+    <ROW Component="Microsoft.Internal.FrameworkUdk.dll" ComponentId="{922FF7E0-9724-4E77-A778-69785424793F}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Internal.FrameworkUdk.dll"/>
+    <ROW Component="Microsoft.UI.Composition.OSSupport.dll" ComponentId="{82750191-F7DC-4585-AD8F-E4D6FE2504F0}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Composition.OSSupport.dll"/>
+    <ROW Component="Microsoft.UI.Input.dll" ComponentId="{FDFEB99B-5A08-4BDA-8C14-5E6819E4F75B}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Input.dll"/>
+    <ROW Component="Microsoft.UI.Windowing.Core.dll" ComponentId="{BFAE551B-EC13-4C8C-8580-ADBBD804F15B}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Windowing.Core.dll"/>
+    <ROW Component="Microsoft.UI.Windowing.dll" ComponentId="{9A2FAE6C-4F65-416C-9F52-99C3E2A9C076}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Windowing.dll"/>
+    <ROW Component="Microsoft.UI.Xaml.Controls.dll" ComponentId="{43F68E16-8834-4452-8CE5-0965D393C866}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Xaml.Controls.dll"/>
+    <ROW Component="Microsoft.UI.Xaml.Internal.dll" ComponentId="{0C2D344C-AB8A-481E-8E2A-2E92D1A3D1FA}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Xaml.Internal.dll"/>
+    <ROW Component="Microsoft.UI.Xaml.Phone.dll" ComponentId="{E9D38C7D-8E33-49E8-806E-D9B44DDF29A4}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.Xaml.Phone.dll"/>
+    <ROW Component="Microsoft.UI.dll" ComponentId="{6B5D562B-5D7B-4A0F-9671-DC7BB48B9259}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.UI.dll"/>
+    <ROW Component="Microsoft.VisualBasic.Core.dll" ComponentId="{6166B2AC-147F-4EC6-BB8C-09F63CC0D68D}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.VisualBasic.Core.dll"/>
+    <ROW Component="Microsoft.VisualBasic.dll" ComponentId="{7B9AAB11-A19A-4FA0-BC80-FA5309864D15}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.VisualBasic.dll"/>
+    <ROW Component="Microsoft.Web.WebView2.Core.dll" ComponentId="{8A764B17-C3CF-4965-8D0C-031FF4EC0567}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Web.WebView2.Core.dll"/>
+    <ROW Component="Microsoft.Win32.Primitives.dll" ComponentId="{0D898327-B3B9-4E43-A481-4B5191FBF7D5}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Win32.Primitives.dll"/>
+    <ROW Component="Microsoft.Win32.Registry.dll" ComponentId="{A2530A97-5BF1-46F9-A86D-02C9B2697B03}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Win32.Registry.dll"/>
+    <ROW Component="Microsoft.WinUI.dll" ComponentId="{9DDBA2F3-6A8E-48A0-A225-51356878AFF2}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.WinUI.dll"/>
+    <ROW Component="Microsoft.Windows.AppLifecycle.Projection.dll" ComponentId="{FB9B65EC-3CF2-44A6-A324-40D7859D0046}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.AppLifecycle.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.AppNotifications.Builder.Projection.dll" ComponentId="{124D9FAB-D0D5-4F63-81FC-FA86FE8A494F}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.AppNotifications.Builder.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.AppNotifications.Projection.dll" ComponentId="{1B8D4E4B-7E4C-422E-B9B4-5BEE8544FEAE}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.AppNotifications.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll" ComponentId="{561C0C9E-CFCB-40ED-AA67-D973C1E4FDBD}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.ApplicationModel.DynamicDependency.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.ApplicationModel.Resources.dll" ComponentId="{69E37F19-4D40-4DAE-9352-1FFCEDF41F39}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Windows.ApplicationModel.Resources.dll"/>
+    <ROW Component="Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll" ComponentId="{D5D6D83B-810E-464A-B284-8AE926B04C2F}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.ApplicationModel_1_.Resources.Projection.dll" ComponentId="{E03F93AF-B7CA-4DAA-9E8C-DE1C8D22779F}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.ApplicationModel.Resources.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.Management.Deployment.Projection.dll" ComponentId="{97C9F275-9DC8-436F-8ACC-A92D12EE3087}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.Management.Deployment.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.PushNotifications.Projection.dll" ComponentId="{365D7B31-052B-4115-A63B-941E78759CA3}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.PushNotifications.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.SDK.NET.dll" ComponentId="{69E784E5-9C55-4876-9A2D-3F4D059FC8D5}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.SDK.NET.dll"/>
+    <ROW Component="Microsoft.Windows.Security.AccessControl.Projection.dll" ComponentId="{7FD40C10-8542-4960-A295-A838526C86DA}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.Security.AccessControl.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.System.Power.Projection.dll" ComponentId="{04F23400-A174-4C74-8D15-487D454606FE}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.System.Power.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.System.Projection.dll" ComponentId="{031657E6-2B6A-474A-845E-BF8438F5340D}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.System.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.Widgets.Projection.dll" ComponentId="{D72D8368-0C3E-4D4F-9CAC-27F1D5F3A6D5}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.Windows.Widgets.Projection.dll"/>
+    <ROW Component="Microsoft.Windows.Widgets.dll" ComponentId="{063749C0-D2BB-45A4-BAC6-37ED1CD5802C}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.Windows.Widgets.dll"/>
+    <ROW Component="Microsoft.WindowsAppRuntime.Bootstrap.Net.dll" ComponentId="{9FE96413-E75C-40C5-84AA-587575884562}" Directory_="app_Dir" Attributes="0" KeyPath="Microsoft.WindowsAppRuntime.Bootstrap.Net.dll"/>
+    <ROW Component="Microsoft.WindowsAppRuntime.Bootstrap.dll" ComponentId="{2663A0F9-DAB8-4EA8-B2F5-B0D5BDF68947}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.WindowsAppRuntime.Bootstrap.dll"/>
+    <ROW Component="Microsoft.WindowsAppRuntime.Insights.Resource.dll" ComponentId="{19555C2E-09A0-4280-8F48-E4CBE64FC8C5}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.WindowsAppRuntime.Insights.Resource.dll"/>
+    <ROW Component="Microsoft.WindowsAppRuntime.dll" ComponentId="{FAF69F81-A1B2-4D03-8520-519F2EE6BAB7}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.WindowsAppRuntime.dll"/>
+    <ROW Component="Microsoft.ui.xaml.dll" ComponentId="{6CA9B135-FCF5-4249-B6E2-25E123F30EE1}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.dll"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui" ComponentId="{5377D32C-1E54-4ECF-9FB3-897AC91F63AE}" Directory_="afZA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_1" ComponentId="{7E22032F-6456-4D4A-8F27-5B208F3CE772}" Directory_="amET_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_1" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_10" ComponentId="{CE09EBBC-DA8C-4C2F-B2C7-F9A0A6D2BE38}" Directory_="csCZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_10" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_11" ComponentId="{03B4FB79-5AF5-4678-93ED-1FD69AA2BD43}" Directory_="cyGB_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_11" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_12" ComponentId="{1EFDD509-06C7-44CE-B8B7-6573BB57C121}" Directory_="daDK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_12" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_13" ComponentId="{2F78716A-EFEB-4142-B59B-74042A9C06E4}" Directory_="deDE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_13" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_14" ComponentId="{B39D2A70-3860-4A5D-8A2C-3173851A16A3}" Directory_="elGR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_14" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_15" ComponentId="{15E78902-BC48-49D7-B2A9-25D5307231B0}" Directory_="enGB_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_15" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_16" ComponentId="{409EE4CE-7BA7-48A8-9750-70258DC1A10D}" Directory_="enus_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.dll.mui_16" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_17" ComponentId="{7287EC4F-9100-4577-A8E1-0E57B75B39D9}" Directory_="esES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_17" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_18" ComponentId="{D82807CA-3921-4DFD-A41B-A0070904D0CB}" Directory_="esMX_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_18" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_19" ComponentId="{504124F6-8B70-4CE7-B55F-5FFB3FAF88AE}" Directory_="etEE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_19" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_2" ComponentId="{8EA80FF5-1A4A-43EC-AE9F-8261CB44A9D9}" Directory_="arSA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_2" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_20" ComponentId="{4B190F2F-AA7C-42BB-9903-06A88D3512D3}" Directory_="euES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_20" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_21" ComponentId="{F28FC546-A93D-40DC-B03B-B7CC57C91D28}" Directory_="faIR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_21" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_22" ComponentId="{A78AD8A9-8005-4656-8BDF-CE948642FE15}" Directory_="fiFI_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_22" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_23" ComponentId="{ED2657B7-5D6A-4B12-BBDD-453287B32666}" Directory_="filPH_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_23" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_24" ComponentId="{BBB624E6-9BBD-41E3-8AF5-867AC2E705CE}" Directory_="frCA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_24" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_25" ComponentId="{5749ACD9-E2FC-42C0-A4F8-754B7DD0DF59}" Directory_="frFR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_25" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_26" ComponentId="{FD3DD99C-67F4-4F35-A113-ACCDF54EFE11}" Directory_="gaIE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_26" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_27" ComponentId="{6B14F601-51A4-48B7-9AB4-176A4A40C9F0}" Directory_="gdgb_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_27" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_28" ComponentId="{836FADA0-257C-4E9B-8141-5D5FE6D42195}" Directory_="glES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_28" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_29" ComponentId="{0EFB6E20-F971-4C0E-89BD-A02CBE805D6F}" Directory_="guIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_29" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_3" ComponentId="{AD21375E-440A-453B-8E9A-925B3F848A0E}" Directory_="asIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_3" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_30" ComponentId="{A0152270-F3DD-4130-AD78-5593E297204A}" Directory_="heIL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_30" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_31" ComponentId="{39F25089-6C7A-4684-B856-79C0DDEEAD78}" Directory_="hiIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_31" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_32" ComponentId="{E176AFA0-0D17-4897-833E-160088E55D05}" Directory_="hrHR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_32" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_33" ComponentId="{D7A2C4B0-7D87-4B20-A4AC-CBF7043AC2EE}" Directory_="huHU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_33" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_34" ComponentId="{7E6F6491-E96C-4AE3-A5E1-070DF956CBF1}" Directory_="hyAM_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_34" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_35" ComponentId="{2AFC8976-2FDE-439C-B6EF-497D9DD02EEF}" Directory_="idID_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_35" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_36" ComponentId="{3CE7E9CF-7985-4FC9-8764-03FDB230AFC1}" Directory_="isIS_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_36" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_37" ComponentId="{30CE194C-EB99-4D69-985F-25137F3886DB}" Directory_="itIT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_37" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_38" ComponentId="{1A728F21-F274-4911-86F1-02479BA1F48C}" Directory_="jaJP_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_38" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_39" ComponentId="{90F427E8-1C1C-434A-963F-701A11BEC37D}" Directory_="kaGE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_39" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_4" ComponentId="{A2E73734-6932-4605-9690-C41D9073CAE0}" Directory_="azLatnAZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_4" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_40" ComponentId="{EFF31966-3B00-4E66-97FB-84DC2E3B6EB2}" Directory_="kkKZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_40" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_41" ComponentId="{38A36B9C-6E4C-46A2-A80C-C1BE49B309AD}" Directory_="kmKH_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_41" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_42" ComponentId="{78428AAD-99C1-4F5F-8BBB-E10158185A5C}" Directory_="knIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_42" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_43" ComponentId="{18282BCA-422B-4627-B7A3-5236B5AFB0A9}" Directory_="koKR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_43" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_44" ComponentId="{F4C7D20E-0D79-4633-9F85-D1D51941BC5C}" Directory_="kokIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_44" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_45" ComponentId="{65D3BD60-6FD6-4BDC-A298-E40424621D7A}" Directory_="lbLU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_45" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_46" ComponentId="{A6823821-27CC-40EA-924A-9BE2BE172733}" Directory_="loLA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_46" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_47" ComponentId="{8B22D1C0-2FC1-4D3A-B72C-59671B885C8D}" Directory_="ltLT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_47" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_48" ComponentId="{4344C230-D186-4E23-911A-EFB04CA47CC8}" Directory_="lvLV_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_48" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_49" ComponentId="{5AD77276-4A06-44A0-A0A3-EF4EB24CE3B6}" Directory_="miNZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_49" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_5" ComponentId="{C41017FF-594E-4E8D-88AB-B58F982E8203}" Directory_="bgBG_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_5" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_50" ComponentId="{9A4C6B00-7288-46DA-A577-0E221BCDA628}" Directory_="mkMK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_50" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_51" ComponentId="{91CBC4AA-4D86-4BF5-84F8-F0D6BF9C428F}" Directory_="mlIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_51" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_52" ComponentId="{C2144330-E786-49AA-8B0E-5C4634184214}" Directory_="mrIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_52" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_53" ComponentId="{2CEF3D64-2708-47A5-8F81-1AF4459A43A5}" Directory_="msMY_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_53" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_54" ComponentId="{FA4F8D2B-4931-4D2D-9E81-7CED79AB6D40}" Directory_="mtMT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_54" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_55" ComponentId="{11A995B9-6D60-4F35-ABDD-1E3A99CE897D}" Directory_="nbNO_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_55" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_56" ComponentId="{0DBC33BF-9BEA-42AC-BB89-3257595D77A3}" Directory_="neNP_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_56" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_57" ComponentId="{1B8B5649-4DAF-45C1-A48A-D28A6850043D}" Directory_="nlNL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_57" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_58" ComponentId="{309F1CBE-893A-48AE-9302-973BF4CFEF8E}" Directory_="nnNO_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_58" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_59" ComponentId="{10293C2E-EF18-4791-9CD3-3514299CF79E}" Directory_="orIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_59" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_6" ComponentId="{AA5F1BC2-18FF-4878-9A09-C5BDD86CD219}" Directory_="bnIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_6" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_60" ComponentId="{D45113EB-BC00-4C5F-8A9E-3502EB5D5251}" Directory_="paIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_60" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_61" ComponentId="{5D0783A3-C653-4597-BB2E-25085435C00B}" Directory_="plPL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_61" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_62" ComponentId="{40BF72BD-8AE5-42D7-93F9-1AA13D8833C7}" Directory_="ptBR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_62" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_63" ComponentId="{1A12F29D-B15E-4A10-B3E8-6FBB7CD7AFBE}" Directory_="ptPT_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_63" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_64" ComponentId="{9C2E16A9-C066-4674-B681-3BF3CE50599D}" Directory_="quzPE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_64" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_65" ComponentId="{EDC033EC-04CD-44F0-88EE-07DB52AEC52B}" Directory_="roRO_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_65" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_66" ComponentId="{D58F9E36-EE13-4AF6-8C8D-D3D5C5C2C112}" Directory_="ruRU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_66" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_67" ComponentId="{C8958EEB-16FF-40BF-8105-009BE7C650CD}" Directory_="skSK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_67" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_68" ComponentId="{4F27AC25-F2D5-42E4-A8A3-DA57ED9FDCC1}" Directory_="slSI_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_68" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_69" ComponentId="{8A93709D-B43B-4470-8A1D-90541D0CC57A}" Directory_="sqAL_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_69" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_7" ComponentId="{47719F01-A161-45D8-BE04-D09D2445111D}" Directory_="bsLatnBA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_7" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_70" ComponentId="{F8F91A58-E5D9-4454-9520-638B98C61F3B}" Directory_="srCyrlBA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_70" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_71" ComponentId="{5A8AF0EC-FF7F-4A00-91C3-B67F602C5FF1}" Directory_="srCyrlRS_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_71" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_72" ComponentId="{41546430-EE50-4B5F-A5C0-7EC3A0FBE5C5}" Directory_="srLatnRS_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_72" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_73" ComponentId="{A4DF99FC-9DDF-4C8F-95BA-ED8DD09CB632}" Directory_="svSE_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_73" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_74" ComponentId="{9EBD86F7-B8C0-4853-808E-E96DF324E5EA}" Directory_="taIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_74" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_75" ComponentId="{4AA0725F-EFC5-426A-8229-F5F7E5086B50}" Directory_="teIN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_75" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_76" ComponentId="{D20E78DD-2ADC-44DC-8E3D-1B412EA9A788}" Directory_="thTH_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_76" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_77" ComponentId="{63DEBB79-0361-4D22-A305-8C0EA401E15C}" Directory_="trTR_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_77" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_78" ComponentId="{D59146D9-7E0E-4E3B-99EC-2DE586220D25}" Directory_="ttRU_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_78" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_79" ComponentId="{D166327C-D26E-476A-8DF0-899090B492A0}" Directory_="ugCN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_79" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_8" ComponentId="{F3A18BD8-83A4-42A4-9E90-E011C0641054}" Directory_="caES_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_8" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_80" ComponentId="{148B4039-32D3-48CF-B420-448F8C76D02F}" Directory_="ukUA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_80" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_81" ComponentId="{8D765726-8E34-4F6E-9B08-274189BFC420}" Directory_="urPK_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_81" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_82" ComponentId="{BE0A7EBF-76D5-450B-8968-446E9C6F426B}" Directory_="uzLatnUZ_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_82" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_83" ComponentId="{5CCF357C-D4C4-428D-824C-732796733543}" Directory_="viVN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_83" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_84" ComponentId="{B9486782-9D10-467B-878E-DCC058C21AAC}" Directory_="zhCN_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_84" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_85" ComponentId="{FF9DAE08-9FA6-46AC-9DA8-477AAC2A652F}" Directory_="zhTW_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_85" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.dll.mui_9" ComponentId="{BDF369CD-8D0F-4CE1-ADF3-AFA176FA768E}" Directory_="caEsVALENCIA_Dir" Attributes="0" KeyPath="Microsoft.ui.xaml.dll.mui_9" Type="0"/>
+    <ROW Component="Microsoft.ui.xaml.resources.19h1.dll" ComponentId="{8D892585-4D57-41D7-8B57-BA4DEA22A0B4}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.resources.19h1.dll"/>
+    <ROW Component="Microsoft.ui.xaml.resources.common.dll" ComponentId="{1F016592-9802-48FF-9475-7F7E709A8A0E}" Directory_="app_Dir" Attributes="256" KeyPath="Microsoft.ui.xaml.resources.common.dll"/>
+    <ROW Component="ProductInformation" ComponentId="{24F63346-C525-4C08-B8A3-388D5EF99D4D}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
+    <ROW Component="PushNotificationsLongRunningTask.ProxyStub.dll" ComponentId="{0687460E-FCF4-48E7-8426-2148E75C89AF}" Directory_="app_Dir" Attributes="256" KeyPath="PushNotificationsLongRunningTask.ProxyStub.dll"/>
+    <ROW Component="RestartAgent.exe" ComponentId="{F5F84590-D7F2-45FF-8188-3846A9AFD0BF}" Directory_="app_Dir" Attributes="256" KeyPath="RestartAgent.exe"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{7B6A972E-BD73-4DE1-8C3C-FDA62AFA32D0}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="SQLitePCLRaw.batteries_v2.dll" ComponentId="{A78EE760-4B42-4C49-B026-5673AD47B2D2}" Directory_="app_Dir" Attributes="0" KeyPath="SQLitePCLRaw.batteries_v2.dll"/>
+    <ROW Component="SQLitePCLRaw.core.dll" ComponentId="{5B065C81-718B-490B-9ABF-A29F4B018228}" Directory_="app_Dir" Attributes="0" KeyPath="SQLitePCLRaw.core.dll"/>
+    <ROW Component="SQLitePCLRaw.provider.e_sqlite3.dll" ComponentId="{065FF84C-A789-4949-8430-F46318CC8BF9}" Directory_="app_Dir" Attributes="0" KeyPath="SQLitePCLRaw.provider.e_sqlite3.dll"/>
+    <ROW Component="System.AppContext.dll" ComponentId="{F368885A-96BB-4861-8840-2AD75CAC5F67}" Directory_="app_Dir" Attributes="0" KeyPath="System.AppContext.dll"/>
+    <ROW Component="System.Buffers.dll" ComponentId="{995EF284-93D3-4F54-A208-43BEF8353AAD}" Directory_="app_Dir" Attributes="0" KeyPath="System.Buffers.dll"/>
+    <ROW Component="System.Collections.Concurrent.dll" ComponentId="{6A61B01B-9879-4825-B114-AE1892D1F2A6}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.Concurrent.dll"/>
+    <ROW Component="System.Collections.Immutable.dll" ComponentId="{5DB8BBF3-4872-45B5-9787-B5378BFEDDEB}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.Immutable.dll"/>
+    <ROW Component="System.Collections.NonGeneric.dll" ComponentId="{96956E1D-6F9E-4930-9DB2-C34C9B6EE87B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.NonGeneric.dll"/>
+    <ROW Component="System.Collections.Specialized.dll" ComponentId="{F7266E05-954E-4356-ACB0-AD441FF96BDA}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.Specialized.dll"/>
+    <ROW Component="System.Collections.dll" ComponentId="{1411048D-26A4-4423-B7BF-5BCE31703B53}" Directory_="app_Dir" Attributes="256" KeyPath="System.Collections.dll"/>
+    <ROW Component="System.ComponentModel.Annotations.dll" ComponentId="{D0E0208D-9C4C-4073-9926-12253C15E16E}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.Annotations.dll"/>
+    <ROW Component="System.ComponentModel.DataAnnotations.dll" ComponentId="{D4F0111E-E4C0-4213-8214-3149FEB19DA7}" Directory_="app_Dir" Attributes="0" KeyPath="System.ComponentModel.DataAnnotations.dll"/>
+    <ROW Component="System.ComponentModel.EventBasedAsync.dll" ComponentId="{3868BD1B-A04A-418D-9725-1C4DC610A1C4}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.EventBasedAsync.dll"/>
+    <ROW Component="System.ComponentModel.Primitives.dll" ComponentId="{CAAA9785-60B3-41A4-AB81-B4B88F2A878D}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.Primitives.dll"/>
+    <ROW Component="System.ComponentModel.TypeConverter.dll" ComponentId="{9604046E-1F12-461B-9462-E2401F0DEC6B}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.TypeConverter.dll"/>
+    <ROW Component="System.ComponentModel.dll" ComponentId="{FCC04737-7879-4AB9-AD9E-DE4CFB1FA959}" Directory_="app_Dir" Attributes="256" KeyPath="System.ComponentModel.dll"/>
+    <ROW Component="System.Configuration.dll" ComponentId="{05150FD2-E495-4BA4-8A25-6E564982F587}" Directory_="app_Dir" Attributes="0" KeyPath="System.Configuration.dll"/>
+    <ROW Component="System.Console.dll" ComponentId="{D0D7C22C-AEFB-4C67-91C4-E95E3562BF99}" Directory_="app_Dir" Attributes="256" KeyPath="System.Console.dll"/>
+    <ROW Component="System.Core.dll" ComponentId="{5007FB73-FA1D-4835-84B1-40BE0D8878D5}" Directory_="app_Dir" Attributes="0" KeyPath="System.Core.dll"/>
+    <ROW Component="System.Data.Common.dll" ComponentId="{58812F97-7016-4B5E-ABBA-686E9851ED7D}" Directory_="app_Dir" Attributes="256" KeyPath="System.Data.Common.dll"/>
+    <ROW Component="System.Data.DataSetExtensions.dll" ComponentId="{E78D2612-1286-4C64-B6E4-9C243FD5C8F4}" Directory_="app_Dir" Attributes="0" KeyPath="System.Data.DataSetExtensions.dll"/>
+    <ROW Component="System.Data.dll" ComponentId="{BB3A05A9-CB5C-4C44-803C-2F00191DA67D}" Directory_="app_Dir" Attributes="0" KeyPath="System.Data.dll"/>
+    <ROW Component="System.Diagnostics.Contracts.dll" ComponentId="{1D005B95-9AEF-40F7-A029-8527024B7441}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Contracts.dll"/>
+    <ROW Component="System.Diagnostics.Debug.dll" ComponentId="{84014B06-6F9C-4195-827A-132B297211E1}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Debug.dll"/>
+    <ROW Component="System.Diagnostics.DiagnosticSource.dll" ComponentId="{A25F4EBA-BE7D-427C-BAAA-2E6A55FCE0F6}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.DiagnosticSource.dll"/>
+    <ROW Component="System.Diagnostics.FileVersionInfo.dll" ComponentId="{906B570C-3F21-494C-940A-F0DAF0B93084}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.FileVersionInfo.dll"/>
+    <ROW Component="System.Diagnostics.Process.dll" ComponentId="{D32E51AC-224B-49DC-9F28-6617A8FF6E05}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.Process.dll"/>
+    <ROW Component="System.Diagnostics.StackTrace.dll" ComponentId="{89CD3F3D-6CCC-456C-AB90-ECF4B33A7D8A}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.StackTrace.dll"/>
+    <ROW Component="System.Diagnostics.TextWriterTraceListener.dll" ComponentId="{395C6493-BFBC-46E6-9537-E11E06E26885}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.TextWriterTraceListener.dll"/>
+    <ROW Component="System.Diagnostics.Tools.dll" ComponentId="{A281EE86-1AF2-4D59-AF9B-5CD246AB45A0}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Tools.dll"/>
+    <ROW Component="System.Diagnostics.TraceSource.dll" ComponentId="{8039298D-9A7D-4258-8F9B-104755F77844}" Directory_="app_Dir" Attributes="256" KeyPath="System.Diagnostics.TraceSource.dll"/>
+    <ROW Component="System.Diagnostics.Tracing.dll" ComponentId="{DD3DDA0F-938C-40FC-B4A6-7BEEF577B789}" Directory_="app_Dir" Attributes="0" KeyPath="System.Diagnostics.Tracing.dll"/>
+    <ROW Component="System.Drawing.Primitives.dll" ComponentId="{B4D41DC3-834A-443B-96FC-9C9486A4FD50}" Directory_="app_Dir" Attributes="256" KeyPath="System.Drawing.Primitives.dll"/>
+    <ROW Component="System.Drawing.dll" ComponentId="{C004C8B4-EC6D-4788-A661-DB47B0A23929}" Directory_="app_Dir" Attributes="0" KeyPath="System.Drawing.dll"/>
+    <ROW Component="System.Dynamic.Runtime.dll" ComponentId="{730C6243-7FF1-4DD7-ABEC-D3329EA698B3}" Directory_="app_Dir" Attributes="0" KeyPath="System.Dynamic.Runtime.dll"/>
+    <ROW Component="System.Formats.Asn1.dll" ComponentId="{09246CED-7799-4AB9-BD0D-C659522A747C}" Directory_="app_Dir" Attributes="256" KeyPath="System.Formats.Asn1.dll"/>
+    <ROW Component="System.Formats.Tar.dll" ComponentId="{CEB90685-6F63-4220-92E4-825B81878DF9}" Directory_="app_Dir" Attributes="256" KeyPath="System.Formats.Tar.dll"/>
+    <ROW Component="System.Globalization.Calendars.dll" ComponentId="{01E07E2F-0A75-404D-98A0-38C9D7CB41F4}" Directory_="app_Dir" Attributes="0" KeyPath="System.Globalization.Calendars.dll"/>
+    <ROW Component="System.Globalization.Extensions.dll" ComponentId="{B5D49664-78BD-4F1A-AEA8-E3A065AFAA3F}" Directory_="app_Dir" Attributes="0" KeyPath="System.Globalization.Extensions.dll"/>
+    <ROW Component="System.Globalization.dll" ComponentId="{6B05940B-7662-4842-B0E8-32CD5C008AC1}" Directory_="app_Dir" Attributes="0" KeyPath="System.Globalization.dll"/>
+    <ROW Component="System.IO.Compression.Brotli.dll" ComponentId="{C3E3026A-68C4-42AB-A577-944872A4B4CA}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.Brotli.dll"/>
+    <ROW Component="System.IO.Compression.FileSystem.dll" ComponentId="{55396450-5593-47CF-831A-18242DFFF3FD}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.Compression.FileSystem.dll"/>
+    <ROW Component="System.IO.Compression.Native.dll" ComponentId="{AF575F5D-FABC-4AB2-B1E6-42B91A194077}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.Native.dll"/>
+    <ROW Component="System.IO.Compression.ZipFile.dll" ComponentId="{513F492E-A0F5-487D-B52B-3D305352153D}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.ZipFile.dll"/>
+    <ROW Component="System.IO.Compression.dll" ComponentId="{9B4BC9CD-69FA-44A2-AEF2-6A183D7824C8}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Compression.dll"/>
+    <ROW Component="System.IO.FileSystem.AccessControl.dll" ComponentId="{8E822F16-485B-4321-895D-A072D0E08DC3}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.FileSystem.AccessControl.dll"/>
+    <ROW Component="System.IO.FileSystem.DriveInfo.dll" ComponentId="{4F49DD5B-DF7A-4A56-8802-8889B11DBFCE}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.FileSystem.DriveInfo.dll"/>
+    <ROW Component="System.IO.FileSystem.Primitives.dll" ComponentId="{9B4AB4F5-28D0-4B8E-83A5-7037EBAA2941}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.FileSystem.Primitives.dll"/>
+    <ROW Component="System.IO.FileSystem.Watcher.dll" ComponentId="{F284C9BA-7870-456F-BF9C-052E04088BF0}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.FileSystem.Watcher.dll"/>
+    <ROW Component="System.IO.FileSystem.dll" ComponentId="{E0A15F42-EEC5-4E6F-A953-A51E3C1F16F8}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.FileSystem.dll"/>
+    <ROW Component="System.IO.IsolatedStorage.dll" ComponentId="{0FBA4E58-E3EB-4533-AF3D-A846FEC2E370}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.IsolatedStorage.dll"/>
+    <ROW Component="System.IO.MemoryMappedFiles.dll" ComponentId="{C98EC0B0-7F3F-4C3E-A7F3-FFF6625EACEA}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.MemoryMappedFiles.dll"/>
+    <ROW Component="System.IO.Pipes.AccessControl.dll" ComponentId="{F331BEC6-65B6-45E4-986D-08F919773327}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.Pipes.AccessControl.dll"/>
+    <ROW Component="System.IO.Pipes.dll" ComponentId="{9EEFA664-C4B4-48C5-B4C5-9CB406C488FD}" Directory_="app_Dir" Attributes="256" KeyPath="System.IO.Pipes.dll"/>
+    <ROW Component="System.IO.UnmanagedMemoryStream.dll" ComponentId="{2EED0EA1-A66A-4A29-A50A-C22A610509B4}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.UnmanagedMemoryStream.dll"/>
+    <ROW Component="System.IO.dll" ComponentId="{A9FC4E73-5CC2-41C9-B576-561A4D9CE1A2}" Directory_="app_Dir" Attributes="0" KeyPath="System.IO.dll"/>
+    <ROW Component="System.Linq.Expressions.dll" ComponentId="{7136F6C0-E0F8-495C-B885-F7126BB41266}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.Expressions.dll"/>
+    <ROW Component="System.Linq.Parallel.dll" ComponentId="{DB4D65A6-A1BD-4817-AC27-C87613A91E03}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.Parallel.dll"/>
+    <ROW Component="System.Linq.Queryable.dll" ComponentId="{34439868-DD27-4669-A60E-0899DBF07748}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.Queryable.dll"/>
+    <ROW Component="System.Linq.dll" ComponentId="{E7850963-1739-4483-93DC-E60C27401697}" Directory_="app_Dir" Attributes="256" KeyPath="System.Linq.dll"/>
+    <ROW Component="System.Memory.dll" ComponentId="{732E0FC5-C9DA-4ECC-BA81-ADFA50B9D283}" Directory_="app_Dir" Attributes="256" KeyPath="System.Memory.dll"/>
+    <ROW Component="System.Net.Http.Json.dll" ComponentId="{48EC0617-6C82-4D34-9625-40E3ACE2A482}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Http.Json.dll"/>
+    <ROW Component="System.Net.Http.dll" ComponentId="{C06B5282-C050-40C8-AA65-E599496311E4}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Http.dll"/>
+    <ROW Component="System.Net.HttpListener.dll" ComponentId="{EFFE7167-E39E-4709-8E5A-053F0B31BD89}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.HttpListener.dll"/>
+    <ROW Component="System.Net.Mail.dll" ComponentId="{B8599B10-20E8-4BD6-835D-C3CFE48A7E69}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Mail.dll"/>
+    <ROW Component="System.Net.NameResolution.dll" ComponentId="{E9233FD3-9325-44DC-80CC-6B158E41EBF8}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.NameResolution.dll"/>
+    <ROW Component="System.Net.NetworkInformation.dll" ComponentId="{AEF3BE2E-EA44-4084-BFA4-158430C7551F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.NetworkInformation.dll"/>
+    <ROW Component="System.Net.Ping.dll" ComponentId="{A57CF05F-E558-4622-B9D7-CC5D6FC5E877}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Ping.dll"/>
+    <ROW Component="System.Net.Primitives.dll" ComponentId="{C8D031F5-67D1-4B32-88E5-2D52313B2BDF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Primitives.dll"/>
+    <ROW Component="System.Net.Quic.dll" ComponentId="{DC47EDC3-BAFF-4093-BF46-1BDF81EFDA17}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Quic.dll"/>
+    <ROW Component="System.Net.Requests.dll" ComponentId="{DCD362FF-5595-4834-9B9F-1838A092EB7F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Requests.dll"/>
+    <ROW Component="System.Net.Security.dll" ComponentId="{3F3FB10C-5428-429E-95A8-EB50D0741695}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Security.dll"/>
+    <ROW Component="System.Net.ServicePoint.dll" ComponentId="{D76DE4E8-652D-48B5-AE0C-045B8722A0B0}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.ServicePoint.dll"/>
+    <ROW Component="System.Net.Sockets.dll" ComponentId="{42205C95-6922-471E-96E3-2858494B35FF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.Sockets.dll"/>
+    <ROW Component="System.Net.WebClient.dll" ComponentId="{81929DB4-409E-48D7-9BF5-00B3E810AC8B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebClient.dll"/>
+    <ROW Component="System.Net.WebHeaderCollection.dll" ComponentId="{416DF537-EFC0-444A-88BA-5CAA48A438BF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebHeaderCollection.dll"/>
+    <ROW Component="System.Net.WebProxy.dll" ComponentId="{10CD279F-6AA1-4719-B12C-6BA85B6E04A1}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebProxy.dll"/>
+    <ROW Component="System.Net.WebSockets.Client.dll" ComponentId="{E1212D07-C044-443A-9665-194428C047D0}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebSockets.Client.dll"/>
+    <ROW Component="System.Net.WebSockets.dll" ComponentId="{9FDE7AB9-577E-44AF-9F1E-7297FBE741DD}" Directory_="app_Dir" Attributes="256" KeyPath="System.Net.WebSockets.dll"/>
+    <ROW Component="System.Net.dll" ComponentId="{13391984-F138-4DBC-A82C-A42F10C53EEE}" Directory_="app_Dir" Attributes="0" KeyPath="System.Net.dll"/>
+    <ROW Component="System.Numerics.Vectors.dll" ComponentId="{63757AA1-1ECF-4F64-BF18-01966AC0698E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Numerics.Vectors.dll"/>
+    <ROW Component="System.Numerics.dll" ComponentId="{C6423DBE-DE87-442B-B1AD-8722EF29A997}" Directory_="app_Dir" Attributes="0" KeyPath="System.Numerics.dll"/>
+    <ROW Component="System.ObjectModel.dll" ComponentId="{713B2A19-E685-4898-8123-9BAFBF5C4E22}" Directory_="app_Dir" Attributes="256" KeyPath="System.ObjectModel.dll"/>
+    <ROW Component="System.Private.CoreLib.dll" ComponentId="{244ED5BA-214A-40E7-9E2E-F428AD446E6B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.CoreLib.dll"/>
+    <ROW Component="System.Private.DataContractSerialization.dll" ComponentId="{7A15C035-CFD4-4245-B688-9A3A0FA5346F}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.DataContractSerialization.dll"/>
+    <ROW Component="System.Private.Uri.dll" ComponentId="{2CE1E2AD-03E6-4773-A07D-B2DD7975F7D8}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.Uri.dll"/>
+    <ROW Component="System.Private.Xml.Linq.dll" ComponentId="{9C495AED-7CE0-43D2-B6B8-25875C32A1EA}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.Xml.Linq.dll"/>
+    <ROW Component="System.Private.Xml.dll" ComponentId="{9C5445D4-41CA-4151-BD9A-D834675D5D69}" Directory_="app_Dir" Attributes="256" KeyPath="System.Private.Xml.dll"/>
+    <ROW Component="System.Reflection.DispatchProxy.dll" ComponentId="{E5FAE1A8-ABDF-45EB-AAE7-68596DE532F0}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.DispatchProxy.dll"/>
+    <ROW Component="System.Reflection.Emit.ILGeneration.dll" ComponentId="{7376E96D-7168-4253-B89F-081924123D50}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Emit.ILGeneration.dll"/>
+    <ROW Component="System.Reflection.Emit.Lightweight.dll" ComponentId="{F154974E-DDC8-4848-BDCB-715C9C86B6AC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Emit.Lightweight.dll"/>
+    <ROW Component="System.Reflection.Emit.dll" ComponentId="{FCAD4B1A-3BC3-45C9-B590-5F7384A70F74}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.Emit.dll"/>
+    <ROW Component="System.Reflection.Extensions.dll" ComponentId="{79C7225B-37F1-4A26-AD39-A5AEAFB58446}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Extensions.dll"/>
+    <ROW Component="System.Reflection.Metadata.dll" ComponentId="{C77F9A2F-029B-4116-A912-B38E492B10F8}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.Metadata.dll"/>
+    <ROW Component="System.Reflection.Primitives.dll" ComponentId="{BCA8326D-0807-425E-AF0D-5A048DBCA9B1}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.Primitives.dll"/>
+    <ROW Component="System.Reflection.TypeExtensions.dll" ComponentId="{726D155A-B9B6-423B-B226-FC9A200CA0EB}" Directory_="app_Dir" Attributes="256" KeyPath="System.Reflection.TypeExtensions.dll"/>
+    <ROW Component="System.Reflection.dll" ComponentId="{38296F7A-6BCB-4554-BE54-28879E0F8C8C}" Directory_="app_Dir" Attributes="0" KeyPath="System.Reflection.dll"/>
+    <ROW Component="System.Resources.Reader.dll" ComponentId="{B0768D85-F5AC-475C-A55C-6C8248E147F3}" Directory_="app_Dir" Attributes="0" KeyPath="System.Resources.Reader.dll"/>
+    <ROW Component="System.Resources.ResourceManager.dll" ComponentId="{FABF8942-F8B2-4C52-A9ED-97F641E33C2E}" Directory_="app_Dir" Attributes="0" KeyPath="System.Resources.ResourceManager.dll"/>
+    <ROW Component="System.Resources.Writer.dll" ComponentId="{451E8317-E841-418A-BF2F-DFB9C0CB6B52}" Directory_="app_Dir" Attributes="256" KeyPath="System.Resources.Writer.dll"/>
+    <ROW Component="System.Runtime.CompilerServices.Unsafe.dll" ComponentId="{88CCC1E3-5119-45AD-A7A5-C1610B7E5713}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.CompilerServices.Unsafe.dll"/>
+    <ROW Component="System.Runtime.CompilerServices.VisualC.dll" ComponentId="{F351EFAB-51C0-4B87-B92E-73C6D2E06C95}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.CompilerServices.VisualC.dll"/>
+    <ROW Component="System.Runtime.Extensions.dll" ComponentId="{7475ADCE-E341-4127-8308-F2DF2D5849EE}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Extensions.dll"/>
+    <ROW Component="System.Runtime.Handles.dll" ComponentId="{6EB8C01B-0EF1-4A05-A8F3-CC7B4AB1FA31}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Handles.dll"/>
+    <ROW Component="System.Runtime.InteropServices.JavaScript.dll" ComponentId="{4A415D60-FAF4-4FE9-BA67-7FDE4E3C593C}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.InteropServices.JavaScript.dll"/>
+    <ROW Component="System.Runtime.InteropServices.RuntimeInformation.dll" ComponentId="{2151B4A6-EC49-4992-8117-D3CB7D76C4EC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.InteropServices.RuntimeInformation.dll"/>
+    <ROW Component="System.Runtime.InteropServices.dll" ComponentId="{E2D735D8-CB60-43A8-85B8-2D5894468221}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.InteropServices.dll"/>
+    <ROW Component="System.Runtime.Intrinsics.dll" ComponentId="{A2EB3823-BE13-473C-BAE6-344E4C9954CE}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Intrinsics.dll"/>
+    <ROW Component="System.Runtime.Loader.dll" ComponentId="{161C51AB-2F45-4A9D-B62F-C128A02ACF64}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Loader.dll"/>
+    <ROW Component="System.Runtime.Numerics.dll" ComponentId="{1267DEB9-1CCA-4AA0-8F6C-0D7F5B0DB841}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.Numerics.dll"/>
+    <ROW Component="System.Runtime.Serialization.Formatters.dll" ComponentId="{D6FE5D30-C404-4A63-BFB5-BB856D8FE2A6}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.Serialization.Formatters.dll"/>
+    <ROW Component="System.Runtime.Serialization.Json.dll" ComponentId="{107B9598-BE3D-47E8-9683-82225C316EC5}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Serialization.Json.dll"/>
+    <ROW Component="System.Runtime.Serialization.Primitives.dll" ComponentId="{711A74E0-2212-43BB-9D9D-6B381F95B0B4}" Directory_="app_Dir" Attributes="256" KeyPath="System.Runtime.Serialization.Primitives.dll"/>
+    <ROW Component="System.Runtime.Serialization.Xml.dll" ComponentId="{54719607-9BC8-4464-9294-3E6793DB8961}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Serialization.Xml.dll"/>
+    <ROW Component="System.Runtime.Serialization.dll" ComponentId="{69C50E4B-2AFB-4E0B-9C6A-6445AFAB420B}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.Serialization.dll"/>
+    <ROW Component="System.Runtime.dll" ComponentId="{A3C3940B-20FA-4F30-A178-242C027E78C0}" Directory_="app_Dir" Attributes="0" KeyPath="System.Runtime.dll"/>
+    <ROW Component="System.Security.AccessControl.dll" ComponentId="{758A22DE-1531-4085-B2B8-F6E478BFB625}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.AccessControl.dll"/>
+    <ROW Component="System.Security.Claims.dll" ComponentId="{EB151247-B3C9-468C-90F2-2CD8CB14F527}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.Claims.dll"/>
+    <ROW Component="System.Security.Cryptography.Algorithms.dll" ComponentId="{38CD4D8B-A30B-4928-961F-6BF9215C58C3}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Algorithms.dll"/>
+    <ROW Component="System.Security.Cryptography.Cng.dll" ComponentId="{0F87E8E3-3A0B-47BB-A168-B46AE44C8352}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Cng.dll"/>
+    <ROW Component="System.Security.Cryptography.Csp.dll" ComponentId="{349F8493-2E2A-4FC3-8898-9263CE4BF998}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Csp.dll"/>
+    <ROW Component="System.Security.Cryptography.Encoding.dll" ComponentId="{3BD6296D-15E4-495B-B91F-33904B1A9C6B}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Encoding.dll"/>
+    <ROW Component="System.Security.Cryptography.OpenSsl.dll" ComponentId="{C80CAA5E-44D0-4253-9FAA-CC07BBB45075}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.OpenSsl.dll"/>
+    <ROW Component="System.Security.Cryptography.Primitives.dll" ComponentId="{CCD75444-7440-4300-A9E4-2285E16E8FD8}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.Primitives.dll"/>
+    <ROW Component="System.Security.Cryptography.ProtectedData.dll" ComponentId="{95DDBE1E-8337-4EA7-8668-D4DA0A7B6857}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.ProtectedData.dll"/>
+    <ROW Component="System.Security.Cryptography.X509Certificates.dll" ComponentId="{72170B99-DA6E-46A2-902B-40159C7C1119}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Cryptography.X509Certificates.dll"/>
+    <ROW Component="System.Security.Cryptography.dll" ComponentId="{24BCCB6E-D679-4C7B-AC32-EE2C09C0C428}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.Cryptography.dll"/>
+    <ROW Component="System.Security.Principal.Windows.dll" ComponentId="{149E5EBF-2E29-4E80-98A3-EAF2005E3B49}" Directory_="app_Dir" Attributes="256" KeyPath="System.Security.Principal.Windows.dll"/>
+    <ROW Component="System.Security.Principal.dll" ComponentId="{AB587A50-69DC-4CA5-AA76-4683EEC60ACE}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.Principal.dll"/>
+    <ROW Component="System.Security.SecureString.dll" ComponentId="{F299BC41-6B60-4A08-86DD-817B5EA76F39}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.SecureString.dll"/>
+    <ROW Component="System.Security.dll" ComponentId="{0B4E76AB-A74E-40B5-B69F-6FD376F5D6BE}" Directory_="app_Dir" Attributes="0" KeyPath="System.Security.dll"/>
+    <ROW Component="System.ServiceModel.Web.dll" ComponentId="{3A53DC56-7DCE-4018-96E8-5BF58F620FDB}" Directory_="app_Dir" Attributes="0" KeyPath="System.ServiceModel.Web.dll"/>
+    <ROW Component="System.ServiceProcess.dll" ComponentId="{3E6E9535-C5F5-4500-BFA0-12C8BD6ED563}" Directory_="app_Dir" Attributes="0" KeyPath="System.ServiceProcess.dll"/>
+    <ROW Component="System.Text.Encoding.CodePages.dll" ComponentId="{A628A64D-578E-47E1-BFAD-17B5A5752B94}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.Encoding.CodePages.dll"/>
+    <ROW Component="System.Text.Encoding.Extensions.dll" ComponentId="{77091152-8916-45D4-B57B-FFD3E15B8BE6}" Directory_="app_Dir" Attributes="0" KeyPath="System.Text.Encoding.Extensions.dll"/>
+    <ROW Component="System.Text.Encoding.dll" ComponentId="{5BE01D41-0A2A-45FA-B5F9-9940E2A439CC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Text.Encoding.dll"/>
+    <ROW Component="System.Text.Encodings.Web.dll" ComponentId="{69162DF2-4F79-4F51-B567-D8DBB228B751}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.Encodings.Web.dll"/>
+    <ROW Component="System.Text.Json.dll" ComponentId="{DF88835B-2E76-4B3D-83C1-E3C5C675C80E}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.Json.dll"/>
+    <ROW Component="System.Text.RegularExpressions.dll" ComponentId="{FBD59CF5-10B1-4A54-8830-423A6F0B7877}" Directory_="app_Dir" Attributes="256" KeyPath="System.Text.RegularExpressions.dll"/>
+    <ROW Component="System.Threading.Channels.dll" ComponentId="{DCBEF7E6-3110-4C73-B9CC-C535BF84CBAA}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.Channels.dll"/>
+    <ROW Component="System.Threading.Overlapped.dll" ComponentId="{F00D90AB-6644-4691-B7E4-0E71C550B62D}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Overlapped.dll"/>
+    <ROW Component="System.Threading.Tasks.Dataflow.dll" ComponentId="{D34E5FB5-E72B-4F8A-9E52-9F2426E10E35}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.Tasks.Dataflow.dll"/>
+    <ROW Component="System.Threading.Tasks.Extensions.dll" ComponentId="{B54979EA-E4FA-44AD-849C-BAE724CAEF79}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Tasks.Extensions.dll"/>
+    <ROW Component="System.Threading.Tasks.Parallel.dll" ComponentId="{F3DDF620-4351-4244-9EC9-5D3D5EAE65F0}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.Tasks.Parallel.dll"/>
+    <ROW Component="System.Threading.Tasks.dll" ComponentId="{6EF2A61D-6D76-4F9A-BCBC-16753F21BF11}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Tasks.dll"/>
+    <ROW Component="System.Threading.Thread.dll" ComponentId="{41612E54-982A-46BE-AFCB-C526230006F0}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Thread.dll"/>
+    <ROW Component="System.Threading.ThreadPool.dll" ComponentId="{9F0722B8-3869-440F-82E9-6A7378211A50}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.ThreadPool.dll"/>
+    <ROW Component="System.Threading.Timer.dll" ComponentId="{55F5A9FD-6348-4B5F-A5FC-9E6F91D2AB48}" Directory_="app_Dir" Attributes="0" KeyPath="System.Threading.Timer.dll"/>
+    <ROW Component="System.Threading.dll" ComponentId="{B457FCA5-1EBD-48DF-8C2B-10E408726C64}" Directory_="app_Dir" Attributes="256" KeyPath="System.Threading.dll"/>
+    <ROW Component="System.Transactions.Local.dll" ComponentId="{34DA4497-8253-45A8-934A-59B196336A47}" Directory_="app_Dir" Attributes="256" KeyPath="System.Transactions.Local.dll"/>
+    <ROW Component="System.Transactions.dll" ComponentId="{EDF04332-C6A3-4472-8696-7708D714DABC}" Directory_="app_Dir" Attributes="0" KeyPath="System.Transactions.dll"/>
+    <ROW Component="System.ValueTuple.dll" ComponentId="{7BAB2387-E0BA-4671-855D-627B4C626FBC}" Directory_="app_Dir" Attributes="0" KeyPath="System.ValueTuple.dll"/>
+    <ROW Component="System.Web.HttpUtility.dll" ComponentId="{39DEDEA1-0238-4BAB-9D63-AA18B16BE2FF}" Directory_="app_Dir" Attributes="256" KeyPath="System.Web.HttpUtility.dll"/>
+    <ROW Component="System.Web.dll" ComponentId="{4BF28BA9-4672-474A-A3C5-0F6341E5D659}" Directory_="app_Dir" Attributes="0" KeyPath="System.Web.dll"/>
+    <ROW Component="System.Windows.dll" ComponentId="{DB4E2511-54F0-43AE-9D1D-158CD4062A19}" Directory_="app_Dir" Attributes="0" KeyPath="System.Windows.dll"/>
+    <ROW Component="System.Xml.Linq.dll" ComponentId="{51B0EFDF-00B5-4B2D-A3F5-4FBCD7DEA3E1}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.Linq.dll"/>
+    <ROW Component="System.Xml.ReaderWriter.dll" ComponentId="{DC77F1E3-8C8C-4F7B-B17A-84ADB6D46862}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.ReaderWriter.dll"/>
+    <ROW Component="System.Xml.Serialization.dll" ComponentId="{4A0481C9-98C5-4C4D-843A-2ACBBBE52A2A}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.Serialization.dll"/>
+    <ROW Component="System.Xml.XDocument.dll" ComponentId="{A87F0391-9D02-49DF-AA3E-1BBA896BFC03}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XDocument.dll"/>
+    <ROW Component="System.Xml.XPath.XDocument.dll" ComponentId="{E822B0A6-B175-4074-81B4-1E9C5D3C5C9B}" Directory_="app_Dir" Attributes="256" KeyPath="System.Xml.XPath.XDocument.dll"/>
+    <ROW Component="System.Xml.XPath.dll" ComponentId="{4D7C3D72-3C4F-48D9-A6A0-2BE57C7792D5}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XPath.dll"/>
+    <ROW Component="System.Xml.XmlDocument.dll" ComponentId="{9FD1EB7E-92EB-4D5F-9017-4B559BD553BF}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XmlDocument.dll"/>
+    <ROW Component="System.Xml.XmlSerializer.dll" ComponentId="{256BD3DE-CBB6-4D1B-B0B5-6B16E4C87502}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.XmlSerializer.dll"/>
+    <ROW Component="System.Xml.dll" ComponentId="{84E1BDB4-ADD2-4120-B980-D87D38D04686}" Directory_="app_Dir" Attributes="0" KeyPath="System.Xml.dll"/>
+    <ROW Component="System.dll" ComponentId="{D505BD2B-727D-499C-84C5-CCA1CCEE5903}" Directory_="app_Dir" Attributes="0" KeyPath="System.dll"/>
+    <ROW Component="WinRT.Runtime.dll" ComponentId="{D2817E2D-35D9-45AA-B17D-ABA6788BA76F}" Directory_="app_Dir" Attributes="0" KeyPath="WinRT.Runtime.dll"/>
+    <ROW Component="WinUIEdit.dll" ComponentId="{3CE22963-03B8-4CFC-8708-BF8A8D2BCA77}" Directory_="app_Dir" Attributes="256" KeyPath="WinUIEdit.dll"/>
+    <ROW Component="WindowsAppSdk.AppxDeploymentExtens_1_ions.Desktop.dll" ComponentId="{AE4D9587-9973-46BE-974E-FC4B757D19DB}" Directory_="app_Dir" Attributes="256" KeyPath="WindowsAppSdk.AppxDeploymentExtensions.Desktop.dll"/>
+    <ROW Component="WindowsAppSdk.AppxDeploymentExtensions.DesktopEventLogInstrumentation.dl" ComponentId="{95304FD1-86CD-4F8F-B833-0F594EB0A434}" Directory_="app_Dir" Attributes="256" KeyPath="WindowsAppSdk.AppxDeploymentExtensions.DesktopEventLogInstrumentation"/>
+    <ROW Component="WindowsBase.dll" ComponentId="{C82FE77D-204B-48C0-9B46-BCD7B6D15E79}" Directory_="app_Dir" Attributes="0" KeyPath="WindowsBase.dll"/>
+    <ROW Component="clretwrc.dll" ComponentId="{97A5D353-C554-40B9-9264-DAE92A605E93}" Directory_="app_Dir" Attributes="256" KeyPath="clretwrc.dll"/>
+    <ROW Component="clrgc.dll" ComponentId="{73DB65E8-DF50-4847-9ADB-BBC20A67E593}" Directory_="app_Dir" Attributes="256" KeyPath="clrgc.dll"/>
+    <ROW Component="clrjit.dll" ComponentId="{373957BC-4DED-4015-8B72-5B4C72652BFE}" Directory_="app_Dir" Attributes="256" KeyPath="clrjit.dll"/>
+    <ROW Component="coreclr.dll" ComponentId="{21570BCE-77C2-428B-A420-150663D04965}" Directory_="app_Dir" Attributes="256" KeyPath="coreclr.dll"/>
+    <ROW Component="createdump.exe" ComponentId="{B253BCA5-754A-456D-9AAB-254FD43CE059}" Directory_="app_Dir" Attributes="256" KeyPath="createdump.exe"/>
+    <ROW Component="dcompi.dll" ComponentId="{FC9CA365-1F10-42CB-830D-2645AEFAA13D}" Directory_="app_Dir" Attributes="256" KeyPath="dcompi.dll"/>
+    <ROW Component="dwmcorei.dll" ComponentId="{EA454DE8-9D57-44B0-9046-9E845D9BEF81}" Directory_="app_Dir" Attributes="256" KeyPath="dwmcorei.dll"/>
+    <ROW Component="e_sqlite3.dll" ComponentId="{6EF6BC8B-FC79-4E49-B644-32A843F028FD}" Directory_="app_Dir" Attributes="256" KeyPath="e_sqlite3.dll"/>
+    <ROW Component="hostfxr.dll" ComponentId="{22A16DAD-C6D6-47A4-B710-A7249242CD24}" Directory_="app_Dir" Attributes="256" KeyPath="hostfxr.dll"/>
+    <ROW Component="hostpolicy.dll" ComponentId="{24237097-2AF3-4654-AB36-815179B23AFB}" Directory_="app_Dir" Attributes="256" KeyPath="hostpolicy.dll"/>
+    <ROW Component="map.html" ComponentId="{C1449782-DC9A-414C-9C38-7B614CB79D06}" Directory_="Assets_Dir" Attributes="0" KeyPath="map.html" Type="0"/>
+    <ROW Component="marshal.dll" ComponentId="{630EC425-00DF-47FA-89A7-51671C8F0BE7}" Directory_="app_Dir" Attributes="256" KeyPath="marshal.dll"/>
+    <ROW Component="mscordaccore.dll" ComponentId="{E64FD476-F588-4155-A2CB-2AE2BB239465}" Directory_="app_Dir" Attributes="256" KeyPath="mscordaccore.dll"/>
+    <ROW Component="mscordaccore_amd64_amd64_8.0.2426.7010.dll" ComponentId="{3EE031AC-D368-45EA-BA59-C4332B992FC1}" Directory_="app_Dir" Attributes="256" KeyPath="mscordaccore_amd64_amd64_8.0.2426.7010.dll"/>
+    <ROW Component="mscordbi.dll" ComponentId="{82DD8B95-8654-43AB-8A52-BE345C1A8712}" Directory_="app_Dir" Attributes="256" KeyPath="mscordbi.dll"/>
+    <ROW Component="mscorlib.dll" ComponentId="{92A53C02-D14F-4FD6-8403-841DECF9A85E}" Directory_="app_Dir" Attributes="0" KeyPath="mscorlib.dll"/>
+    <ROW Component="mscorrc.dll" ComponentId="{C06BAD52-E458-4071-B0BE-5A635F4AF36D}" Directory_="app_Dir" Attributes="256" KeyPath="mscorrc.dll"/>
+    <ROW Component="msquic.dll" ComponentId="{6E75D416-17ED-4AC3-B6C3-2335A9F83121}" Directory_="app_Dir" Attributes="256" KeyPath="msquic.dll"/>
+    <ROW Component="netstandard.dll" ComponentId="{A202F114-0819-4AAD-8643-254941AA68A8}" Directory_="app_Dir" Attributes="0" KeyPath="netstandard.dll"/>
+    <ROW Component="schema.sql" ComponentId="{FE2B72A2-4E18-4430-95A9-DD3BAC7F1406}" Directory_="Data_Dir" Attributes="0" KeyPath="schema.sql" Type="0"/>
+    <ROW Component="wuceffectsi.dll" ComponentId="{77E5C405-E4A5-4205-9C44-4C861D450135}" Directory_="app_Dir" Attributes="256" KeyPath="wuceffectsi.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0"/>
@@ -914,13 +914,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrapperUISequenceComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="249"/>
-    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="252"/>
-    <ROW Action="AI_AppSearchEx" Condition="AI_BOOTSTRAPPER" Sequence="251"/>
-    <ROW Action="AI_DownloadPrereq" Condition="AI_BOOTSTRAPPER AND (NOT AI_PrereqsFulfilled)" Sequence="695"/>
-    <ROW Action="AI_ExtractPrereq" Condition="AI_BOOTSTRAPPER AND (NOT AI_PrereqsFulfilled)" Sequence="696"/>
-    <ROW Action="AI_InstallPrePrerequisite" Condition="AI_BOOTSTRAPPER AND (NOT AI_PrereqsFulfilled)" Sequence="697"/>
-    <ROW Action="AI_VerifyPrePrereq" Condition="AI_BOOTSTRAPPER AND (NOT AI_PrereqsFulfilled)" Sequence="698"/>
-    <ROW Action="AI_CleanPrePrereq" Condition="AI_BOOTSTRAPPER AND (NOT AI_PrereqsFulfilled)" Sequence="699"/>
+    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="251"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="..\..\artifacts\installer-output" Languages="pt_BR" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="..\..\src\DDSStudyOS.App\Assets\DDSStudyOS.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" UseLargeSchema="true" ExeName="DDSStudyOS-Setup" MsiPackageType="x64"/>
@@ -936,9 +930,6 @@
     <ROW Fragment="LicenseAgreementDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\LicenseAgreementDlg.aip"/>
     <ROW Fragment="MaintenanceTypeDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\MaintenanceTypeDlg.aip"/>
     <ROW Fragment="MaintenanceWelcomeDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\MaintenanceWelcomeDlg.aip"/>
-    <ROW Fragment="PreparePrereqDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\PreparePrereqDlg.aip"/>
-    <ROW Fragment="PrerequisitesDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\PrerequisitesDlg.aip"/>
-    <ROW Fragment="ProgressPrereqDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\ProgressPrereqDlg.aip"/>
     <ROW Fragment="SequenceDialogs.aip" Path="&lt;AI_THEMES&gt;classic\fragments\SequenceDialogs.aip"/>
     <ROW Fragment="Sequences.aip" Path="&lt;AI_FRAGS&gt;Sequences.aip"/>
     <ROW Fragment="StaticUIStrings.aip" Path="&lt;AI_FRAGS&gt;StaticUIStrings.aip"/>
@@ -948,21 +939,12 @@
     <ROW Fragment="VerifyRemoveDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\VerifyRemoveDlg.aip"/>
     <ROW Fragment="VerifyRepairDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\VerifyRepairDlg.aip"/>
     <ROW Fragment="WelcomeDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\WelcomeDlg.aip"/>
-    <ROW Fragment="WelcomePrereqDlg.aip" Path="&lt;AI_THEMES&gt;classic\fragments\WelcomePrereqDlg.aip"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiActionTextComponent">
-    <ROW Action="AI_ConfigureChainer" Description="Configurando o lançador de pré-requisitos" DescriptionLocId="ActionText.Description.AI_ConfigureChainer" Template="Configurar Launcher" TemplateLocId="ActionText.Template.AI_ConfigureChainer"/>
     <ROW Action="AI_DeleteLzma" Description="Eliminando arquivos extraídos" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
     <ROW Action="AI_DeleteRLzma" Description="Eliminando arquivos extraídos" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
-    <ROW Action="AI_DownloadPrereq" Description="Baixando software pré-requisito" DescriptionLocId="ActionText.Description.AI_DownloadPrereq" Template="[1]" TemplateLocId="ActionText.Template.AI_DownloadPrereq"/>
     <ROW Action="AI_ExtractFiles" Description="Extraindo arquivos" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
     <ROW Action="AI_ExtractLzma" Description="Extraindo arquivos" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
-    <ROW Action="AI_ExtractPrereq" Description="Extraindo software pré-requisito" DescriptionLocId="ActionText.Description.AI_ExtractPrereq" Template="[1]" TemplateLocId="ActionText.Template.AI_ExtractPrereq"/>
-    <ROW Action="AI_InstallPostPrerequisite" Description="Instalando software de pré-requisito" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" Template="[1]" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
-    <ROW Action="AI_InstallPrePrerequisite" Description="Instalando software de pré-requisito" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" Template="[1]" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
-    <ROW Action="AI_InstallPrerequisite" Description="Instalando software de pré-requisito" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" Template="[1]" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
-    <ROW Action="AI_VerifyPrePrereq" Description="Verificando pré-requisitos" DescriptionLocId="ActionText.Description.AI_VerifyPrereq" Template="[1] não foi instalado corretamente." TemplateLocId="ActionText.Template.AI_VerifyPrereq"/>
-    <ROW Action="AI_VerifyPrereq" Description="Verificando pré-requisitos" DescriptionLocId="ActionText.Description.AI_VerifyPrereq" Template="[1] não foi instalado corretamente." TemplateLocId="ActionText.Template.AI_VerifyPrereq"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiAppSearchComponent">
     <ROW Property="AI_SETUPEXEPATH" Signature_="AI_EXE_PATH_LM" Builds="DefaultBuild"/>
@@ -971,8 +953,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
-    <ROW Name="aipackagechainer.exe" SourcePath="&lt;AI_CUSTACTS&gt;aipackagechainer.exe" DigSign="true"/>
-    <ROW Name="file_deleter.ps1" SourcePath="&lt;AI_SCRIPTS&gt;file_deleter.ps1"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
@@ -1003,61 +983,33 @@
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="203"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_RollbackPrereq" Condition="1" Ordering="102"/>
-    <ROW Dialog_="ExitDialog" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="301"/>
-    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="103"/>
-    <ROW Dialog_="UserExit" Control_="Finish" Event="DoAction" Argument="AI_CleanPrereq" Condition="1" Ordering="101"/>
-    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_RollbackPrePrereq" Condition="1" Ordering="104"/>
-    <ROW Dialog_="ExitDialog" Control_="Finish" Event="DoAction" Argument="AI_CleanPrePrereq" Condition="1" Ordering="302"/>
-    <ROW Dialog_="FatalError" Control_="Finish" Event="DoAction" Argument="AI_CleanPrePrereq" Condition="1" Ordering="105"/>
-    <ROW Dialog_="UserExit" Control_="Finish" Event="DoAction" Argument="AI_CleanPrePrereq" Condition="1" Ordering="102"/>
-    <ROW Dialog_="WelcomePrereqDlg" Control_="Next" Event="NewDialog" Argument="PrerequisitesDlg" Condition="AI_BOOTSTRAPPER" Ordering="1"/>
-    <ROW Dialog_="PrerequisitesDlg" Control_="Next" Event="EndDialog" Argument="Return" Condition="AI_BOOTSTRAPPER" Ordering="1"/>
-    <ROW Dialog_="PrerequisitesDlg" Control_="Back" Event="NewDialog" Argument="WelcomePrereqDlg" Condition="AI_BOOTSTRAPPER" Ordering="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="APPDIR" Component_="APPDIR" ManualDelete="true"/>
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
-    <ROW Action="AI_AppSearchEx" Type="1" Source="Prereq.dll" Target="DoAppSearchEx"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_CleanPrePrereq" Type="65" Source="Prereq.dll" Target="CleanPrereq" WithoutSeq="true"/>
-    <ROW Action="AI_CleanPrereq" Type="65" Source="Prereq.dll" Target="CleanPrereq" WithoutSeq="true"/>
-    <ROW Action="AI_ConfigureChainer" Type="1" Source="Prereq.dll" Target="ConfigurePrereqLauncher"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="CustomActionData" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
-    <ROW Action="AI_DownloadPrereq" Type="1" Source="Prereq.dll" Target="DownloadPrereq"/>
     <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
     <ROW Action="AI_EnableDebugLog" Type="321" Source="aicustact.dll" Target="EnableDebugLog"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ExtractFiles" Type="1" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_ExtractLzma" Type="1025" Source="lzmaextractor.dll" Target="ExtractLZMAFiles"/>
-    <ROW Action="AI_ExtractPrereq" Type="65" Source="Prereq.dll" Target="ExtractPrereq"/>
     <ROW Action="AI_FindExeLzma" Type="1" Source="lzmaextractor.dll" Target="FindEXE"/>
     <ROW Action="AI_InstallModeCheck" Type="1" Source="aicustact.dll" Target="UpdateInstallMode" WithoutSeq="true"/>
-    <ROW Action="AI_InstallPostPrerequisite" Type="1" Source="Prereq.dll" Target="InstallPostPrereq"/>
-    <ROW Action="AI_InstallPrePrerequisite" Type="65" Source="Prereq.dll" Target="InstallPrePrereq"/>
-    <ROW Action="AI_InstallPrerequisite" Type="1" Source="Prereq.dll" Target="InstallPrereq"/>
-    <ROW Action="AI_LaunchChainer" Type="3314" Source="AI_PREREQ_CHAINER"/>
-    <ROW Action="AI_MigrateInstallerProps" Type="1" Source="aicustact.dll" Target="MigrateInstallerProps"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
     <ROW Action="AI_PRESERVE_INSTALL_TYPE" Type="65" Source="aicustact.dll" Target="PreserveInstallType"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH" Target="[AI_SETUPEXEPATH_ORIGINAL]"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
-    <ROW Action="AI_ResolvePropertyBaseFolder" Type="1" Source="aicustact.dll" Target="ResolvePropertyBaseFolder" WithoutSeq="true"/>
-    <ROW Action="AI_RestoreInstallerProps" Type="1" Source="aicustact.dll" Target="RestoreInstallerProps" WithoutSeq="true"/>
-    <ROW Action="AI_RollbackPrePrereq" Type="65" Source="Prereq.dll" Target="RollbackPrePrereq" WithoutSeq="true"/>
-    <ROW Action="AI_RollbackPrereq" Type="65" Source="Prereq.dll" Target="RollbackPrereq" WithoutSeq="true"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="AI_VerifyPrePrereq" Type="1" Source="Prereq.dll" Target="VerifyPrePrereq"/>
-    <ROW Action="AI_VerifyPrereq" Type="1" Source="Prereq.dll" Target="VerifyPrereq"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder][Manufacturer]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -1409,21 +1361,16 @@
     <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
     <ROW Action="AI_EnableDebugLog" Sequence="51"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
-    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="102" Builds="DefaultBuild"/>
+    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="198" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="197" Builds="DefaultBuild"/>
     <ROW Action="AI_FindExeLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="196" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
-    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6596" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractFiles" Sequence="1399" Builds="DefaultBuild"/>
     <ROW Action="AI_DATA_SETTER" Sequence="1398"/>
-    <ROW Action="AI_AppSearchEx" Sequence="101"/>
-    <ROW Action="AI_MigrateInstallerProps" Condition="SETUPEXEDIR AND ((UILevel = 2) OR (UILevel = 3))" Sequence="6597"/>
-    <ROW Action="AI_VerifyPrereq" Sequence="1101"/>
-    <ROW Action="AI_ConfigureChainer" Condition="(NOT SETUPEXEDIR) AND ((UILevel = 2) OR (UILevel = 3)) AND (NOT UPGRADINGPRODUCTCODE)" Sequence="6598"/>
-    <ROW Action="AI_LaunchChainer" Condition="AI_PREREQ_CHAINER AND (NOT UPGRADINGPRODUCTCODE)" Sequence="6599"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_PRESERVE_INSTALL_TYPE" Sequence="199"/>
@@ -1432,14 +1379,7 @@
     <ROW Action="AI_DpiContentScale" Sequence="52"/>
     <ROW Action="AI_EnableDebugLog" Sequence="51"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
-    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="102"/>
-    <ROW Action="AI_AppSearchEx" Sequence="101"/>
-    <ROW Action="AI_DownloadPrereq" Sequence="1296"/>
-    <ROW Action="AI_ExtractPrereq" Sequence="1297"/>
-    <ROW Action="AI_InstallPrerequisite" Sequence="1298"/>
-    <ROW Action="AI_InstallPostPrerequisite" Sequence="1301"/>
-    <ROW Action="AI_CleanPrereq" Sequence="1302"/>
-    <ROW Action="AI_InstallPrePrerequisite" Condition="Installed" Sequence="1299"/>
+    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="((VersionNT &lt;&gt; 501) AND (VersionNT &lt;&gt; 502))" Description="[ProductName] não pode ser instalado em [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
@@ -1476,12 +1416,5 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="0.0.1" VersionMax="[|ProductVersion]" Attributes="257" ActionProperty="OLDPRODUCTS"/>
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="[|ProductVersion]" Attributes="2" ActionProperty="AI_NEWERPRODUCTFOUND"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.PreReqComponent">
-    <ROW PrereqKey="NETDESKTOPRUNTIME" DisplayName=".NET Desktop Runtime 8 (x64)" SetupFileUrl="https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe" Location="1" ExactSize="0" WinNTVersions="Windows 9x/ME/NT/2000/XP/Vista/Windows 7/Windows 8 x86/Windows 8.1 x86/Windows 10 x86" Operator="1" ComLine="/install /quiet /norestart" Options="yx" TargetName=".NET Desktop Runtime 8 (x64)"/>
-    <ATTRIBUTE name="PrereqsOrder" value="NETDESKTOPRUNTIME"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
-    <ROW SearchKey="Microsoft.WindowsDesktop.App" Prereq="NETDESKTOPRUNTIME" SearchType="12" SearchString="HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App" VerMin="8.0.0" Order="1" Property="PreReqSearch"/>
   </COMPONENT>
 </DOCUMENT>

@@ -1,5 +1,7 @@
 using DDSStudyOS.App.Services;
+using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,6 +14,7 @@ public sealed partial class SettingsPage : Page
 {
     private readonly DatabaseService _db = new();
     private readonly BackupService _backup;
+    private bool _isImportingVault;
 
     public SettingsPage()
     {
@@ -31,6 +34,8 @@ public sealed partial class SettingsPage : Page
         VersionText.Text = $"Versão {AppReleaseInfo.VersionString}";
         CompanyText.Text = $"Desenvolvido por {AppReleaseInfo.CompanyName}";
         DownloadsToggle.IsOn = SettingsService.DownloadsOrganizerEnabled;
+
+        InitializeVaultSection();
     }
 
     private void DownloadsToggle_Toggled(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -173,6 +178,175 @@ public sealed partial class SettingsPage : Page
         }
 
         return "Alertas encontrados: " + string.Join(" | ", failed);
+    }
+
+    private void InitializeVaultSection()
+    {
+        VaultBrowserCombo.ItemsSource = CredentialVaultService.GetSupportedImportSources();
+        VaultBrowserCombo.SelectedIndex = 0;
+        RefreshChromeStatus();
+        RefreshVaultList();
+    }
+
+    private void RefreshChromeStatus_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        RefreshChromeStatus();
+    }
+
+    private void RefreshChromeStatus()
+    {
+        var isChromeRunning = CredentialVaultService.IsChromeRunning();
+        ChromeStatusDot.Fill = new SolidColorBrush(isChromeRunning ? Colors.OrangeRed : Colors.LimeGreen);
+        ChromeStatusText.Text = isChromeRunning
+            ? "Status do Chrome: aberto (feche para exportar CSV sem conflito)."
+            : "Status do Chrome: fechado (pronto para exportar/importar CSV).";
+    }
+
+    private void RefreshVaultList_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        RefreshVaultList();
+        MsgText.Text = "Lista do cofre atualizada.";
+    }
+
+    private void RefreshVaultList()
+    {
+        var items = CredentialVaultService.GetAll();
+        VaultListView.ItemsSource = items;
+
+        if (items.Count == 0)
+        {
+            VaultSummaryText.Text = "Cofre vazio no momento.";
+            return;
+        }
+
+        VaultSummaryText.Text = $"Cofre com {items.Count} credenciais salvas.";
+    }
+
+    private async void PickVaultCsv_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var picker = new FileOpenPicker();
+        picker.FileTypeFilter.Add(".csv");
+
+        var window = AppState.MainWindow;
+        if (window is null)
+        {
+            MsgText.Text = "Erro interno: Janela principal não encontrada.";
+            return;
+        }
+
+        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+        var file = await picker.PickSingleFileAsync();
+        if (file is null)
+        {
+            return;
+        }
+
+        VaultImportPathBox.Text = file.Path;
+    }
+
+    private async void ImportVaultCsv_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (_isImportingVault)
+        {
+            return;
+        }
+
+        var path = (VaultImportPathBox.Text ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            MsgText.Text = "Selecione um arquivo CSV para importar.";
+            return;
+        }
+
+        if (!File.Exists(path))
+        {
+            MsgText.Text = "O arquivo CSV informado não foi encontrado.";
+            return;
+        }
+
+        var source = VaultBrowserCombo.SelectedItem?.ToString() ?? "CSV";
+
+        try
+        {
+            _isImportingVault = true;
+            VaultProgressBar.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            VaultSummaryText.Text = "Importando CSV para o Cofre DDS...";
+
+            var result = await Task.Run(() => CredentialVaultService.ImportFromCsv(path, source));
+            VaultSummaryText.Text = result.Message;
+            MsgText.Text = "Importação do cofre concluída.";
+
+            RefreshVaultList();
+            RefreshChromeStatus();
+        }
+        catch (Exception ex)
+        {
+            VaultSummaryText.Text = "Falha ao importar CSV para o cofre.";
+            MsgText.Text = "Erro ao importar cofre: " + ex.Message;
+        }
+        finally
+        {
+            VaultProgressBar.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            _isImportingVault = false;
+        }
+    }
+
+    private async void ClearVault_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = "Limpar Cofre DDS",
+            Content = "Essa ação removerá todas as credenciais salvas no cofre local. Deseja continuar?",
+            PrimaryButtonText = "Limpar cofre",
+            CloseButtonText = "Cancelar",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.XamlRoot
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result != ContentDialogResult.Primary)
+        {
+            return;
+        }
+
+        CredentialVaultService.Clear();
+        RefreshVaultList();
+        MsgText.Text = "Cofre DDS limpo com sucesso.";
+    }
+
+    private void DeleteVaultEntry_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (VaultListView.SelectedItem is not VaultCredential selected)
+        {
+            MsgText.Text = "Selecione uma credencial para excluir.";
+            return;
+        }
+
+        CredentialVaultService.Delete(selected.Id);
+        RefreshVaultList();
+        MsgText.Text = "Credencial removida do cofre.";
+    }
+
+    private void OpenBrowserWithSelectedCredential_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (VaultListView.SelectedItem is not VaultCredential selected)
+        {
+            MsgText.Text = "Selecione uma credencial para abrir no navegador.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(selected.Url))
+        {
+            MsgText.Text = "A credencial selecionada não possui URL válida.";
+            return;
+        }
+
+        AppState.PendingBrowserUrl = selected.Url;
+        AppState.PendingVaultCredentialId = selected.Id;
+        AppState.RequestNavigateTag?.Invoke("browser");
+        MsgText.Text = "Abrindo navegador com preenchimento automático do cofre.";
     }
 
     private async Task<Windows.Storage.StorageFile?> PickBackupFileAsync()

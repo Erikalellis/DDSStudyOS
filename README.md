@@ -33,30 +33,36 @@ O app valida o runtime na inicialização. Se faltar, ele exibe diálogo com lin
 - Lembretes com estado de notificação persistido para recuperar pendências ao reabrir
 
 ## Empacotamento
-Consulte `docs/MSIX_CICD.md` para estratégia de MSIX/CI e checklist de assinatura.
+Fluxo oficial de instalador: `docs/INNO_SETUP.md` (Inno Setup).
+
+Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 
 ## Documentação (GitHub)
+- Guia oficial do instalador (Inno Setup): `docs/INNO_SETUP.md`
+- Guia legado (Advanced Installer): `docs/ADVANCED_INSTALLER_SETUP.md`
+- Projeto legado do instalador (Advanced Installer): `installer/advanced-installer/README.md`
 - Guia de release e empacotamento: `docs/MSIX_CICD.md`
-- Guia de setup no Advanced Installer: `docs/ADVANCED_INSTALLER_SETUP.md`
-- Projeto do instalador (Advanced Installer): `installer/advanced-installer/README.md`
 - Arquivos legais do instalador: `installer/legal/`
 - Informações de atualização (feeds/links): `docs/UPDATE_INFO.md`
 - Changelog técnico: `CHANGELOG.md`
 - Suporte: `SUPPORT.md`
 
 ## Links de publicação
-- `Update Info URL`: publicar `docs/UPDATE_INFO.md` no GitHub e usar o link no Advanced Installer.
+- `Update Info URL`: publicar `docs/UPDATE_INFO.md` no GitHub e usar no release/instalador oficial.
 - `Support URL`: usar `SUPPORT.md` publicado no GitHub.
 - `Release Notes URL`: usar `CHANGELOG.md` publicado no GitHub.
 
 ## Scripts úteis
+- `scripts/build-inno-installer.ps1`: fluxo oficial de build do setup Inno (`DDSStudyOS-Setup-Inno.exe`)
+- `scripts/run-setup-with-log.ps1`: executa setup com log de instalação para diagnóstico
 - `scripts/build-release.ps1`: build + publish usando MSBuild do Visual Studio (via `vswhere`)
 - `scripts/sign-release.ps1`: assinatura de artefatos com `.pfx` ou certificado do store por thumbprint
 - `scripts/install-internal-cert.ps1`: instalação robusta do certificado interno
 - `scripts/Instalar_DDS.bat`: launcher simples para instalação em ambiente interno
 - `scripts/publish-github.ps1`: cria/publica repositório no GitHub e atualiza links de suporte/update
-- `scripts/prepare-installer-input.ps1`: gera pasta pronta para importar no Advanced Installer
-- `scripts/create-advanced-installer-project.ps1`: cria e preenche automaticamente o projeto `.aip`
+- `scripts/prepare-installer-input.ps1`: gera pasta de entrada do instalador
+- `scripts/build-installer.ps1`: fluxo legado (Advanced Installer)
+- `scripts/create-advanced-installer-project.ps1`: fluxo legado para projeto `.aip`
 
 ## Observação de release
 Após cada `publish`, assine novamente o executável com `scripts/sign-release.ps1`, pois o arquivo é recriado durante o publish.

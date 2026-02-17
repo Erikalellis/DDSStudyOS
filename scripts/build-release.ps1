@@ -1,7 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$Platform = "x64",
-    [string]$RuntimeIdentifier = "win10-x64",
+    [string]$RuntimeIdentifier = "win-x64",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
     [switch]$SkipSolutionBuild,
@@ -118,7 +118,16 @@ Write-Host "RuntimeIdentifier: $RuntimeIdentifier"
 Write-Host "SelfContained: $selfContainedValue"
 Write-Host "WindowsAppSDKSelfContained: $windowsAppSdkSelfContainedValue"
 
-if (-not $SkipSolutionBuild) {
+$effectiveSkipSolutionBuild = [bool]$SkipSolutionBuild
+if (-not $effectiveSkipSolutionBuild -and $windowsAppSdkSelfContainedValue) {
+    Write-Host ""
+    Write-Host "==> Build da solution ignorado"
+    Write-Host "Motivo: evitar divergencia de configuracao entre solution e publish no modo WindowsAppSDKSelfContained."
+    Write-Host "O publish do projeto sera executado diretamente com RuntimeIdentifier/Platform explicitos."
+    $effectiveSkipSolutionBuild = $true
+}
+
+if (-not $effectiveSkipSolutionBuild) {
     Write-Host ""
     Write-Host "==> Build da solution"
     & $resolvedMsBuild $solutionPath /t:Build /p:Configuration=$Configuration /m /nologo
@@ -139,3 +148,4 @@ Assert-PublishOutput -PublishPath $publishPath -SelfContainedRequested $selfCont
 Write-Host ""
 Write-Host "Publish concluido em: $publishPath"
 Write-Host "Observacao: o publish recria o EXE. Assine novamente com scripts/sign-release.ps1."
+
