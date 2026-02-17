@@ -111,7 +111,7 @@ function Install-ExternalPackage {
         Remove-Item $targetPath -Force -ErrorAction SilentlyContinue
     }
 
-    Write-Log "Baixando $DisplayName: $Url"
+    Write-Log "Baixando ${DisplayName}: $Url"
     Download-File -Url $Url -Destination $targetPath
 
     Write-Log "Executando instalador de $DisplayName"
@@ -132,10 +132,8 @@ try {
     "===== DDS StudyOS Prerequisites =====" | Set-Content -Path $LogPath -Encoding UTF8
     Write-Log "Inicio da validacao de pre-requisitos"
     Write-Log "InstallWebView2=$InstallWebView2 InstallDotNetDesktopRuntime=$InstallDotNetDesktopRuntime DotNetDesktopMajor=$DotNetDesktopMajor"
-
-    if (-not (Test-IsAdmin)) {
-        throw "Permissao administrativa obrigatoria para instalar pre-requisitos."
-    }
+    Write-Log "Usuario atual: $env:USERNAME"
+    Write-Log "Execucao com privilegio administrativo: $(Test-IsAdmin)"
 
     if ($InstallWebView2) {
         $wv = Test-WebView2Installed
@@ -143,6 +141,7 @@ try {
             Write-Log "WebView2 ja instalado. Versao: $($wv.Version)"
         }
         else {
+            Write-Log "WebView2 nao detectado. Iniciando instalacao pelo bootstrapper."
             Install-ExternalPackage `
                 -DisplayName "WebView2 Runtime" `
                 -Url "https://go.microsoft.com/fwlink/p/?LinkId=2124703" `
@@ -162,6 +161,10 @@ try {
     }
 
     if ($InstallDotNetDesktopRuntime) {
+        if (-not (Test-IsAdmin)) {
+            throw "Permissao administrativa obrigatoria para instalar .NET Desktop Runtime."
+        }
+
         $dotnet = Test-DotNetDesktopRuntimeInstalled -Major $DotNetDesktopMajor
         if ($dotnet.Installed) {
             Write-Log ".NET Desktop Runtime $DotNetDesktopMajor ja instalado. Versao: $($dotnet.Version)"
