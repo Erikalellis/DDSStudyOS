@@ -2,15 +2,29 @@
 
 Este guia prepara o projeto para gerar o instalador `.exe` com os links oficiais.
 
-## 1) Preparar arquivos de entrada do setup
-Execute:
+## 1) Fluxo recomendado (automatico e repetivel)
+Para evitar setup com arquivos faltando, use sempre este comando unico:
 
 ```powershell
-.\scripts\prepare-installer-input.ps1 -SignExecutable
+.\scripts\build-installer.ps1
+```
+
+Se quiser informar manualmente o caminho do Advanced Installer:
+
+```powershell
+.\scripts\build-installer.ps1 -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"
 ```
 
 Observacao: por padrao o publish agora roda em `SelfContained=true` e `WindowsAppSDKSelfContained=true` para evitar erro de app nao abrir em maquina sem runtime.
 Observacao: por padrao a plataforma usada no publish e `x64`.
+Observacao: o script recria o `.aip` do zero a cada build e recompila o setup final.
+
+## 2) O que o script automatico faz
+1. Executa publish self-contained do app.
+2. Recria `artifacts/installer-input`.
+3. Recria `installer/advanced-installer/DDSStudyOS.aip`.
+4. Adiciona pre-requisito `.NET Desktop Runtime 8 (x64)` em modo automatico.
+5. Compila o setup em `artifacts/installer-output`.
 
 Saida esperada:
 - `artifacts/installer-input/app` (arquivos da aplicacao)
@@ -18,8 +32,9 @@ Saida esperada:
 - `artifacts/installer-input/docs` (support, changelog, update info)
 - `artifacts/installer-input/legal` (EULA e readme do instalador)
 - `artifacts/installer-input/installer-manifest.json`
+- `artifacts/installer-output/DDSStudyOS-Setup.exe`
 
-## 2) Criar projeto `.aip` automaticamente
+## 3) Criar projeto `.aip` manualmente (opcional)
 Se o Advanced Installer ja estiver instalado:
 
 ```powershell
@@ -43,29 +58,29 @@ Observacao: o script aplica automaticamente o icone de `src/DDSStudyOS.App/Asset
 Observacao: o script adiciona automaticamente o pre-requisito `.NET Desktop Runtime 8 (x64)` para baixar/instalar quando estiver faltando.
 Observacao: para desabilitar esse comportamento em um caso especifico, use `-EnableDotNetDesktopPrerequisite 0`.
 
-## 3) Abrir projeto no Advanced Installer e Build
+## 4) Abrir projeto no Advanced Installer e Build (opcional)
 1. Abrir `installer/advanced-installer/DDSStudyOS.aip`
 2. Conferir Product Details, Files and Folders e Digital Signature
 3. Clicar em `Build`
 
-## 4) Dados do produto (preenchidos pelo script)
+## 5) Dados do produto (preenchidos pelo script)
 - Product Name: `DDS StudyOS`
 - Company Name: `Deep Darkness Studios`
 - Version: lida de `src/DDSStudyOS.App/DDSStudyOS.App.csproj`
 - Publisher: `Deep Darkness Studios`
 - Idioma principal do instalador: `Português (Brasil)` (`ProductLanguage=1046`, `pt_BR`)
 
-## 5) Arquivos da aplicacao
+## 6) Arquivos da aplicacao
 - Fonte importada automaticamente: `artifacts/installer-input/app`
 - Executavel principal: `DDSStudyOS.App.exe`
 
-## 6) Links oficiais (Installer UI / Product Details)
+## 7) Links oficiais (Installer UI / Product Details)
 - Homepage: `https://177.71.165.60/`
 - Support: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
 - Release Notes: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
 - Update Info: `https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md`
 
-## 7) Arquivos legais no instalador
+## 8) Arquivos legais no instalador
 - License Agreement (EULA PT-BR): `installer/legal/EULA.pt-BR.rtf`
 - License Agreement (EULA ES): `installer/legal/EULA.es.rtf`
 - Readme da instalacao: `installer/legal/README_INSTALLER.pt-BR.rtf`
@@ -75,7 +90,7 @@ Se estiver usando o pacote pronto (`artifacts/installer-input`), use:
 - `artifacts/installer-input/legal/EULA.es.rtf`
 - `artifacts/installer-input/legal/README_INSTALLER.pt-BR.rtf`
 
-## 8) Certificado interno (opcional, homologacao)
+## 9) Certificado interno (opcional, homologacao)
 Se desejar instalar certificado no fim do setup:
 - Adicionar:
   - `artifacts/installer-input/scripts/install-internal-cert.ps1`
@@ -83,35 +98,35 @@ Se desejar instalar certificado no fim do setup:
 - Custom Action (PowerShell):
   - `-NoProfile -ExecutionPolicy Bypass -File "install-internal-cert.ps1" -CerPath "DDS_Studios_Final.cer" -ExpectedThumbprint "6780CE530A33615B591727F5334B3DD075B76422" -StoreScope LocalMachine -InstallTrustedPublisher $true -InstallRoot $true`
 
-## 9) Assinatura do instalador
+## 10) Assinatura do instalador
 - Assinar `DDSStudyOS.App.exe` antes de empacotar.
 - Assinar tambem o `Setup.exe` final no Advanced Installer.
 
-## 10) Teste minimo antes de publicar
+## 11) Teste minimo antes de publicar
 1. Instalar em maquina limpa.
 2. Abrir app e validar navegacao.
 3. Testar backup export/import.
 4. Testar lembrete e notificacao.
 5. Validar links de suporte e changelog.
 
-## 11) Personalizar icone (PNG -> ICO)
+## 12) Personalizar icone (PNG -> ICO)
 1. Gerar o `.ico`:
    - `.\scripts\convert-png-to-ico.ps1 -SourceImage "C:\Users\robso\Downloads\dds icone.png" -OutputIco ".\src\DDSStudyOS.App\Assets\DDSStudyOS.ico"`
 2. Recriar o `.aip`:
    - `.\scripts\create-advanced-installer-project.ps1 -Force -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
 
-## 12) Troubleshooting rapido (licenca vazia)
+## 13) Troubleshooting rapido (licenca vazia)
 1. Se a janela de licenca abrir sem texto, recrie o `.aip`:
-   - `.\scripts\create-advanced-installer-project.ps1 -Force -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
+   - `.\scripts\build-installer.ps1 -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
 2. Confirme no `.aip`:
    - `LicenseAgreementDlg` presente em `FragmentComponent`
    - `AgreementText` apontando para `..\legal\EULA.pt-BR.rtf`
 
-## 13) Troubleshooting rapido (popup pedindo .NET Runtime)
+## 14) Troubleshooting rapido (popup pedindo .NET Runtime)
 1. Gere novamente o pacote de entrada e o instalador:
-   - `.\scripts\prepare-installer-input.ps1`
-   - `.\scripts\create-advanced-installer-project.ps1 -Force -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
+   - `.\scripts\build-installer.ps1 -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"`
 2. Confirme no `.aip` que existem:
    - `PreReqComponent` com `.NET Desktop Runtime 8 (x64)`
    - `PreReqSearchComponent` para `HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App`
+   - `MsiFilesComponent` com `hostfxr.dll`, `hostpolicy.dll` e `coreclr.dll`
 3. Compile e distribua somente o setup novo em `artifacts/installer-output/DDSStudyOS-Setup.exe`.

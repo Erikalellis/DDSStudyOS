@@ -2,7 +2,26 @@
 
 Esta pasta guarda o projeto `.aip` do instalador do DDS StudyOS.
 
-## Gerar projeto automaticamente
+## Fluxo recomendado (automatico)
+No repositorio raiz, use um comando unico:
+
+```powershell
+.\scripts\build-installer.ps1
+```
+
+Se necessario, informe manualmente o caminho do CLI:
+
+```powershell
+.\scripts\build-installer.ps1 -AdvancedInstallerPath "F:\Program Files (x86)\Caphyon\Advanced Installer 23.4\bin\x86\AdvancedInstaller.com"
+```
+
+Esse fluxo:
+- gera publish self-contained
+- recria `installer-input`
+- recria `DDSStudyOS.aip` com pre-requisito automatico de `.NET Desktop Runtime 8 (x64)`
+- compila o setup em `artifacts/installer-output`
+
+## Gerar somente o projeto `.aip`
 No repositorio raiz:
 
 ```powershell
