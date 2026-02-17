@@ -53,7 +53,7 @@
         <Grid x:Name="SplashOverlay" Opacity="1">
             <Grid.Background>
                 <ImageBrush
-                    ImageSource="ms-appx:///Assets/SplashBackground.png"
+                    ImageSource="Assets/SplashBackground.png"
                     Stretch="UniformToFill"
                     AlignmentX="Center"
                     AlignmentY="Center" />
