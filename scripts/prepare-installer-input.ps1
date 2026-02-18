@@ -84,7 +84,30 @@ $docsOut = Join-Path $OutputDirectory "docs"
 $legalOut = Join-Path $OutputDirectory "legal"
 New-Item -ItemType Directory -Path $appOut, $scriptsOut, $docsOut, $legalOut -Force | Out-Null
 
-Copy-Item (Join-Path $publishDir "*") $appOut -Recurse -Force
+# Copia os arquivos do publish para o input do instalador.
+# Importante: nunca copie pastas de cache/estado geradas em runtime (ex.: WebView2 user data),
+# pois podem estar mudando enquanto copiamos e quebrar o build do instalador.
+$excludedRootDirs = @(
+    "DDS_StudyOS" # Pasta que pode aparecer quando o WebView2 grava dados ao lado do executável
+)
+
+$items = Get-ChildItem -Path $publishDir -Force
+foreach ($item in $items) {
+    if ($item.PSIsContainer) {
+        if ($excludedRootDirs -contains $item.Name) {
+            Write-Host "Ignorando pasta de runtime/cache no publish: $($item.Name)"
+            continue
+        }
+
+        # Pastas do tipo "DDSStudyOS.App.exe.WebView2" (user data) não fazem parte do app.
+        if ($item.Name.EndsWith(".WebView2", [System.StringComparison]::OrdinalIgnoreCase)) {
+            Write-Host "Ignorando pasta de runtime/cache do WebView2 no publish: $($item.Name)"
+            continue
+        }
+    }
+
+    Copy-Item -Path $item.FullName -Destination $appOut -Recurse -Force
+}
 Copy-Item (Join-Path $repoRoot "scripts\install-internal-cert.ps1") $scriptsOut -Force
 Copy-Item (Join-Path $repoRoot "scripts\Instalar_DDS.bat") $scriptsOut -Force
 Copy-Item (Join-Path $repoRoot "scripts\DDS_Studios_Final.cer") $scriptsOut -Force

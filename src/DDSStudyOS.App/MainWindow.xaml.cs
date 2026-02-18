@@ -17,6 +17,12 @@ public sealed partial class MainWindow : Window
     private PomodoroService? _pomodoro;
     private bool _bootstrapped;
     private bool _splashDismissed;
+    private TaskCompletionSource<bool>? _onboardingCompletion;
+    private TaskCompletionSource<bool>? _tourCompletion;
+    private int _tourStepIndex;
+    private TourStep[] _tourSteps = Array.Empty<TourStep>();
+
+    private sealed record TourStep(FrameworkElement Target, string Title, string Subtitle);
 
     public MainWindow()
     {
@@ -78,7 +84,7 @@ public sealed partial class MainWindow : Window
             await SetSplashStepAsync(10, "Carregando perfil e preferências...");
             await Task.Delay(150);
 
-            await SetSplashStepAsync(35, "Preparando banco de dados...");
+            await SetSplashStepAsync(30, "Preparando banco de dados...");
             try
             {
                 var db = new DatabaseService();
@@ -89,11 +95,14 @@ public sealed partial class MainWindow : Window
                 AppLogger.Warn($"Splash: falha ao preparar banco. Motivo: {ex.Message}");
             }
 
-            await SetSplashStepAsync(60, "Carregando módulos principais...");
-            await Task.Delay(220);
+            await SetSplashStepAsync(55, "Carregando módulos (Cursos, Materiais, Agenda)...");
+            await Task.Delay(180);
 
-            await SetSplashStepAsync(82, "Verificando componentes do sistema...");
-            await Task.Delay(220);
+            await SetSplashStepAsync(75, "Preparando navegador interno (WebView2)...");
+            await Task.Delay(180);
+
+            await SetSplashStepAsync(88, "Checando componentes do sistema...");
+            await Task.Delay(180);
 
             await SetSplashStepAsync(100, "Finalizando...");
 
@@ -109,6 +118,7 @@ public sealed partial class MainWindow : Window
             await HideSplashAsync();
 
             await EnsureUserRegistrationAsync();
+            await EnsureFirstRunTourAsync();
             StartBackgroundServices();
 
             // Executa diagnostico em background sem travar a interface principal
@@ -263,209 +273,343 @@ public sealed partial class MainWindow : Window
         }
 
         var tcs = new TaskCompletionSource<bool>();
+        _onboardingCompletion = tcs;
+
+        if (!DispatcherQueue.TryEnqueue(() =>
+        {
+            try
+            {
+                PrepareOnboardingDefaults();
+                ShowOnboardingOverlay();
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error("Falha ao abrir onboarding do usuário.", ex);
+                _onboardingCompletion?.TrySetResult(true);
+                _onboardingCompletion = null;
+            }
+        }))
+        {
+            _onboardingCompletion?.TrySetResult(true);
+            _onboardingCompletion = null;
+        }
+
+        return tcs.Task;
+    }
+
+    private void PrepareOnboardingDefaults()
+    {
+        try
+        {
+            // Defaults suaves para reduzir atrito no primeiro uso.
+            if (string.IsNullOrWhiteSpace(OnboardingCountryBox.Text))
+            {
+                OnboardingCountryBox.Text = "Brasil";
+            }
+
+            OnboardingExperienceLevelCombo.SelectedIndex = OnboardingExperienceLevelCombo.SelectedIndex < 0 ? 0 : OnboardingExperienceLevelCombo.SelectedIndex;
+            OnboardingStudyShiftCombo.SelectedIndex = OnboardingStudyShiftCombo.SelectedIndex < 0 ? 4 : OnboardingStudyShiftCombo.SelectedIndex;
+
+            if (double.IsNaN(OnboardingDailyGoalNumber.Value) || OnboardingDailyGoalNumber.Value <= 0)
+            {
+                OnboardingDailyGoalNumber.Value = 90;
+            }
+
+            OnboardingRemindersToggle.IsOn = true;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Onboarding: falha ao aplicar defaults. Motivo: {ex.Message}");
+        }
+    }
+
+    private void ShowOnboardingOverlay()
+    {
+        OnboardingOverlay.Visibility = Visibility.Visible;
+        OnboardingOverlay.IsHitTestVisible = true;
+        OnboardingFullNameBox.Focus(FocusState.Programmatic);
+    }
+
+    private void HideOnboardingOverlay()
+    {
+        OnboardingOverlay.IsHitTestVisible = false;
+        OnboardingOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private async void OnboardingContinue_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var fullName = (OnboardingFullNameBox.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                await ShowInfoDialogAsync("Nome obrigatório", "Informe seu nome completo para concluir o cadastro.");
+                OnboardingFullNameBox.Focus(FocusState.Programmatic);
+                return;
+            }
+
+            var preferredName = (OnboardingPreferredNameBox.Text ?? string.Empty).Trim();
+            var email = (OnboardingEmailBox.Text ?? string.Empty).Trim();
+            var phone = (OnboardingPhoneBox.Text ?? string.Empty).Trim();
+            var city = (OnboardingCityBox.Text ?? string.Empty).Trim();
+            var state = (OnboardingStateBox.Text ?? string.Empty).Trim();
+            var country = (OnboardingCountryBox.Text ?? string.Empty).Trim();
+            var studyArea = (OnboardingStudyAreaBox.Text ?? string.Empty).Trim();
+            var notes = (OnboardingNotesBox.Text ?? string.Empty).Trim();
+
+            var experience = OnboardingExperienceLevelCombo.SelectedItem?.ToString() ?? "Iniciante";
+            var shift = OnboardingStudyShiftCombo.SelectedItem?.ToString() ?? "Flexivel";
+
+            var goalVal = OnboardingDailyGoalNumber.Value;
+            var dailyGoalMinutes = 90;
+            if (!double.IsNaN(goalVal) && goalVal > 0)
+            {
+                dailyGoalMinutes = (int)Math.Round(goalVal);
+            }
+            dailyGoalMinutes = Math.Clamp(dailyGoalMinutes, 15, 720);
+
+            var now = DateTimeOffset.Now;
+            UserProfileService.Save(new UserProfile
+            {
+                Name = fullName,
+                PreferredName = string.IsNullOrWhiteSpace(preferredName) ? null : preferredName,
+                Email = string.IsNullOrWhiteSpace(email) ? null : email,
+                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone,
+                City = string.IsNullOrWhiteSpace(city) ? null : city,
+                State = string.IsNullOrWhiteSpace(state) ? null : state,
+                Country = string.IsNullOrWhiteSpace(country) ? null : country,
+                StudyArea = string.IsNullOrWhiteSpace(studyArea) ? null : studyArea,
+                ExperienceLevel = experience,
+                StudyShift = shift,
+                DailyGoalMinutes = dailyGoalMinutes,
+                ReceiveReminders = OnboardingRemindersToggle.IsOn,
+                HasSeenTour = false,
+                Notes = string.IsNullOrWhiteSpace(notes) ? null : notes,
+                RegisteredAt = now,
+                UpdatedAt = now
+            });
+
+            UpdateReminderServiceFromProfile();
+            UpdateUserGreeting();
+
+            HideOnboardingOverlay();
+
+            AppLogger.Info($"Onboarding concluído para: {fullName}");
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Falha ao salvar onboarding do usuário.", ex);
+        }
+        finally
+        {
+            _onboardingCompletion?.TrySetResult(true);
+            _onboardingCompletion = null;
+        }
+    }
+
+    private void OnboardingSkip_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var fallback = (Environment.UserName ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(fallback))
+            {
+                fallback = "Estudante";
+            }
+
+            var now = DateTimeOffset.Now;
+            UserProfileService.Save(new UserProfile
+            {
+                Name = fallback,
+                PreferredName = fallback,
+                Country = "Brasil",
+                ExperienceLevel = "Iniciante",
+                StudyShift = "Flexivel",
+                DailyGoalMinutes = 90,
+                ReceiveReminders = true,
+                HasSeenTour = false,
+                RegisteredAt = now,
+                UpdatedAt = now
+            });
+
+            UpdateReminderServiceFromProfile();
+            UpdateUserGreeting();
+
+            HideOnboardingOverlay();
+
+            AppLogger.Info("Onboarding: usuário pulou cadastro completo (perfil mínimo criado).");
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Onboarding: falha ao pular cadastro.", ex);
+        }
+        finally
+        {
+            _onboardingCompletion?.TrySetResult(true);
+            _onboardingCompletion = null;
+        }
+    }
+
+    private Task EnsureFirstRunTourAsync()
+    {
+        try
+        {
+            if (!UserProfileService.TryLoad(out var profile))
+            {
+                return Task.CompletedTask;
+            }
+
+            if (profile.HasSeenTour)
+            {
+                return Task.CompletedTask;
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Tour: falha ao checar perfil. Motivo: {ex.Message}");
+            return Task.CompletedTask;
+        }
+
+        var tcs = new TaskCompletionSource<bool>();
+        _tourCompletion = tcs;
+
+        if (!DispatcherQueue.TryEnqueue(() =>
+        {
+            try
+            {
+                BuildTourSteps();
+                _tourStepIndex = 0;
+                ShowTourStep();
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error("Tour: falha ao iniciar.", ex);
+                EndGuidedTour(markSeen: false);
+            }
+        }))
+        {
+            EndGuidedTour(markSeen: false);
+        }
+
+        return tcs.Task;
+    }
+
+    private void BuildTourSteps()
+    {
+        _tourSteps = new[]
+        {
+            new TourStep(NavView, "Navegação", "Use este menu para acessar as áreas do DDS StudyOS."),
+            new TourStep(NavItemDashboard, "Dashboard", "Sua visão geral do dia, atalhos e status do estudo."),
+            new TourStep(NavItemCourses, "Cursos", "Cadastre cursos e acompanhe progresso."),
+            new TourStep(NavItemMaterials, "Materiais & Certificados", "Organize materiais e certificados em um só lugar."),
+            new TourStep(NavItemAgenda, "Agenda", "Planeje tarefas e lembretes importantes."),
+            new TourStep(NavItemBrowser, "Navegador interno", "Estude aqui dentro com menos distrações (WebView2)."),
+            new TourStep(ProfileCardBorder, "Perfil e Pomodoro", "Seu perfil + Pomodoro Focus para manter consistência."),
+            new TourStep(NavItemSettings, "Configurações", "Ajuste preferências, lembretes e suporte.")
+        };
+    }
+
+    private void ShowTourStep()
+    {
+        if (_tourSteps.Length == 0)
+        {
+            EndGuidedTour(markSeen: false);
+            return;
+        }
+
+        _tourStepIndex = Math.Clamp(_tourStepIndex, 0, _tourSteps.Length - 1);
+        var step = _tourSteps[_tourStepIndex];
+
+        GuidedTourTip.Target = step.Target;
+        GuidedTourTip.Title = step.Title;
+        GuidedTourTip.Subtitle = step.Subtitle;
+        GuidedTourTip.CloseButtonContent = "Pular";
+        GuidedTourTip.ActionButtonContent = _tourStepIndex >= _tourSteps.Length - 1 ? "Concluir" : "Próximo";
+        GuidedTourTip.IsOpen = true;
+    }
+
+    private void GuidedTourTip_ActionButtonClick(TeachingTip sender, object args)
+    {
+        if (_tourSteps.Length == 0)
+        {
+            EndGuidedTour(markSeen: false);
+            return;
+        }
+
+        if (_tourStepIndex >= _tourSteps.Length - 1)
+        {
+            EndGuidedTour(markSeen: true);
+            return;
+        }
+
+        _tourStepIndex++;
+        ShowTourStep();
+    }
+
+    private void GuidedTourTip_CloseButtonClick(TeachingTip sender, object args)
+    {
+        EndGuidedTour(markSeen: true);
+    }
+
+    private void EndGuidedTour(bool markSeen)
+    {
+        try
+        {
+            GuidedTourTip.IsOpen = false;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Tour: falha ao fechar TeachingTip. Motivo: {ex.Message}");
+        }
+
+        if (markSeen)
+        {
+            try
+            {
+                if (UserProfileService.TryLoad(out var profile))
+                {
+                    profile.HasSeenTour = true;
+                    profile.UpdatedAt = DateTimeOffset.Now;
+                    UserProfileService.Save(profile);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"Tour: falha ao marcar como visto. Motivo: {ex.Message}");
+            }
+        }
+
+        _tourCompletion?.TrySetResult(true);
+        _tourCompletion = null;
+    }
+
+    private Task ShowInfoDialogAsync(string title, string message)
+    {
+        var tcs = new TaskCompletionSource<bool>();
 
         if (!DispatcherQueue.TryEnqueue(async () =>
         {
             try
             {
-                while (true)
+                var dlg = new ContentDialog
                 {
-                    var fullNameBox = new TextBox
-                    {
-                        Header = "Nome completo",
-                        PlaceholderText = "Ex.: Erika Lellis",
-                        MinWidth = 360
-                    };
+                    Title = title,
+                    Content = message,
+                    CloseButtonText = "OK",
+                    XamlRoot = RootGrid.XamlRoot
+                };
 
-                    var preferredNameBox = new TextBox
-                    {
-                        Header = "Como prefere ser chamada(o)",
-                        PlaceholderText = "Ex.: Erika"
-                    };
-
-                    var emailBox = new TextBox
-                    {
-                        Header = "E-mail",
-                        PlaceholderText = "exemplo@dominio.com"
-                    };
-
-                    var phoneBox = new TextBox
-                    {
-                        Header = "Telefone (opcional)",
-                        PlaceholderText = "(11) 90000-0000"
-                    };
-
-                    var cityBox = new TextBox
-                    {
-                        Header = "Cidade",
-                        PlaceholderText = "Ex.: Osasco"
-                    };
-
-                    var stateBox = new TextBox
-                    {
-                        Header = "Estado",
-                        PlaceholderText = "Ex.: SP"
-                    };
-
-                    var countryBox = new TextBox
-                    {
-                        Header = "Pais",
-                        PlaceholderText = "Ex.: Brasil"
-                    };
-
-                    var studyAreaBox = new TextBox
-                    {
-                        Header = "Area principal de estudo",
-                        PlaceholderText = "Ex.: Desenvolvimento de Software"
-                    };
-
-                    var experienceLevelCombo = new ComboBox
-                    {
-                        Header = "Nivel atual",
-                        ItemsSource = new[] { "Iniciante", "Intermediario", "Avancado" },
-                        SelectedIndex = 0
-                    };
-
-                    var studyShiftCombo = new ComboBox
-                    {
-                        Header = "Turno preferido",
-                        ItemsSource = new[] { "Manha", "Tarde", "Noite", "Madrugada", "Flexivel" },
-                        SelectedIndex = 4
-                    };
-
-                    var dailyGoalMinutesBox = new TextBox
-                    {
-                        Header = "Meta diaria (minutos)",
-                        Text = "90"
-                    };
-
-                    var remindersToggle = new ToggleSwitch
-                    {
-                        Header = "Ativar lembretes",
-                        IsOn = true
-                    };
-
-                    var notesBox = new TextBox
-                    {
-                        Header = "Observacoes pessoais (opcional)",
-                        AcceptsReturn = true,
-                        TextWrapping = TextWrapping.Wrap,
-                        MinHeight = 80
-                    };
-
-                    var form = new StackPanel
-                    {
-                        Spacing = 10
-                    };
-                    form.Children.Add(new TextBlock
-                    {
-                        Text = "Preencha seu perfil para deixar o DDS StudyOS mais personalizado."
-                    });
-                    form.Children.Add(fullNameBox);
-                    form.Children.Add(preferredNameBox);
-                    form.Children.Add(emailBox);
-                    form.Children.Add(phoneBox);
-                    form.Children.Add(cityBox);
-                    form.Children.Add(stateBox);
-                    form.Children.Add(countryBox);
-                    form.Children.Add(studyAreaBox);
-                    form.Children.Add(experienceLevelCombo);
-                    form.Children.Add(studyShiftCombo);
-                    form.Children.Add(dailyGoalMinutesBox);
-                    form.Children.Add(remindersToggle);
-                    form.Children.Add(notesBox);
-
-                    var scroll = new ScrollViewer
-                    {
-                        Content = form,
-                        MaxHeight = 480
-                    };
-
-                    var dialog = new ContentDialog
-                    {
-                        Title = "Cadastro completo do usuario",
-                        Content = scroll,
-                        PrimaryButtonText = "Salvar cadastro",
-                        CloseButtonText = "Depois",
-                        DefaultButton = ContentDialogButton.Primary,
-                        XamlRoot = RootGrid.XamlRoot
-                    };
-
-                    var result = await dialog.ShowAsync();
-                    if (result != ContentDialogResult.Primary)
-                    {
-                        break;
-                    }
-
-                    var fullName = (fullNameBox.Text ?? string.Empty).Trim();
-                    if (string.IsNullOrWhiteSpace(fullName))
-                    {
-                        var warn = new ContentDialog
-                        {
-                            Title = "Nome obrigatorio",
-                            Content = "Informe seu nome completo para concluir o cadastro.",
-                            CloseButtonText = "OK",
-                            XamlRoot = RootGrid.XamlRoot
-                        };
-                        await warn.ShowAsync();
-                        continue;
-                    }
-
-                    var preferredName = (preferredNameBox.Text ?? string.Empty).Trim();
-                    var email = (emailBox.Text ?? string.Empty).Trim();
-                    var phone = (phoneBox.Text ?? string.Empty).Trim();
-                    var city = (cityBox.Text ?? string.Empty).Trim();
-                    var state = (stateBox.Text ?? string.Empty).Trim();
-                    var country = (countryBox.Text ?? string.Empty).Trim();
-                    var studyArea = (studyAreaBox.Text ?? string.Empty).Trim();
-                    var notes = (notesBox.Text ?? string.Empty).Trim();
-                    var experience = experienceLevelCombo.SelectedItem?.ToString() ?? "Iniciante";
-                    var shift = studyShiftCombo.SelectedItem?.ToString() ?? "Flexivel";
-
-                    var dailyGoalMinutes = 90;
-                    if (int.TryParse((dailyGoalMinutesBox.Text ?? string.Empty).Trim(), out var parsedMinutes))
-                    {
-                        dailyGoalMinutes = Math.Clamp(parsedMinutes, 15, 720);
-                    }
-
-                    var now = DateTimeOffset.Now;
-                    UserProfileService.Save(new UserProfile
-                    {
-                        Name = fullName,
-                        PreferredName = string.IsNullOrWhiteSpace(preferredName) ? null : preferredName,
-                        Email = string.IsNullOrWhiteSpace(email) ? null : email,
-                        Phone = string.IsNullOrWhiteSpace(phone) ? null : phone,
-                        City = string.IsNullOrWhiteSpace(city) ? null : city,
-                        State = string.IsNullOrWhiteSpace(state) ? null : state,
-                        Country = string.IsNullOrWhiteSpace(country) ? null : country,
-                        StudyArea = string.IsNullOrWhiteSpace(studyArea) ? null : studyArea,
-                        ExperienceLevel = experience,
-                        StudyShift = shift,
-                        DailyGoalMinutes = dailyGoalMinutes,
-                        ReceiveReminders = remindersToggle.IsOn,
-                        Notes = string.IsNullOrWhiteSpace(notes) ? null : notes,
-                        RegisteredAt = now,
-                        UpdatedAt = now
-                    });
-
-                    UpdateReminderServiceFromProfile();
-
-                    UpdateUserGreeting();
-                    AppLogger.Info($"Cadastro completo concluido para: {fullName}");
-                    break;
-                }
+                await dlg.ShowAsync();
+                tcs.TrySetResult(true);
             }
             catch (Exception ex)
             {
-                AppLogger.Error("Falha ao abrir cadastro inicial do usuario.", ex);
-            }
-            finally
-            {
-                tcs.TrySetResult(true);
+                AppLogger.Warn($"Dialog: falha ao exibir. Motivo: {ex.Message}");
+                tcs.TrySetResult(false);
             }
         }))
         {
-            tcs.TrySetResult(true);
+            tcs.TrySetResult(false);
         }
 
         return tcs.Task;

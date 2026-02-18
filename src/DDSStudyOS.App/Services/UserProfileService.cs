@@ -18,6 +18,7 @@ public sealed class UserProfile
     public string StudyShift { get; set; } = "Flexivel";
     public int DailyGoalMinutes { get; set; } = 90;
     public bool ReceiveReminders { get; set; } = true;
+    public bool HasSeenTour { get; set; } = false;
     public string? Notes { get; set; }
     public DateTimeOffset RegisteredAt { get; set; } = DateTimeOffset.Now;
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.Now;
