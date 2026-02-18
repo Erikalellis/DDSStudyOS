@@ -100,16 +100,16 @@ public sealed partial class DashboardPage : Page
 
     private void QuickAction_Click(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is StackPanel panel && panel.Tag is string tag)
+        if (e.ClickedItem is not FrameworkElement element || element.Tag is not string tag)
+            return;
+
+        if (tag == "new_course")
         {
-            if (tag == "new_course")
-            {
-                AppState.RequestNavigateTag?.Invoke("courses");
-            }
-            else
-            {
-                AppState.RequestNavigateTag?.Invoke(tag);
-            }
+            AppState.PendingCoursesAction = "new";
+            AppState.RequestNavigateTag?.Invoke("courses");
+            return;
         }
+
+        AppState.RequestNavigateTag?.Invoke(tag);
     }
 }

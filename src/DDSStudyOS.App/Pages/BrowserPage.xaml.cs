@@ -3,8 +3,12 @@ using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Markup;
 using Microsoft.Web.WebView2.Core;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,6 +19,12 @@ public sealed partial class BrowserPage : Page
 {
     private const string HomeAddressAlias = "dds://inicio";
     private const string ErrorAddressAlias = "dds://erro";
+    private static readonly string WebView2UserDataFolder = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "DDSStudyOS",
+        "WebView2");
+
+    private readonly DatabaseService _db;
     private readonly CourseRepository _courseRepo;
     private Course? _currentCourse;
     private DispatcherTimer? _autoSaveTimer;
@@ -22,11 +32,13 @@ public sealed partial class BrowserPage : Page
     private string _internalPageAlias = HomeAddressAlias;
     private string _lastRequestedAddress = HomeAddressAlias;
     private string? _pendingVaultCredentialId;
+    private bool _isPageActive;
 
     public BrowserPage()
     {
         this.InitializeComponent();
-        _courseRepo = new CourseRepository(new DatabaseService());
+        _db = new DatabaseService();
+        _courseRepo = new CourseRepository(_db);
         
         Loaded += BrowserPage_Loaded;
         Unloaded += BrowserPage_Unloaded;
@@ -41,6 +53,28 @@ public sealed partial class BrowserPage : Page
 
     private async void BrowserPage_Loaded(object sender, RoutedEventArgs e)
     {
+        _isPageActive = true;
+
+        try
+        {
+            await _db.EnsureCreatedAsync();
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"BrowserPage: falha ao garantir banco criado. Motivo: {ex.Message}");
+        }
+
+        try
+        {
+            await EnsureWebViewReadyAsync();
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("BrowserPage: falha ao inicializar WebView2.", ex);
+            await ShowInfoDialogAsync("Navegador", "Falha ao iniciar o navegador interno (WebView2). Verifique se o WebView2 Runtime está instalado.");
+            return;
+        }
+
         _pendingVaultCredentialId = AppState.PendingVaultCredentialId;
         AppState.PendingVaultCredentialId = null;
 
@@ -50,7 +84,7 @@ public sealed partial class BrowserPage : Page
             AppState.PendingBrowserUrl = null; // Consume
             Go(url);
         }
-        else
+        else if (Web.Source is null || string.Equals(Web.Source.ToString(), "about:blank", StringComparison.OrdinalIgnoreCase))
         {
             ShowHomePage();
         }
@@ -71,6 +105,7 @@ public sealed partial class BrowserPage : Page
 
     private void BrowserPage_Unloaded(object sender, RoutedEventArgs e)
     {
+        _isPageActive = false;
         _autoSaveTimer?.Stop();
         _ = SaveNotesOnUnloadAsync();
     }
@@ -98,6 +133,31 @@ public sealed partial class BrowserPage : Page
         }
     }
 
+    private async Task EnsureWebViewReadyAsync()
+    {
+        if (Web.CoreWebView2 is not null)
+        {
+            return;
+        }
+
+        Directory.CreateDirectory(WebView2UserDataFolder);
+        var env = await CoreWebView2Environment.CreateWithOptionsAsync(null, WebView2UserDataFolder, null);
+        await Web.EnsureCoreWebView2Async(env);
+    }
+
+    private static string BuildSearchUrl(string query)
+    {
+        var provider = (SettingsService.BrowserSearchProvider ?? "google").Trim().ToLowerInvariant();
+        var encoded = Uri.EscapeDataString(query);
+
+        return provider switch
+        {
+            "duckduckgo" or "ddg" => $"https://duckduckgo.com/?q={encoded}",
+            "bing" => $"https://www.bing.com/search?q={encoded}",
+            _ => $"https://www.google.com/search?q={encoded}"
+        };
+    }
+
     private void Go(string raw)
     {
         if (string.IsNullOrWhiteSpace(raw)) return;
@@ -118,7 +178,7 @@ public sealed partial class BrowserPage : Page
             // Se nao parece URL, vira busca web para UX mais amigavel
             if (raw.Contains(' ') || (!raw.Contains('.') && !raw.StartsWith("localhost", StringComparison.OrdinalIgnoreCase)))
             {
-                raw = $"https://duckduckgo.com/?q={Uri.EscapeDataString(raw)}";
+                raw = BuildSearchUrl(raw);
             }
             else
             {
@@ -137,6 +197,117 @@ public sealed partial class BrowserPage : Page
 
     private void Go_Click(object sender, RoutedEventArgs e) => Go(AddressBox.Text);
     private void Home_Click(object sender, RoutedEventArgs e) => ShowHomePage();
+    private async void Courses_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await _db.EnsureCreatedAsync();
+
+            var allCourses = await _courseRepo.ListAsync();
+            if (allCourses.Count == 0)
+            {
+                await ShowInfoDialogAsync("Cursos", "Nenhum curso cadastrado ainda. Vá em “Cursos” para criar seu primeiro.");
+                return;
+            }
+
+            var searchBox = new TextBox
+            {
+                PlaceholderText = "Buscar curso...",
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+
+            var listView = new ListView
+            {
+                SelectionMode = ListViewSelectionMode.Single,
+                Height = 360
+            };
+
+            var templateXaml = """
+<DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <StackPanel Spacing="2" Padding="6">
+    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+    <TextBlock Text="{Binding Platform}" Opacity="0.7" FontSize="12" TextTrimming="CharacterEllipsis"/>
+  </StackPanel>
+</DataTemplate>
+""";
+            listView.ItemTemplate = (DataTemplate)XamlReader.Load(templateXaml);
+
+            var contentPanel = new StackPanel { Spacing = 8 };
+            contentPanel.Children.Add(searchBox);
+            contentPanel.Children.Add(listView);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Cursos",
+                Content = contentPanel,
+                PrimaryButtonText = "Abrir",
+                CloseButtonText = "Cancelar",
+                DefaultButton = ContentDialogButton.Primary,
+                IsPrimaryButtonEnabled = false,
+                XamlRoot = this.XamlRoot
+            };
+
+            void ApplyFilter(string query)
+            {
+                query = (query ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    listView.ItemsSource = allCourses;
+                    return;
+                }
+
+                listView.ItemsSource = allCourses
+                    .Where(c =>
+                        c.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        (c.Platform?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false))
+                    .ToList();
+            }
+
+            searchBox.TextChanged += (_, __) => ApplyFilter(searchBox.Text);
+            listView.SelectionChanged += (_, __) =>
+            {
+                dialog.IsPrimaryButtonEnabled = listView.SelectedItem is Course c && !string.IsNullOrWhiteSpace(c.Url);
+            };
+
+            ApplyFilter(string.Empty);
+
+            var result = await dialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            if (listView.SelectedItem is not Course selected)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(selected.Url))
+            {
+                await ShowInfoDialogAsync("Cursos", "Esse curso não possui link para abrir. Edite o curso e adicione o link.");
+                return;
+            }
+
+            AppState.CurrentCourseId = selected.Id;
+            await LoadCourseNotes(selected.Id);
+
+            try
+            {
+                await _courseRepo.UpdateLastAccessedAsync(selected.Id);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"BrowserPage: falha ao atualizar 'ultimo acesso' do curso. Motivo: {ex.Message}");
+            }
+
+            Go(selected.Url);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("BrowserPage: falha ao abrir seletor de cursos.", ex);
+            await ShowInfoDialogAsync("Cursos", "Falha ao abrir a lista de cursos.");
+        }
+    }
 
     private void AddressBox_KeyDown(object sender, KeyRoutedEventArgs e)
     {
@@ -173,6 +344,11 @@ public sealed partial class BrowserPage : Page
             return;
         }
 
+        if (!_isPageActive)
+        {
+            return;
+        }
+
         if (Web.CoreWebView2 is null) return;
 
         AppState.WebViewInstance = Web.CoreWebView2;
@@ -186,6 +362,12 @@ public sealed partial class BrowserPage : Page
 
         Web.CoreWebView2.NewWindowRequested += (_, e) =>
         {
+            if (!_isPageActive)
+            {
+                e.Handled = true;
+                return;
+            }
+
             e.Handled = true;
             if (!string.IsNullOrWhiteSpace(e.Uri))
             {
@@ -195,6 +377,11 @@ public sealed partial class BrowserPage : Page
 
         Web.CoreWebView2.NavigationStarting += (_, e) =>
         {
+            if (!_isPageActive)
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(e.Uri)) return;
             _lastRequestedAddress = e.Uri;
 
@@ -212,6 +399,11 @@ public sealed partial class BrowserPage : Page
 
     private void Web_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
     {
+        if (!_isPageActive)
+        {
+            return;
+        }
+
         if (!args.IsSuccess && !_isInternalHomePage)
         {
             ShowNavigationErrorPage(args.WebErrorStatus, _lastRequestedAddress);
@@ -239,6 +431,11 @@ public sealed partial class BrowserPage : Page
 
     private void UpdateNavigationButtons()
     {
+        if (!_isPageActive)
+        {
+            return;
+        }
+
         BackBtn.IsEnabled = Web.CanGoBack;
         ForwardBtn.IsEnabled = Web.CanGoForward;
         ReloadBtn.IsEnabled = true;
@@ -685,22 +882,36 @@ public sealed partial class BrowserPage : Page
 
         try
         {
-            SaveStatusText.Text = "Salvando...";
-            SaveStatusText.Visibility = Visibility.Visible;
+            if (_isPageActive)
+            {
+                SaveStatusText.Text = "Salvando...";
+                SaveStatusText.Visibility = Visibility.Visible;
+            }
 
             _currentCourse.Notes = NotesBox.Text;
             await _courseRepo.UpdateAsync(_currentCourse);
+
+            if (!_isPageActive)
+            {
+                return;
+            }
 
             SaveStatusText.Text = "Salvo";
 
             // Hide status after 2 seconds
             await Task.Delay(2000);
-            SaveStatusText.Visibility = Visibility.Collapsed;
+            if (_isPageActive)
+            {
+                SaveStatusText.Visibility = Visibility.Collapsed;
+            }
         }
         catch (Exception ex)
         {
-            SaveStatusText.Text = "Falha ao salvar";
-            SaveStatusText.Visibility = Visibility.Visible;
+            if (_isPageActive)
+            {
+                SaveStatusText.Text = "Falha ao salvar";
+                SaveStatusText.Visibility = Visibility.Visible;
+            }
             AppLogger.Error("Erro ao salvar anotacoes do navegador.", ex);
         }
     }

@@ -10,6 +10,11 @@
         <TextBlock Text="Desenvolvimento" FontSize="24" FontWeight="SemiBold" />
 
         <StackPanel Grid.Row="1" Spacing="12" Margin="0,12,0,0">
+            <InfoBar Title="Versão beta"
+                     Message="O DDS StudyOS está em desenvolvimento ativo. Algumas funções podem estar incompletas ou mudar a qualquer momento."
+                     IsOpen="True"
+                     Severity="Informational" />
+
             <TextBlock Text="Desenvolvido por Erika Lellis &amp; Deep Darkness Studios" FontSize="16" />
 
             <StackPanel Orientation="Horizontal" Spacing="8">
@@ -22,7 +27,12 @@
                 <HyperlinkButton Content="http://177.71.165.60/" Click="Site_Click" />
             </StackPanel>
 
-            <InfoBar Title="Nota" Message="Essa página é para informações de desenvolvimento e créditos." IsOpen="True" Severity="Informational" />
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button Content="Enviar feedback" Click="Feedback_Click" Style="{StaticResource AccentButtonStyle}" />
+                <HyperlinkButton Content="GitHub (Issues)" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/issues" />
+            </StackPanel>
+
+            <InfoBar Title="Nota" Message="Essa página é para informações de desenvolvimento, créditos e suporte." IsOpen="True" Severity="Informational" />
         </StackPanel>
     </Grid>
 </Page>

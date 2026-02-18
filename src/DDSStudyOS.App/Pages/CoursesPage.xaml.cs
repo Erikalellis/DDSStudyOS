@@ -1,5 +1,6 @@
 using DDSStudyOS.App.Models;
 using DDSStudyOS.App.Services;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ public sealed partial class CoursesPage : Page
     private CourseRepository? _repo;
     private List<Course> _cache = new();
     private Course? _selectedCourse;
+    private bool _hasLoaded;
 
     public CoursesPage()
     {
@@ -22,11 +24,30 @@ public sealed partial class CoursesPage : Page
 
     private async void CoursesPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        if (_hasLoaded) return;
+        _hasLoaded = true;
+
         try
         {
             await _db.EnsureCreatedAsync();
             _repo = new CourseRepository(_db);
             await ReloadAsync();
+
+            var pendingAction = AppState.PendingCoursesAction;
+            AppState.PendingCoursesAction = null;
+
+            if (string.Equals(pendingAction, "new", StringComparison.OrdinalIgnoreCase))
+            {
+                StartNewCourse();
+            }
+            else if (CoursesList.SelectedItem is Course c)
+            {
+                ShowDetails(c);
+            }
+            else
+            {
+                ShowEmptyState();
+            }
         }
         catch (Exception ex)
         {
@@ -34,11 +55,20 @@ public sealed partial class CoursesPage : Page
         }
     }
 
-    private async System.Threading.Tasks.Task ReloadAsync()
+    private async System.Threading.Tasks.Task ReloadAsync(long? reselectId = null)
     {
         if (_repo is null) return;
         _cache = await _repo.ListAsync();
         FilterList(SearchBox.Text);
+
+        if (reselectId.HasValue)
+        {
+            var item = _cache.FirstOrDefault(c => c.Id == reselectId.Value);
+            if (item != null)
+            {
+                CoursesList.SelectedItem = item;
+            }
+        }
     }
 
     private void FilterList(string query)
@@ -66,29 +96,113 @@ public sealed partial class CoursesPage : Page
         if (CoursesList.SelectedItem is Course c)
         {
             _selectedCourse = c;
-            FillForm(c);
-            
-            // Enable Actions
-            DeleteBtn.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-            OpenBtn.IsEnabled = !string.IsNullOrEmpty(c.Url);
-            SaveBtn.Content = "Atualizar Curso";
+            ShowDetails(c);
         }
         else
         {
             _selectedCourse = null;
-            // ClearForm(); // Don't clear immediately to allow new creation context
+            if (EditorScroll.Visibility != Visibility.Visible)
+            {
+                ShowEmptyState();
+            }
         }
     }
 
     private void NewCourse_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        ClearForm();
-        CoursesList.SelectedIndex = -1;
-        _selectedCourse = null;
-        SaveBtn.Content = "Salvar Novo Curso";
-        DeleteBtn.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        OpenBtn.IsEnabled = false;
+        StartNewCourse();
+    }
+
+    private async void CoursesList_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is not Course c)
+            return;
+
+        CoursesList.SelectedItem = c;
+        ShowDetails(c);
+
+        if (string.IsNullOrWhiteSpace(c.Url))
+        {
+            DetailsMsgText.Text = "Esse curso ainda não tem link. Clique em “Editar” para adicionar.";
+            return;
+        }
+
+        await OpenCourseAsync(c);
+    }
+
+    private void DetailsEdit_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (_selectedCourse is null)
+        {
+            ShowEmptyState();
+            return;
+        }
+
+        FillForm(_selectedCourse);
+        FormTitle.Text = $"Editando: {_selectedCourse.Name}";
+        SaveBtn.Content = "Salvar Alterações";
+        MsgText.Text = "";
+
+        ShowEditor();
         NameBox.Focus(Microsoft.UI.Xaml.FocusState.Programmatic);
+    }
+
+    private async void DetailsOpen_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (_selectedCourse is null)
+        {
+            ShowEmptyState();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_selectedCourse.Url))
+        {
+            DetailsMsgText.Text = "Adicione um link para abrir o curso no navegador.";
+            return;
+        }
+
+        await OpenCourseAsync(_selectedCourse);
+    }
+
+    private async void DetailsDelete_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (_repo is null || _selectedCourse is null)
+            return;
+
+        var dialog = new ContentDialog
+        {
+            Title = "Excluir curso",
+            Content = $"Deseja excluir o curso “{_selectedCourse.Name}”?",
+            PrimaryButtonText = "Excluir",
+            CloseButtonText = "Cancelar",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.XamlRoot
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result != ContentDialogResult.Primary)
+            return;
+
+        await _repo.DeleteAsync(_selectedCourse.Id);
+        _selectedCourse = null;
+        CoursesList.SelectedIndex = -1;
+
+        await ReloadAsync();
+        ShowEmptyState();
+    }
+
+    private void CancelEdit_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        MsgText.Text = "";
+
+        if (_selectedCourse != null)
+        {
+            ShowDetails(_selectedCourse);
+        }
+        else
+        {
+            ShowEmptyState();
+        }
     }
 
     private void FillForm(Course c)
@@ -166,8 +280,19 @@ public sealed partial class CoursesPage : Page
                 Status = status,
                 Notes = NullIfEmpty(NotesBox.Text)
             };
-            await _repo.CreateAsync(newCourse);
-            MsgText.Text = "Curso criado com sucesso!";
+            var newId = await _repo.CreateAsync(newCourse);
+
+            SearchBox.Text = ""; // garante que o curso apareca na lista mesmo que exista filtro
+            await ReloadAsync(reselectId: newId);
+
+            _selectedCourse = _cache.FirstOrDefault(c => c.Id == newId);
+            if (_selectedCourse != null)
+            {
+                ShowDetails(_selectedCourse);
+                DetailsMsgText.Text = "Curso criado com sucesso!";
+            }
+
+            return;
         }
         else
         {
@@ -181,48 +306,101 @@ public sealed partial class CoursesPage : Page
             _selectedCourse.Notes = NullIfEmpty(NotesBox.Text);
             
             await _repo.UpdateAsync(_selectedCourse);
-            MsgText.Text = "Curso atualizado com sucesso!";
-        }
 
-        await ReloadAsync();
-        
-        // Re-select if update
-        if (_selectedCourse != null)
-        {
-            // Find updated item in list
-            // Simple approach: clear selection to force refresh
-            CoursesList.SelectedIndex = -1;
-        }
-        else
-        {
-            ClearForm();
-        }
-    }
+            var updatedId = _selectedCourse.Id;
+            await ReloadAsync(reselectId: updatedId);
 
-    private async void Delete_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        if (_repo is null || _selectedCourse is null) return;
-        
-        // Confirm dialog would be nice here, but MVP: just delete
-        await _repo.DeleteAsync(_selectedCourse.Id);
-        MsgText.Text = "Curso excluído.";
-        ClearForm();
-        await ReloadAsync();
-    }
+            _selectedCourse = _cache.FirstOrDefault(c => c.Id == updatedId);
+            if (_selectedCourse != null)
+            {
+                ShowDetails(_selectedCourse);
+                DetailsMsgText.Text = "Curso atualizado com sucesso!";
+            }
 
-    private void OpenCourse_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        var url = UrlBox.Text;
-        if (string.IsNullOrWhiteSpace(url))
-        {
-            MsgText.Text = "Adicione um link para abrir.";
             return;
         }
+    }
 
-        AppState.PendingBrowserUrl = url;
-        if (_selectedCourse != null) AppState.CurrentCourseId = _selectedCourse.Id;
-        
+    private void ShowEmptyState()
+    {
+        EmptyStateCard.Visibility = Visibility.Visible;
+        DetailsCard.Visibility = Visibility.Collapsed;
+        EditorScroll.Visibility = Visibility.Collapsed;
+
+        DetailsMsgText.Text = "";
+        MsgText.Text = "";
+    }
+
+    private void ShowDetails(Course c)
+    {
+        EmptyStateCard.Visibility = Visibility.Collapsed;
+        DetailsCard.Visibility = Visibility.Visible;
+        EditorScroll.Visibility = Visibility.Collapsed;
+
+        DetailsTitleText.Text = c.Name;
+        DetailsPlatformText.Text = string.IsNullOrWhiteSpace(c.Platform) ? "Curso Online" : c.Platform;
+        DetailsStatusText.Text = StatusToDisplay(c.Status);
+        DetailsUsernameText.Text = string.IsNullOrWhiteSpace(c.Username) ? "-" : c.Username;
+        DetailsUrlText.Text = string.IsNullOrWhiteSpace(c.Url) ? "-" : c.Url;
+        DetailsNotesText.Text = string.IsNullOrWhiteSpace(c.Notes) ? "-" : c.Notes;
+
+        DetailsOpenBtn.IsEnabled = !string.IsNullOrWhiteSpace(c.Url);
+        DetailsMsgText.Text = "";
+    }
+
+    private void ShowEditor()
+    {
+        EmptyStateCard.Visibility = Visibility.Collapsed;
+        DetailsCard.Visibility = Visibility.Collapsed;
+        EditorScroll.Visibility = Visibility.Visible;
+
+        DetailsMsgText.Text = "";
+    }
+
+    private void StartNewCourse()
+    {
+        CoursesList.SelectedIndex = -1;
+        _selectedCourse = null;
+
+        ClearForm();
+        FormTitle.Text = "Novo Curso";
+        SaveBtn.Content = "Salvar Curso";
+        MsgText.Text = "";
+
+        ShowEditor();
+        NameBox.Focus(Microsoft.UI.Xaml.FocusState.Programmatic);
+    }
+
+    private async System.Threading.Tasks.Task OpenCourseAsync(Course c)
+    {
+        if (_repo is null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(c.Url))
+            return;
+
+        try
+        {
+            await _repo.UpdateLastAccessedAsync(c.Id);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Falha ao atualizar 'ultimo acesso' do curso. Motivo: {ex.Message}");
+        }
+
+        AppState.PendingBrowserUrl = c.Url;
+        AppState.CurrentCourseId = c.Id;
         AppState.RequestNavigateTag?.Invoke("browser");
+    }
+
+    private static string StatusToDisplay(string? status)
+    {
+        return (status ?? "fazendo").Trim().ToLowerInvariant() switch
+        {
+            "concluido" => "Concluído",
+            "pausado" => "Pausado",
+            _ => "Em andamento"
+        };
     }
 
     private static string? NullIfEmpty(string? s)

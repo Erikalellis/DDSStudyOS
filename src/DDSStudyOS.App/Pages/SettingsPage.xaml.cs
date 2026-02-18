@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
+using Windows.System;
 
 namespace DDSStudyOS.App.Pages;
 
@@ -35,7 +36,76 @@ public sealed partial class SettingsPage : Page
         CompanyText.Text = $"Desenvolvido por {AppReleaseInfo.CompanyName}";
         DownloadsToggle.IsOn = SettingsService.DownloadsOrganizerEnabled;
 
+        InitializeBrowserSettings();
+        InitializeFeedbackSettings();
         InitializeVaultSection();
+    }
+
+    private void InitializeBrowserSettings()
+    {
+        SearchProviderCombo.Items.Clear();
+        SearchProviderCombo.Items.Add("Google");
+        SearchProviderCombo.Items.Add("DuckDuckGo");
+        SearchProviderCombo.Items.Add("Bing");
+
+        var current = (SettingsService.BrowserSearchProvider ?? "google").Trim().ToLowerInvariant();
+        SearchProviderCombo.SelectedIndex = current switch
+        {
+            "duckduckgo" or "ddg" => 1,
+            "bing" => 2,
+            _ => 0
+        };
+
+        SearchProviderCombo.SelectionChanged += (_, __) =>
+        {
+            var selected = SearchProviderCombo.SelectedItem?.ToString() ?? "Google";
+            SettingsService.BrowserSearchProvider = selected.ToLowerInvariant() switch
+            {
+                "duckduckgo" => "duckduckgo",
+                "bing" => "bing",
+                _ => selected.Contains("duck", StringComparison.OrdinalIgnoreCase) ? "duckduckgo" :
+                     selected.Contains("bing", StringComparison.OrdinalIgnoreCase) ? "bing" :
+                     "google"
+            };
+
+            MsgText.Text = $"Busca padrão do navegador: {SearchProviderCombo.SelectedItem}.";
+        };
+    }
+
+    private void InitializeFeedbackSettings()
+    {
+        FeedbackUrlBox.Text = SettingsService.FeedbackFormUrl;
+    }
+
+    private void SaveFeedback_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        SettingsService.FeedbackFormUrl = (FeedbackUrlBox.Text ?? string.Empty).Trim();
+        MsgText.Text = "Link de feedback salvo.";
+    }
+
+    private async void OpenFeedback_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var url = (FeedbackUrlBox.Text ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            MsgText.Text = "Informe um link de feedback válido (ex.: Google Forms).";
+            return;
+        }
+
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            MsgText.Text = "Link inválido.";
+            return;
+        }
+
+        try
+        {
+            await Launcher.LaunchUriAsync(uri);
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Falha ao abrir link: " + ex.Message;
+        }
     }
 
     private void DownloadsToggle_Toggled(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

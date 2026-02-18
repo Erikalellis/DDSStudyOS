@@ -42,7 +42,15 @@
             <!-- Left: Course List -->
             <Grid Grid.Column="0" RowDefinitions="Auto,*">
                 <TextBox Grid.Row="0" x:Name="SearchBox" PlaceholderText="Buscar curso..." Margin="0,0,0,12" TextChanged="SearchBox_TextChanged"/>
-                <ListView Grid.Row="1" x:Name="CoursesList" SelectionMode="Single" SelectionChanged="CoursesList_SelectionChanged" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="1" CornerRadius="4">
+                <ListView Grid.Row="1"
+                          x:Name="CoursesList"
+                          SelectionMode="Single"
+                          IsItemClickEnabled="True"
+                          ItemClick="CoursesList_ItemClick"
+                          SelectionChanged="CoursesList_SelectionChanged"
+                          BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                          BorderThickness="1"
+                          CornerRadius="4">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Padding="12">
@@ -57,49 +65,137 @@
                 </ListView>
             </Grid>
 
-            <!-- Right: Details Form -->
-            <ScrollViewer Grid.Column="1">
-                <StackPanel Spacing="16" MaxWidth="600" HorizontalAlignment="Left">
-                    
-                    <!-- Info Card -->
-                    <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="24">
-                        <StackPanel Spacing="16">
-                            <TextBlock x:Name="FormTitle" Text="Detalhes do Curso" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                            
-                            <TextBox x:Name="NameBox" Header="Nome do Curso" PlaceholderText="Ex: Python Completo 2026"/>
-                            <TextBox x:Name="PlatformBox" Header="Plataforma" PlaceholderText="Ex: Udemy, Coursera"/>
-                            <TextBox x:Name="UrlBox" Header="Link de Acesso" PlaceholderText="https://..."/>
-                            
-                            <Grid ColumnSpacing="16">
+            <!-- Right: Details / Editor -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Detalhes"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Opacity="0.85"
+                           Margin="0,0,0,12"/>
+
+                <Grid Grid.Row="1">
+                    <!-- Empty State -->
+                    <Border x:Name="EmptyStateCard"
+                            Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                            CornerRadius="8"
+                            Padding="24"
+                            Visibility="Visible">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Selecione um curso na lista"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="Dica: clique em “Novo Curso” para cadastrar. Para editar um curso existente, selecione e clique em “Editar”."
+                                       Opacity="0.75"
+                                       TextWrapping="WrapWholeWords"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Read-only Details -->
+                    <Border x:Name="DetailsCard"
+                            Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                            CornerRadius="8"
+                            Padding="24"
+                            Visibility="Collapsed">
+                        <StackPanel Spacing="14">
+                            <StackPanel Spacing="2">
+                                <TextBlock x:Name="DetailsTitleText"
+                                           Text="Curso"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock x:Name="DetailsPlatformText" Text="Plataforma" Opacity="0.75"/>
+                            </StackPanel>
+
+                            <Grid ColumnSpacing="12" RowSpacing="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" x:Name="UsernameBox" Header="Login (Usuário)" PlaceholderText="seu@email.com"/>
-                                <PasswordBox Grid.Column="1" x:Name="PasswordBox" Header="Senha (deixe em branco para manter a atual)"/>
-                            </Grid>
-                            
-                            <ComboBox x:Name="StatusBox" Header="Status Atual" SelectedIndex="0" HorizontalAlignment="Stretch">
-                                <ComboBoxItem Content="Em Andamento" Tag="fazendo"/>
-                                <ComboBoxItem Content="Concluído" Tag="concluido"/>
-                                <ComboBoxItem Content="Pausado" Tag="pausado"/>
-                            </ComboBox>
-                            
-                            <TextBox x:Name="NotesBox" Header="Observações Rápidas" AcceptsReturn="True" TextWrapping="Wrap" Height="80" PlaceholderText="Anotações sobre login ou progresso..."/>
 
-                            <!-- Actions Toolbar -->
-                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,16,0,0">
-                                <Button x:Name="SaveBtn" Content="Salvar" Style="{StaticResource AccentButtonStyle}" Click="Save_Click"/>
-                                <Button x:Name="DeleteBtn" Content="Excluir" Click="Delete_Click" Visibility="Collapsed"/>
-                                <AppBarSeparator/>
-                                <Button x:Name="OpenBtn" Content="Abrir no Navegador" Click="OpenCourse_Click" IsEnabled="False"/>
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="2">
+                                    <TextBlock Text="Status" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock x:Name="DetailsStatusText" Text="-" FontWeight="SemiBold"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
+                                    <TextBlock Text="Usuário" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock x:Name="DetailsUsernameText" Text="-" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="2">
+                                    <TextBlock Text="Link" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock x:Name="DetailsUrlText" Text="-" TextWrapping="WrapWholeWords"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="2">
+                                    <TextBlock Text="Observações" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock x:Name="DetailsNotesText" Text="-" Opacity="0.9" TextWrapping="WrapWholeWords"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                <Button x:Name="DetailsOpenBtn" Content="Abrir" Style="{StaticResource AccentButtonStyle}" Click="DetailsOpen_Click"/>
+                                <Button x:Name="DetailsEditBtn" Content="Editar" Click="DetailsEdit_Click"/>
+                                <Button x:Name="DetailsDeleteBtn" Content="Excluir" Click="DetailsDelete_Click" Foreground="Red" BorderBrush="Red"/>
                             </StackPanel>
-                            
-                            <TextBlock x:Name="MsgText" Text="" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontWeight="SemiBold"/>
+
+                            <TextBlock x:Name="DetailsMsgText"
+                                       Text=""
+                                       Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="WrapWholeWords"/>
                         </StackPanel>
                     </Border>
-                </StackPanel>
-            </ScrollViewer>
+
+                    <!-- Editor -->
+                    <ScrollViewer x:Name="EditorScroll" Visibility="Collapsed">
+                        <StackPanel Spacing="16" MaxWidth="600" HorizontalAlignment="Left">
+                            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="24">
+                                <StackPanel Spacing="16">
+                                    <TextBlock x:Name="FormTitle" Text="Novo Curso" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                                    <TextBox x:Name="NameBox" Header="Nome do Curso" PlaceholderText="Ex: Python Completo 2026"/>
+                                    <TextBox x:Name="PlatformBox" Header="Plataforma" PlaceholderText="Ex: Udemy, Coursera"/>
+                                    <TextBox x:Name="UrlBox" Header="Link de Acesso" PlaceholderText="https://..."/>
+
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Grid.Column="0" x:Name="UsernameBox" Header="Login (Usuário)" PlaceholderText="seu@email.com"/>
+                                        <PasswordBox Grid.Column="1" x:Name="PasswordBox" Header="Senha (deixe em branco para manter a atual)"/>
+                                    </Grid>
+
+                                    <ComboBox x:Name="StatusBox" Header="Status Atual" SelectedIndex="0" HorizontalAlignment="Stretch">
+                                        <ComboBoxItem Content="Em Andamento" Tag="fazendo"/>
+                                        <ComboBoxItem Content="Concluído" Tag="concluido"/>
+                                        <ComboBoxItem Content="Pausado" Tag="pausado"/>
+                                    </ComboBox>
+
+                                    <TextBox x:Name="NotesBox" Header="Observações Rápidas" AcceptsReturn="True" TextWrapping="Wrap" Height="80" PlaceholderText="Anotações sobre login ou progresso..."/>
+
+                                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,16,0,0">
+                                        <Button x:Name="SaveBtn" Content="Salvar" Style="{StaticResource AccentButtonStyle}" Click="Save_Click"/>
+                                        <Button Content="Cancelar" Click="CancelEdit_Click"/>
+                                    </StackPanel>
+
+                                    <TextBlock x:Name="MsgText" Text="" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

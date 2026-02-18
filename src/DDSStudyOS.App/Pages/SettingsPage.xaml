@@ -43,6 +43,35 @@
                     </Border>
                 </StackPanel>
 
+                <!-- Navegador -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Navegador" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <ComboBox x:Name="SearchProviderCombo" Header="Mecanismo de busca padrão"/>
+                            <TextBlock Text="Escolha qual buscador será usado quando você digitar termos (sem URL) na barra do navegador." FontSize="12" Opacity="0.65" TextWrapping="WrapWholeWords"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Feedback -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Feedback (Beta)" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <InfoBar Title="Versão de teste"
+                                     Message="Estamos em beta. Seu feedback ajuda muito a melhorar o DDS StudyOS."
+                                     IsOpen="True"
+                                     Severity="Informational"/>
+                            <TextBox x:Name="FeedbackUrlBox" Header="Link do formulário de feedback" PlaceholderText="Cole aqui o link do Google Forms (opcional)"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Salvar" Click="SaveFeedback_Click" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="Abrir link de feedback" Click="OpenFeedback_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
                 <!-- DDS Vault -->
                 <StackPanel Spacing="12">
                     <TextBlock Text="Cofre DDS (Logins &amp; Senhas)" Style="{StaticResource SubtitleTextBlockStyle}"/>
