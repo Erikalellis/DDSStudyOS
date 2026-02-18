@@ -1,15 +1,18 @@
 DDS StudyOS v2.1.0 (versão de teste)
 
-Estamos liberando uma build para testes do DDS StudyOS, nosso hub desktop de estudos.
+Estamos liberando uma nova build para testes do DDS StudyOS, nosso hub desktop de estudos.
 
-O que você pode testar agora:
-- Cursos, materiais e agenda integrados
-- Pomodoro + organização automática de downloads
-- Backup local e restauração
-- Navegador interno (WebView2)
+O que mudou nesta versão:
+- Novo splash premium (fade-in/fade-out) com carregamento
+- Cadastro inicial de perfil (primeira execução)
+- Tour guiado no primeiro uso
+- Instalador oficial (Inno Setup) em português com verificação do WebView2
 
 Download (instalador oficial):
 https://github.com/Erikalellis/DDSStudyOS/releases/tag/v2.1.0
+
+Download direto (Inno):
+https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup-Inno.exe
 
 Por favor, teste e envie feedback (bugs, sugestões e prints) nos comentários ou por mensagem.
 Deep Darkness Studios

@@ -6,6 +6,9 @@ Estamos liberando a nova versao de testes do **DDS StudyOS v2.1.0**.
 Principais melhorias desta build:
 - Instalador oficial em Inno Setup, mais robusto e em portugues (pt-BR).
 - Correcao de cenarios onde o app instalava, mas nao iniciava.
+- Splash premium (fade-in/fade-out) com barra de progresso.
+- Cadastro inicial de perfil (primeira execucao).
+- Tour guiado no primeiro uso.
 - Atalho no Desktop e no Menu Iniciar.
 - Verificacao automatica de pre-requisito WebView2 durante o setup.
 - Base de release padronizada para os proximos ciclos de atualizacao.
@@ -23,6 +26,11 @@ Se encontrar qualquer erro, envie:
 1. Versao do Windows.
 2. Etapa em que ocorreu (instalacao, abertura ou uso).
 3. Print/video curto.
+
+## Se o app nao abrir (ajuda rapida)
+- Log do instalador (Inno): execute com `/LOG="C:\Temp\DDSStudyOS-Inno.log"`
+- Log de pre-requisitos: `%LOCALAPPDATA%\Temp\DDSStudyOS-Prereqs.log`
+- Log do app: `%LOCALAPPDATA%\DDSStudyOS\logs\app.log`
 
 ## Ordem sugerida das fotos do post
 - Foto 1: Tela inicial do DDS StudyOS (janela aberta e funcionando).
