@@ -85,6 +85,16 @@ function Assert-PublishOutput {
         }
     }
 
+    $priPath = Join-Path $PublishPath "DDSStudyOS.App.pri"
+    if (-not (Test-Path $priPath)) {
+        throw "Publish invalido: arquivo .pri do app nao encontrado: $priPath"
+    }
+
+    $xbfFiles = Get-ChildItem -Path $PublishPath -Filter "*.xbf" -Recurse -File -ErrorAction SilentlyContinue
+    if (-not $xbfFiles -or $xbfFiles.Count -eq 0) {
+        throw "Publish invalido: nenhum arquivo .xbf foi encontrado em: $PublishPath"
+    }
+
     $runtimeConfigPath = Join-Path $PublishPath "DDSStudyOS.App.runtimeconfig.json"
     if (-not (Test-Path $runtimeConfigPath)) {
         throw "Publish invalido: runtimeconfig nao encontrado: $runtimeConfigPath"
@@ -94,6 +104,67 @@ function Assert-PublishOutput {
     $includedFrameworks = $runtimeConfig.runtimeOptions.includedFrameworks
     if (-not $includedFrameworks -or $includedFrameworks.Count -eq 0) {
         throw "Publish invalido: expected 'includedFrameworks' para build self-contained em $runtimeConfigPath."
+    }
+}
+
+function Repair-WinUIUnpackagedPublishArtifacts {
+    param(
+        [string]$BuildOutputPath,
+        [string]$PublishPath
+    )
+
+    if (-not (Test-Path $BuildOutputPath)) {
+        throw "Pasta de build nao encontrada: $BuildOutputPath"
+    }
+    if (-not (Test-Path $PublishPath)) {
+        throw "Pasta de publish nao encontrada: $PublishPath"
+    }
+
+    # Bug fix: uma versao anterior deste script podia acabar copiando artefatos do proprio
+    # publish (BuildOutputPath\\publish) para dentro do publish novamente, criando
+    # pastas aninhadas do tipo publish\\publish. Remova isso para nao poluir o instalador.
+    $nestedPublish = Join-Path $PublishPath "publish"
+    if (Test-Path $nestedPublish) {
+        $nestedXbfs = Get-ChildItem -Path $nestedPublish -Filter "*.xbf" -Recurse -File -ErrorAction SilentlyContinue
+        if ($nestedXbfs -and $nestedXbfs.Count -gt 0) {
+            Write-Host "==> Limpando pasta aninhada indevida: $nestedPublish"
+            Remove-Item -Path $nestedPublish -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    # Em projetos WinUI 3 unpackaged, alguns artefatos gerados (XBF/PRI do app) nem sempre
+    # sao copiados automaticamente para a pasta de publish. Sem eles, InitializeComponent falha.
+    $appPriName = "DDSStudyOS.App.pri"
+    $publishPri = Join-Path $PublishPath $appPriName
+    $buildPri = Join-Path $BuildOutputPath $appPriName
+    if (Test-Path $buildPri) {
+        Write-Host "==> Corrigindo publish: copiando $appPriName"
+        Copy-Item -Path $buildPri -Destination $publishPri -Force
+    }
+
+    # Nao copie nada que ja esteja dentro de BuildOutputPath\\publish (evita publish\\publish)
+    $excludeDir = Join-Path $BuildOutputPath "publish"
+    $excludePrefix = $null
+    if (Test-Path $excludeDir) {
+        $excludePrefix = (Resolve-Path $excludeDir).Path.TrimEnd('\') + '\'
+    }
+
+    $buildXbfs = Get-ChildItem -Path $BuildOutputPath -Filter "*.xbf" -Recurse -File -ErrorAction SilentlyContinue |
+        Where-Object {
+            if (-not $excludePrefix) { return $true }
+            return -not $_.FullName.StartsWith($excludePrefix, [System.StringComparison]::OrdinalIgnoreCase)
+        }
+    if ($buildXbfs -and $buildXbfs.Count -gt 0) {
+        Write-Host "==> Corrigindo publish: copiando arquivos .xbf ($($buildXbfs.Count))"
+        foreach ($file in $buildXbfs) {
+            $relative = $file.FullName.Substring($BuildOutputPath.Length).TrimStart('\')
+            $dest = Join-Path $PublishPath $relative
+            $destDir = Split-Path -Path $dest -Parent
+            if (-not (Test-Path $destDir)) {
+                New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+            }
+            Copy-Item -Path $file.FullName -Destination $dest -Force
+        }
     }
 }
 
@@ -143,7 +214,10 @@ if ($LASTEXITCODE -ne 0) {
     throw "Falha no publish do app."
 }
 
-$publishPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier\publish"
+$buildOutputPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier"
+$publishPath = Join-Path $buildOutputPath "publish"
+
+Repair-WinUIUnpackagedPublishArtifacts -BuildOutputPath $buildOutputPath -PublishPath $publishPath
 Assert-PublishOutput -PublishPath $publishPath -SelfContainedRequested $selfContainedValue
 Write-Host ""
 Write-Host "Publish concluido em: $publishPath"

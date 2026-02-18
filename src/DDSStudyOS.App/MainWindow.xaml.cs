@@ -2,9 +2,7 @@ using DDSStudyOS.App.Pages;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Animation;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace DDSStudyOS.App;
@@ -12,18 +10,6 @@ namespace DDSStudyOS.App;
 public sealed partial class MainWindow : Window
 {
     private static readonly string AppTitle = AppReleaseInfo.ProductName;
-    private const int SplashMinDurationMs = 8000;
-    private const int SplashStepDelayMs = 700;
-    private static readonly (string Message, string Detail, double Progress)[] SplashSteps =
-    {
-        ("Iniciando plataforma...", "Carregando componentes centrais...", 4),
-        ("Validando ambiente local...", "Conferindo integridade de configuracoes...", 16),
-        ("Preparando base de dados...", "Inicializando estrutura de armazenamento...", 30),
-        ("Ativando modulos de estudo...", "Cursos, agenda e materiais em preparacao...", 48),
-        ("Carregando Cofre DDS...", "Sincronizando credenciais protegidas...", 64),
-        ("Inicializando navegador interno...", "Preparando WebView para acesso rapido...", 80),
-        ("Aplicando preferencias...", "Finalizando configuracoes do usuario...", 93)
-    };
     private readonly DownloadOrganizerService _downloadOrganizer = new();
     private readonly ReminderNotificationService _reminderNotifier = new(new DatabaseService());
     private PomodoroService? _pomodoro;
@@ -45,76 +31,24 @@ public sealed partial class MainWindow : Window
         // Init Pomodoro
         InitializePomodoro();
 
-        // Splash + carregamento + cadastro inicial de usuário
-        _ = RunFirstLaunchExperienceAsync();
+        // Bootstrap de inicializacao sem splash pesado
+        _ = BootstrapAsync();
     }
 
-    private async Task RunFirstLaunchExperienceAsync()
+    private async Task BootstrapAsync()
     {
-        var watch = Stopwatch.StartNew();
-
         try
         {
-            AppLogger.Info("Splash branding iniciado.");
-
-            SetSplashStep("Iniciando plataforma...", "Preparando experiencia premium DDS StudyOS...", 2);
-            await AnimateOpacityAsync(SplashCard, from: 0, to: 1, durationMs: 520);
-
-            foreach (var step in SplashSteps)
-            {
-                SetSplashStep(step.Message, step.Detail, step.Progress);
-                await Task.Delay(SplashStepDelayMs);
-            }
-
-            var remainingMs = SplashMinDurationMs - (int)watch.ElapsedMilliseconds;
-            if (remainingMs > 0)
-            {
-                await Task.Delay(remainingMs);
-            }
-
-            SetSplashStep("DDS StudyOS pronto para iniciar.", "Abrindo tela inicial...", 100);
-            await Task.Delay(360);
-
-            await AnimateOpacityAsync(SplashCard, from: SplashCard.Opacity, to: 0, durationMs: 420);
-            await AnimateOpacityAsync(SplashOverlay, from: SplashOverlay.Opacity, to: 0, durationMs: 320);
-            SplashOverlay.Visibility = Visibility.Collapsed;
-
             await EnsureUserRegistrationAsync();
             StartBackgroundServices();
 
             // Executa diagnostico em background sem travar a interface principal
             _ = RunStartupChecksAsync();
-
-            AppLogger.Info($"Splash branding finalizado em {watch.ElapsedMilliseconds} ms.");
         }
         catch (Exception ex)
         {
-            AppLogger.Error("Falha na experiencia de primeiro acesso.", ex);
-            SplashOverlay.Visibility = Visibility.Collapsed;
+            AppLogger.Error("Falha na inicializacao da janela principal.", ex);
         }
-    }
-
-    private Task AnimateOpacityAsync(UIElement target, double from, double to, int durationMs)
-    {
-        var tcs = new TaskCompletionSource<bool>();
-
-        var animation = new DoubleAnimation
-        {
-            From = from,
-            To = to,
-            Duration = TimeSpan.FromMilliseconds(durationMs),
-            EnableDependentAnimation = true
-        };
-
-        var storyboard = new Storyboard();
-        storyboard.Children.Add(animation);
-        Storyboard.SetTarget(animation, target);
-        Storyboard.SetTargetProperty(animation, "Opacity");
-
-        storyboard.Completed += (_, __) => tcs.TrySetResult(true);
-        storyboard.Begin();
-
-        return tcs.Task;
     }
 
     private void StartBackgroundServices()
@@ -131,15 +65,6 @@ public sealed partial class MainWindow : Window
         {
             _reminderNotifier.Start(this);
         }
-    }
-
-    private void SetSplashStep(string message, string detail, double progress)
-    {
-        var safeProgress = Math.Clamp(progress, 0, 100);
-        SplashStatusText.Text = message;
-        SplashDetailText.Text = detail;
-        SplashProgressBar.Value = safeProgress;
-        SplashProgressText.Text = $"{Math.Round(safeProgress)}%";
     }
 
     private void UpdateReminderServiceFromProfile()
