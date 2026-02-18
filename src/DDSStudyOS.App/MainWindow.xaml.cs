@@ -2,7 +2,9 @@ using DDSStudyOS.App.Pages;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace DDSStudyOS.App;
@@ -13,6 +15,8 @@ public sealed partial class MainWindow : Window
     private readonly DownloadOrganizerService _downloadOrganizer = new();
     private readonly ReminderNotificationService _reminderNotifier = new(new DatabaseService());
     private PomodoroService? _pomodoro;
+    private bool _bootstrapped;
+    private bool _splashDismissed;
 
     public MainWindow()
     {
@@ -21,6 +25,7 @@ public sealed partial class MainWindow : Window
 
         // Custom Window Title
         this.Title = AppTitle;
+        SplashVersionText.Text = $"v{AppReleaseInfo.VersionString}";
         UpdateUserGreeting();
 
         ContentFrame.Navigate(typeof(DashboardPage));
@@ -31,14 +36,78 @@ public sealed partial class MainWindow : Window
         // Init Pomodoro
         InitializePomodoro();
 
-        // Bootstrap de inicializacao sem splash pesado
-        _ = BootstrapAsync();
+        InitializeSplashVisualState();
     }
 
-    private async Task BootstrapAsync()
+    private void InitializeSplashVisualState()
     {
         try
         {
+            SplashOverlay.Visibility = Visibility.Visible;
+            SplashOverlay.IsHitTestVisible = true;
+
+            var contentVisual = ElementCompositionPreview.GetElementVisual(SplashContent);
+            contentVisual.Opacity = 0f;
+            contentVisual.Scale = new Vector3(0.98f, 0.98f, 1f);
+
+            SplashProgressBar.Value = 0;
+            SplashStatusText.Text = "Iniciando...";
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Splash: falha ao inicializar visual. Motivo: {ex.Message}");
+        }
+    }
+
+    private void RootGrid_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (_bootstrapped) return;
+        _bootstrapped = true;
+
+        _ = BootstrapWithSplashAsync();
+    }
+
+    private async Task BootstrapWithSplashAsync()
+    {
+        try
+        {
+            await ShowSplashAsync();
+
+            var startedAt = DateTimeOffset.Now;
+
+            await SetSplashStepAsync(10, "Carregando perfil e preferências...");
+            await Task.Delay(150);
+
+            await SetSplashStepAsync(35, "Preparando banco de dados...");
+            try
+            {
+                var db = new DatabaseService();
+                await db.EnsureCreatedAsync();
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"Splash: falha ao preparar banco. Motivo: {ex.Message}");
+            }
+
+            await SetSplashStepAsync(60, "Carregando módulos principais...");
+            await Task.Delay(220);
+
+            await SetSplashStepAsync(82, "Verificando componentes do sistema...");
+            await Task.Delay(220);
+
+            await SetSplashStepAsync(100, "Finalizando...");
+
+            // Mantém splash por alguns segundos para dar um ar mais "premium",
+            // mas sem travar a inicialização caso tudo esteja rápido demais.
+            var minDuration = TimeSpan.FromSeconds(3);
+            var elapsed = DateTimeOffset.Now - startedAt;
+            if (elapsed < minDuration)
+            {
+                await Task.Delay(minDuration - elapsed);
+            }
+
+            await HideSplashAsync();
+
             await EnsureUserRegistrationAsync();
             StartBackgroundServices();
 
@@ -48,7 +117,114 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             AppLogger.Error("Falha na inicializacao da janela principal.", ex);
+            await HideSplashAsync();
         }
+    }
+
+    private async Task ShowSplashAsync()
+    {
+        _splashDismissed = false;
+        SplashOverlay.Visibility = Visibility.Visible;
+        SplashOverlay.IsHitTestVisible = true;
+
+        // Garante layout antes de animar (melhor para Scale/CenterPoint).
+        await Task.Yield();
+        await AnimateSplashContentAsync(show: true);
+    }
+
+    private async Task HideSplashAsync()
+    {
+        if (_splashDismissed) return;
+        _splashDismissed = true;
+
+        try
+        {
+            await AnimateSplashContentAsync(show: false);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Splash: falha ao animar fechamento. Motivo: {ex.Message}");
+        }
+
+        SplashOverlay.IsHitTestVisible = false;
+        SplashOverlay.Visibility = Visibility.Collapsed;
+    }
+
+    private async Task SetSplashStepAsync(int percent, string status)
+    {
+        if (_splashDismissed) return;
+
+        percent = Math.Clamp(percent, 0, 100);
+        status = string.IsNullOrWhiteSpace(status) ? "Carregando..." : status.Trim();
+
+        await EnqueueOnUIAsync(() =>
+        {
+            SplashProgressBar.Value = percent;
+            SplashStatusText.Text = status;
+        });
+
+        // Pequena pausa para a UI conseguir renderizar as mudanças.
+        await Task.Delay(120);
+    }
+
+    private Task EnqueueOnUIAsync(Action action)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        if (!DispatcherQueue.TryEnqueue(() =>
+        {
+            try
+            {
+                action();
+                tcs.TrySetResult(true);
+            }
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+        }))
+        {
+            tcs.TrySetResult(false);
+        }
+
+        return tcs.Task;
+    }
+
+    private async Task AnimateSplashContentAsync(bool show)
+    {
+        var visual = ElementCompositionPreview.GetElementVisual(SplashContent);
+        var compositor = visual.Compositor;
+
+        var duration = TimeSpan.FromMilliseconds(show ? 450 : 350);
+        var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.2f, 1.0f));
+
+        visual.CenterPoint = new Vector3(
+            (float)(SplashContent.ActualWidth / 2.0),
+            (float)(SplashContent.ActualHeight / 2.0),
+            0f);
+
+        if (show)
+        {
+            visual.Opacity = 0f;
+            visual.Scale = new Vector3(0.98f, 0.98f, 1f);
+        }
+        else
+        {
+            visual.Opacity = 1f;
+            visual.Scale = new Vector3(1f, 1f, 1f);
+        }
+
+        var opacityAnim = compositor.CreateScalarKeyFrameAnimation();
+        opacityAnim.Duration = duration;
+        opacityAnim.InsertKeyFrame(1f, show ? 1f : 0f, easing);
+
+        var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
+        scaleAnim.Duration = duration;
+        scaleAnim.InsertKeyFrame(1f, show ? new Vector3(1f, 1f, 1f) : new Vector3(0.98f, 0.98f, 1f), easing);
+
+        visual.StartAnimation("Opacity", opacityAnim);
+        visual.StartAnimation("Scale", scaleAnim);
+
+        await Task.Delay(duration);
     }
 
     private void StartBackgroundServices()

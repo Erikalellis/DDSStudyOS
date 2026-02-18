@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" Loaded="RootGrid_Loaded">
         <NavigationView
             x:Name="NavView"
             PaneDisplayMode="Left"
@@ -51,5 +51,62 @@
 
             <Frame x:Name="ContentFrame" />
         </NavigationView>
+
+        <!-- Splash overlay (first launch + initialization). Hidden after bootstrap. -->
+        <Grid x:Name="SplashOverlay" IsHitTestVisible="True" Visibility="Visible">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FF05060A" Offset="0.0" />
+                    <GradientStop Color="#FF0B1C3A" Offset="0.45" />
+                    <GradientStop Color="#FF2C1240" Offset="1.0" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <StackPanel x:Name="SplashContent"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="16">
+                <Border CornerRadius="999"
+                        Background="#22FFFFFF"
+                        Padding="14">
+                    <Image Source="ms-appx:///Assets/SplashBackground.png"
+                           Width="220"
+                           Height="220"
+                           Stretch="UniformToFill" />
+                </Border>
+
+                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                    <TextBlock Text="DDS StudyOS"
+                               Foreground="White"
+                               FontSize="38"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Deep Darkness Studios"
+                               Foreground="#CCFFFFFF"
+                               FontSize="12"
+                               HorizontalAlignment="Center" />
+                    <TextBlock x:Name="SplashVersionText"
+                               Text="v0.0.0"
+                               Foreground="#99FFFFFF"
+                               FontSize="11"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Width="360" Spacing="10" Margin="0,10,0,0">
+                    <ProgressBar x:Name="SplashProgressBar"
+                                 Minimum="0"
+                                 Maximum="100"
+                                 Value="0"
+                                 Height="6"
+                                 Foreground="#FF7B61FF" />
+                    <TextBlock x:Name="SplashStatusText"
+                               Text="Iniciando..."
+                               Foreground="#CCFFFFFF"
+                               FontSize="12"
+                               TextAlignment="Center"
+                               TextWrapping="WrapWholeWords" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
