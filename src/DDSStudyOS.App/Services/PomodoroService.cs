@@ -7,14 +7,15 @@ public class PomodoroService
 {
     private System.Timers.Timer _timer;
     private int _secondsRemaining;
-    private int _totalSeconds; // Para calcular progresso
+    private int _totalSeconds;
     private bool _isWorkMode = true;
     
-    // Callback agora recebe: TimeString, ProgressValue (0-100), StatusString, IsWorkMode
     private Action<string, double, string, bool> _onTick;
     private Action _onComplete;
 
     public bool IsRunning { get; private set; }
+    public bool IsWorkMode => _isWorkMode;
+    public bool HasActiveSession => _secondsRemaining > 0 && _totalSeconds > 0;
     public string CurrentStatus => _isWorkMode ? "Foco" : "Pausa";
     public string TimeDisplay => $"{_secondsRemaining / 60:D2}:{_secondsRemaining % 60:D2}";
     
@@ -40,8 +41,21 @@ public class PomodoroService
 
     private void Start(int minutes)
     {
+        minutes = Math.Clamp(minutes, 1, 180);
         _totalSeconds = minutes * 60;
         _secondsRemaining = _totalSeconds;
+        IsRunning = true;
+        _timer.Start();
+        NotifyTick();
+    }
+
+    public void Resume()
+    {
+        if (!HasActiveSession)
+        {
+            return;
+        }
+
         IsRunning = true;
         _timer.Start();
         NotifyTick();
@@ -51,7 +65,6 @@ public class PomodoroService
     {
         _timer.Stop();
         IsRunning = false;
-        // Notifica estado pausado (sem mudar tempo)
         NotifyTick();
     }
 
@@ -84,9 +97,6 @@ public class PomodoroService
         double progress = 0;
         if (_totalSeconds > 0)
         {
-            // Progresso inverso (barra cheia no começo, vazia no final? ou enchendo?)
-            // Windows Taskbar geralmente mostra "quanto já foi feito".
-            // Para Pomodoro, "tempo decorrido" é o progresso.
             int elapsed = _totalSeconds - _secondsRemaining;
             progress = (double)elapsed / _totalSeconds;
         }

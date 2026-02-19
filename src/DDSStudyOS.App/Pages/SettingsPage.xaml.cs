@@ -37,6 +37,7 @@ public sealed partial class SettingsPage : Page
         DownloadsToggle.IsOn = SettingsService.DownloadsOrganizerEnabled;
 
         InitializeBrowserSettings();
+        InitializePomodoroSettings();
         InitializeFeedbackSettings();
         InitializeVaultSection();
     }
@@ -77,6 +78,15 @@ public sealed partial class SettingsPage : Page
         FeedbackUrlBox.Text = SettingsService.FeedbackFormUrl;
     }
 
+    private void InitializePomodoroSettings()
+    {
+        PomoFocusBox.Value = SettingsService.PomodoroFocusMinutes;
+        PomoBreakBox.Value = SettingsService.PomodoroBreakMinutes;
+        PomoAutoBreakToggle.IsOn = SettingsService.PomodoroAutoStartBreak;
+        PomoAutoWorkToggle.IsOn = SettingsService.PomodoroAutoStartWork;
+        PomoNotifyToggle.IsOn = SettingsService.PomodoroNotifyOnFinish;
+    }
+
     private void SaveFeedback_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         SettingsService.FeedbackFormUrl = (FeedbackUrlBox.Text ?? string.Empty).Trim();
@@ -106,6 +116,20 @@ public sealed partial class SettingsPage : Page
         {
             MsgText.Text = "Falha ao abrir link: " + ex.Message;
         }
+    }
+
+    private void SavePomodoro_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var focus = (int)Math.Round(double.IsNaN(PomoFocusBox.Value) ? 25 : PomoFocusBox.Value);
+        var pause = (int)Math.Round(double.IsNaN(PomoBreakBox.Value) ? 5 : PomoBreakBox.Value);
+
+        SettingsService.PomodoroFocusMinutes = focus;
+        SettingsService.PomodoroBreakMinutes = pause;
+        SettingsService.PomodoroAutoStartBreak = PomoAutoBreakToggle.IsOn;
+        SettingsService.PomodoroAutoStartWork = PomoAutoWorkToggle.IsOn;
+        SettingsService.PomodoroNotifyOnFinish = PomoNotifyToggle.IsOn;
+
+        MsgText.Text = "Configurações do Pomodoro salvas. Elas serão aplicadas no próximo ciclo.";
     }
 
     private void DownloadsToggle_Toggled(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

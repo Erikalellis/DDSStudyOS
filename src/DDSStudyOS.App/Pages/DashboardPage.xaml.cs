@@ -94,22 +94,55 @@ public sealed partial class DashboardPage : Page
 
             AppState.PendingBrowserUrl = _lastCourse.Url;
             AppState.CurrentCourseId = _lastCourse.Id;
-            AppState.RequestNavigateTag?.Invoke("browser");
+            NavigateToTag("browser");
         }
     }
 
-    private void QuickAction_Click(object sender, ItemClickEventArgs e)
+    private void QuickActionButton_Click(object sender, RoutedEventArgs e)
     {
-        if (e.ClickedItem is not FrameworkElement element || element.Tag is not string tag)
+        if (sender is not FrameworkElement element || element.Tag is not string tag)
             return;
 
         if (tag == "new_course")
         {
             AppState.PendingCoursesAction = "new";
-            AppState.RequestNavigateTag?.Invoke("courses");
+            NavigateToTag("courses");
             return;
         }
 
-        AppState.RequestNavigateTag?.Invoke(tag);
+        if (tag == "browser_favorites")
+        {
+            AppState.PendingBrowserUrl = "dds://favoritos";
+            NavigateToTag("browser");
+            return;
+        }
+
+        NavigateToTag(tag);
+    }
+
+    private void NavigateToTag(string tag)
+    {
+        if (AppState.RequestNavigateTag is { } navigate)
+        {
+            navigate(tag);
+            return;
+        }
+
+        var pageType = tag switch
+        {
+            "dashboard" => typeof(DashboardPage),
+            "courses" => typeof(CoursesPage),
+            "materials" => typeof(MaterialsPage),
+            "agenda" => typeof(AgendaPage),
+            "browser" => typeof(BrowserPage),
+            "settings" => typeof(SettingsPage),
+            "dev" => typeof(DevelopmentPage),
+            _ => typeof(DashboardPage)
+        };
+
+        if (Frame?.CurrentSourcePageType != pageType)
+        {
+            Frame?.Navigate(pageType);
+        }
     }
 }

@@ -21,6 +21,7 @@ public sealed partial class MainWindow : Window
     private TaskCompletionSource<bool>? _tourCompletion;
     private int _tourStepIndex;
     private TourStep[] _tourSteps = Array.Empty<TourStep>();
+    private bool _suppressNavSelectionChanged;
 
     private sealed record TourStep(FrameworkElement Target, string Title, string Subtitle);
 
@@ -34,7 +35,7 @@ public sealed partial class MainWindow : Window
         SplashVersionText.Text = $"v{AppReleaseInfo.VersionString}";
         UpdateUserGreeting();
 
-        ContentFrame.Navigate(typeof(DashboardPage));
+        NavigateToTag("dashboard");
 
         // Permite que outras telas peçam navegação (MVP)
         Services.AppState.RequestNavigateTag = NavigateToTag;
@@ -80,11 +81,13 @@ public sealed partial class MainWindow : Window
             await ShowSplashAsync();
 
             var startedAt = DateTimeOffset.Now;
+            var isFirstRun = !UserProfileService.IsRegistered();
+            var minimumSplashDuration = isFirstRun ? TimeSpan.FromSeconds(10) : TimeSpan.FromSeconds(7);
 
-            await SetSplashStepAsync(10, "Carregando perfil e preferências...");
-            await Task.Delay(150);
+            await SetSplashStepAsync(8, "Carregando perfil e preferências...");
+            await Task.Delay(220);
 
-            await SetSplashStepAsync(30, "Preparando banco de dados...");
+            await SetSplashStepAsync(24, "Preparando banco de dados...");
             try
             {
                 var db = new DatabaseService();
@@ -95,24 +98,21 @@ public sealed partial class MainWindow : Window
                 AppLogger.Warn($"Splash: falha ao preparar banco. Motivo: {ex.Message}");
             }
 
-            await SetSplashStepAsync(55, "Carregando módulos (Cursos, Materiais, Agenda)...");
-            await Task.Delay(180);
+            await SetSplashStepAsync(42, "Carregando módulos (Cursos, Materiais, Agenda)...");
+            await Task.Delay(420);
 
-            await SetSplashStepAsync(75, "Preparando navegador interno (WebView2)...");
-            await Task.Delay(180);
+            await SetSplashStepAsync(64, "Preparando navegador interno...");
+            await Task.Delay(520);
 
-            await SetSplashStepAsync(88, "Checando componentes do sistema...");
-            await Task.Delay(180);
+            await SetSplashStepAsync(82, "Checando componentes do sistema...");
+            await Task.Delay(420);
 
             await SetSplashStepAsync(100, "Finalizando...");
 
-            // Mantém splash por alguns segundos para dar um ar mais "premium",
-            // mas sem travar a inicialização caso tudo esteja rápido demais.
-            var minDuration = TimeSpan.FromSeconds(3);
             var elapsed = DateTimeOffset.Now - startedAt;
-            if (elapsed < minDuration)
+            if (elapsed < minimumSplashDuration)
             {
-                await Task.Delay(minDuration - elapsed);
+                await Task.Delay(minimumSplashDuration - elapsed);
             }
 
             await HideSplashAsync();
@@ -505,7 +505,8 @@ public sealed partial class MainWindow : Window
             new TourStep(NavItemAgenda, "Agenda", "Planeje tarefas e lembretes importantes."),
             new TourStep(NavItemBrowser, "Navegador interno", "Estude aqui dentro com menos distrações (WebView2)."),
             new TourStep(ProfileCardBorder, "Perfil e Pomodoro", "Seu perfil + Pomodoro Focus para manter consistência."),
-            new TourStep(NavItemSettings, "Configurações", "Ajuste preferências, lembretes e suporte.")
+            new TourStep(NavItemSettings, "Configurações", "Ajuste preferências, pomodoro, lembretes e suporte."),
+            new TourStep(NavItemDev, "Desenvolvimento", "Veja o que está sendo melhorado no beta e envie feedback.")
         };
     }
 
@@ -523,7 +524,7 @@ public sealed partial class MainWindow : Window
         GuidedTourTip.Target = step.Target;
         GuidedTourTip.Title = step.Title;
         GuidedTourTip.Subtitle = step.Subtitle;
-        GuidedTourTip.CloseButtonContent = "Pular";
+        GuidedTourTip.CloseButtonContent = _tourStepIndex > 0 ? "Voltar" : "Pular";
         GuidedTourTip.ActionButtonContent = _tourStepIndex >= _tourSteps.Length - 1 ? "Concluir" : "Próximo";
         GuidedTourTip.IsOpen = true;
     }
@@ -548,6 +549,13 @@ public sealed partial class MainWindow : Window
 
     private void GuidedTourTip_CloseButtonClick(TeachingTip sender, object args)
     {
+        if (_tourStepIndex > 0)
+        {
+            _tourStepIndex--;
+            ShowTourStep();
+            return;
+        }
+
         EndGuidedTour(markSeen: true);
     }
 
@@ -643,15 +651,37 @@ public sealed partial class MainWindow : Window
             }),
             onComplete: () => DispatcherQueue.TryEnqueue(() =>
             {
-                PomoTimerText.Text = "00:00";
-                PomoActionBtn.Content = "\uE768"; // Play icon
-                this.Title = AppTitle; // Reset Title
+                var finishedWork = _pomodoro?.IsWorkMode ?? true;
+                var focusMinutes = SettingsService.PomodoroFocusMinutes;
+                var breakMinutes = SettingsService.PomodoroBreakMinutes;
 
-                // Flash Taskbar or Stop Progress
+                if (SettingsService.PomodoroNotifyOnFinish)
+                {
+                    var title = finishedWork ? "Pomodoro Finalizado" : "Pausa Finalizada";
+                    var body = finishedWork ? "Hora de mudar o foco!" : "Hora de voltar ao foco!";
+                    Services.ToastService.ShowReminderToast(title, body);
+                }
+
+                if (finishedWork && SettingsService.PomodoroAutoStartBreak)
+                {
+                    _pomodoro?.StartBreak(breakMinutes);
+                    PomoActionBtn.Content = "\uE769";
+                    return;
+                }
+
+                if (!finishedWork && SettingsService.PomodoroAutoStartWork)
+                {
+                    _pomodoro?.StartWork(focusMinutes);
+                    PomoActionBtn.Content = "\uE769";
+                    return;
+                }
+
+                PomoTimerText.Text = "00:00";
+                PomoActionBtn.Content = "\uE768";
+                this.Title = AppTitle;
+
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
                 TaskbarService.SetState(hwnd, TaskbarService.TbpFlag.TBPF_NOPROGRESS);
-
-                Services.ToastService.ShowReminderToast("Pomodoro Finalizado", "Hora de mudar o foco!");
             })
         );
     }
@@ -706,7 +736,15 @@ public sealed partial class MainWindow : Window
         }
         else
         {
-            _pomodoro.StartWork(); // Resume or Start Default
+            if (_pomodoro.HasActiveSession)
+            {
+                _pomodoro.Resume();
+            }
+            else
+            {
+                _pomodoro.StartWork(SettingsService.PomodoroFocusMinutes);
+            }
+
             PomoActionBtn.Content = "\uE769"; // Pause icon
         }
     }
@@ -727,7 +765,7 @@ public sealed partial class MainWindow : Window
     {
         if (_pomodoro is null) return;
 
-        _pomodoro.StartWork(25);
+        _pomodoro.StartWork(SettingsService.PomodoroFocusMinutes);
         PomoActionBtn.Content = "\uE769";
     }
 
@@ -735,8 +773,13 @@ public sealed partial class MainWindow : Window
     {
         if (_pomodoro is null) return;
 
-        _pomodoro.StartBreak(5);
+        _pomodoro.StartBreak(SettingsService.PomodoroBreakMinutes);
         PomoActionBtn.Content = "\uE769";
+    }
+
+    private void PomoSettings_Click(object sender, RoutedEventArgs e)
+    {
+        NavigateToTag("settings");
     }
 
     // --- System Handlers ---
@@ -845,6 +888,11 @@ public sealed partial class MainWindow : Window
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
+        if (_suppressNavSelectionChanged)
+        {
+            return;
+        }
+
         if (args.SelectedItem is not NavigationViewItem item) return;
         var tag = item.Tag?.ToString() ?? "dashboard";
         NavigateToTag(tag);
@@ -864,6 +912,31 @@ public sealed partial class MainWindow : Window
             _ => typeof(DashboardPage)
         };
 
-        ContentFrame.Navigate(pageType);
+        var navItem = FindNavItemByTag(tag);
+        if (navItem is not null && !ReferenceEquals(NavView.SelectedItem, navItem))
+        {
+            _suppressNavSelectionChanged = true;
+            NavView.SelectedItem = navItem;
+            _suppressNavSelectionChanged = false;
+        }
+
+        if (ContentFrame.CurrentSourcePageType != pageType)
+        {
+            ContentFrame.Navigate(pageType);
+        }
+    }
+
+    private NavigationViewItem? FindNavItemByTag(string tag)
+    {
+        foreach (var item in NavView.MenuItems)
+        {
+            if (item is NavigationViewItem navItem &&
+                string.Equals(navItem.Tag?.ToString(), tag, StringComparison.OrdinalIgnoreCase))
+            {
+                return navItem;
+            }
+        }
+
+        return null;
     }
 }

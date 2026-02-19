@@ -9,7 +9,8 @@
     <Grid Padding="16" RowDefinitions="Auto,*">
         <TextBlock Text="Desenvolvimento" FontSize="24" FontWeight="SemiBold" />
 
-        <StackPanel Grid.Row="1" Spacing="12" Margin="0,12,0,0">
+        <ScrollViewer Grid.Row="1" Margin="0,12,0,0">
+        <StackPanel Spacing="12">
             <InfoBar Title="Versão beta"
                      Message="O DDS StudyOS está em desenvolvimento ativo. Algumas funções podem estar incompletas ou mudar a qualquer momento."
                      IsOpen="True"
@@ -32,7 +33,27 @@
                 <HyperlinkButton Content="GitHub (Issues)" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/issues" />
             </StackPanel>
 
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Melhorias desta fase (beta)" FontWeight="SemiBold"/>
+                    <TextBlock Text="• Correções no navegador interno e estabilidade de navegação."/>
+                    <TextBlock Text="• Melhorias em onboarding/tour guiado."/>
+                    <TextBlock Text="• Ajustes em cursos, favoritos e fluxo de estudo."/>
+                    <TextBlock Text="• Evolução contínua do instalador e experiência inicial."/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Próximas entregas planejadas" FontWeight="SemiBold"/>
+                    <TextBlock Text="• Métricas semanais no dashboard."/>
+                    <TextBlock Text="• Atualizador automático de versão."/>
+                    <TextBlock Text="• Exportar/importar preferências do usuário."/>
+                </StackPanel>
+            </Border>
+
             <InfoBar Title="Nota" Message="Essa página é para informações de desenvolvimento, créditos e suporte." IsOpen="True" Severity="Informational" />
         </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

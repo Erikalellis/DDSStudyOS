@@ -45,6 +45,7 @@ public sealed class DatabaseService
             // Manual Migrations for v2 (Add columns to existing tables if needed)
             await SafeExecuteAsync(conn, "ALTER TABLE courses ADD COLUMN last_accessed TEXT;");
             await SafeExecuteAsync(conn, "ALTER TABLE courses ADD COLUMN notes TEXT;"); // Ensure notes exists
+            await SafeExecuteAsync(conn, "ALTER TABLE courses ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0;");
             await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN is_completed INTEGER DEFAULT 0;");
             await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN last_notified_at TEXT;");
             await SafeExecuteAsync(conn, "ALTER TABLE materials ADD COLUMN storage_mode TEXT NOT NULL DEFAULT 'reference';");

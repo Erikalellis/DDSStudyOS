@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS courses (
     url           TEXT,
     username      TEXT,
     password_blob BLOB, -- DPAPI protected bytes (opcional)
+    is_favorite   INTEGER NOT NULL DEFAULT 0,
     start_date    TEXT,
     due_date      TEXT,
     status        TEXT,

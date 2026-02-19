@@ -45,34 +45,35 @@
 
                 <!-- Quick Actions -->
                 <TextBlock Text="Acesso Rápido" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,0"/>
-                <GridView SelectionMode="None" IsItemClickEnabled="True" ItemClick="QuickAction_Click">
-                    <GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="Margin" Value="0,0,12,12"/>
-                        </Style>
-                    </GridView.ItemContainerStyle>
-                    
-                    <Border Width="120" Height="100" Background="{ThemeResource SystemControlBackgroundAltHighBrush}" CornerRadius="4" Padding="12" Tag="new_course">
-                        <StackPanel>
-                            <FontIcon Glyph="&#xE710;" FontSize="24" HorizontalAlignment="Left" Margin="0,0,0,8"/>
+                <WrapGrid Orientation="Horizontal" MaximumRowsOrColumns="4">
+                    <Button Click="QuickActionButton_Click" Tag="new_course" Margin="0,0,12,12">
+                        <StackPanel Width="120" Height="92" Spacing="8">
+                            <FontIcon Glyph="&#xE710;" FontSize="24" HorizontalAlignment="Left" />
                             <TextBlock Text="Novo Curso" TextWrapping="Wrap"/>
                         </StackPanel>
-                    </Border>
-                    
-                    <Border Width="120" Height="100" Background="{ThemeResource SystemControlBackgroundAltHighBrush}" CornerRadius="4" Padding="12" Tag="agenda">
-                        <StackPanel>
-                            <FontIcon Glyph="&#xE787;" FontSize="24" HorizontalAlignment="Left" Margin="0,0,0,8"/>
+                    </Button>
+
+                    <Button Click="QuickActionButton_Click" Tag="agenda" Margin="0,0,12,12">
+                        <StackPanel Width="120" Height="92" Spacing="8">
+                            <FontIcon Glyph="&#xE787;" FontSize="24" HorizontalAlignment="Left" />
                             <TextBlock Text="Ver Agenda" TextWrapping="Wrap"/>
                         </StackPanel>
-                    </Border>
+                    </Button>
 
-                    <Border Width="120" Height="100" Background="{ThemeResource SystemControlBackgroundAltHighBrush}" CornerRadius="4" Padding="12" Tag="browser">
-                        <StackPanel>
-                            <FontIcon Glyph="&#xE774;" FontSize="24" HorizontalAlignment="Left" Margin="0,0,0,8"/>
+                    <Button Click="QuickActionButton_Click" Tag="browser" Margin="0,0,12,12">
+                        <StackPanel Width="120" Height="92" Spacing="8">
+                            <FontIcon Glyph="&#xE774;" FontSize="24" HorizontalAlignment="Left" />
                             <TextBlock Text="Navegador" TextWrapping="Wrap"/>
                         </StackPanel>
-                    </Border>
-                </GridView>
+                    </Button>
+
+                    <Button Click="QuickActionButton_Click" Tag="browser_favorites" Margin="0,0,12,12">
+                        <StackPanel Width="120" Height="92" Spacing="8">
+                            <FontIcon Glyph="&#xE734;" FontSize="24" HorizontalAlignment="Left" />
+                            <TextBlock Text="Favoritos" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Button>
+                </WrapGrid>
             </StackPanel>
 
             <!-- Sidebar -->

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,6 +20,7 @@ public sealed partial class BrowserPage : Page
 {
     private const string HomeAddressAlias = "dds://inicio";
     private const string ErrorAddressAlias = "dds://erro";
+    private const string AliasNotFoundAddressAlias = "dds://404";
     private static readonly string WebView2UserDataFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "DDSStudyOS",
@@ -64,14 +66,8 @@ public sealed partial class BrowserPage : Page
             AppLogger.Warn($"BrowserPage: falha ao garantir banco criado. Motivo: {ex.Message}");
         }
 
-        try
+        if (!await EnsureWebViewReadySafeAsync())
         {
-            await EnsureWebViewReadyAsync();
-        }
-        catch (Exception ex)
-        {
-            AppLogger.Error("BrowserPage: falha ao inicializar WebView2.", ex);
-            await ShowInfoDialogAsync("Navegador", "Falha ao iniciar o navegador interno (WebView2). Verifique se o WebView2 Runtime está instalado.");
             return;
         }
 
@@ -107,6 +103,11 @@ public sealed partial class BrowserPage : Page
     {
         _isPageActive = false;
         _autoSaveTimer?.Stop();
+        if (ReferenceEquals(AppState.WebViewInstance, Web.CoreWebView2))
+        {
+            AppState.WebViewInstance = null;
+        }
+
         _ = SaveNotesOnUnloadAsync();
     }
 
@@ -145,6 +146,47 @@ public sealed partial class BrowserPage : Page
         await Web.EnsureCoreWebView2Async(env);
     }
 
+    private async Task<bool> EnsureWebViewReadySafeAsync()
+    {
+        try
+        {
+            await EnsureWebViewReadyAsync();
+            return Web.CoreWebView2 is not null;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("BrowserPage: falha ao inicializar WebView2.", ex);
+            await ShowInfoDialogAsync("Navegador", "Falha ao iniciar o navegador interno (WebView2). Verifique se o WebView2 Runtime está instalado.");
+            return false;
+        }
+    }
+
+    private void NavigateToTag(string tag)
+    {
+        if (AppState.RequestNavigateTag is { } navigate)
+        {
+            navigate(tag);
+            return;
+        }
+
+        var pageType = tag switch
+        {
+            "dashboard" => typeof(DashboardPage),
+            "courses" => typeof(CoursesPage),
+            "materials" => typeof(MaterialsPage),
+            "agenda" => typeof(AgendaPage),
+            "browser" => typeof(BrowserPage),
+            "settings" => typeof(SettingsPage),
+            "dev" => typeof(DevelopmentPage),
+            _ => null
+        };
+
+        if (pageType is not null && Frame?.CurrentSourcePageType != pageType)
+        {
+            Frame?.Navigate(pageType);
+        }
+    }
+
     private static string BuildSearchUrl(string query)
     {
         var provider = (SettingsService.BrowserSearchProvider ?? "google").Trim().ToLowerInvariant();
@@ -163,50 +205,131 @@ public sealed partial class BrowserPage : Page
         if (string.IsNullOrWhiteSpace(raw)) return;
         raw = raw.Trim();
 
-        if (string.Equals(raw, HomeAddressAlias, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(raw, "dds://home", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(raw, "dds://inicio", StringComparison.OrdinalIgnoreCase))
+        if (TryHandleInternalAlias(raw))
         {
-            ShowHomePage();
             return;
         }
 
-        if (!raw.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
-            !raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase) &&
-            !raw.StartsWith("about:", StringComparison.OrdinalIgnoreCase))
+        string targetAddress;
+        if (Uri.TryCreate(raw, UriKind.Absolute, out var absoluteUri))
         {
-            // Se nao parece URL, vira busca web para UX mais amigavel
-            if (raw.Contains(' ') || (!raw.Contains('.') && !raw.StartsWith("localhost", StringComparison.OrdinalIgnoreCase)))
+            var scheme = absoluteUri.Scheme.ToLowerInvariant();
+            if (scheme is "http" or "https" or "about")
             {
-                raw = BuildSearchUrl(raw);
+                targetAddress = absoluteUri.ToString();
             }
             else
             {
-                raw = "https://" + raw;
+                targetAddress = BuildSearchUrl(raw);
             }
         }
-
-        if (Uri.TryCreate(raw, UriKind.Absolute, out var uri))
+        else
         {
-            _isInternalHomePage = false;
-            _lastRequestedAddress = uri.ToString();
-            Web.Source = uri;
-            AddressBox.Text = uri.ToString();
+            var shouldTreatAsUrl =
+                raw.StartsWith("localhost", StringComparison.OrdinalIgnoreCase) ||
+                raw.Contains('.') ||
+                raw.Contains(':');
+
+            targetAddress = shouldTreatAsUrl
+                ? $"https://{raw}"
+                : BuildSearchUrl(raw);
+        }
+
+        if (Uri.TryCreate(targetAddress, UriKind.Absolute, out var uri))
+        {
+            NavigateToUri(uri);
+        }
+    }
+
+    private void NavigateToUri(Uri uri)
+    {
+        _isInternalHomePage = false;
+        _lastRequestedAddress = uri.ToString();
+        Web.Source = uri;
+        AddressBox.Text = uri.ToString();
+    }
+
+    private bool TryHandleInternalAlias(string raw)
+    {
+        if (!raw.StartsWith("dds://", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        var alias = raw.Trim().ToLowerInvariant();
+        switch (alias)
+        {
+            case HomeAddressAlias:
+            case "dds://home":
+                ShowHomePage();
+                return true;
+
+            case "dds://courses":
+            case "dds://cursos":
+                _ = OpenCoursePickerAsync(onlyFavorites: false);
+                return true;
+
+            case "dds://favorites":
+            case "dds://favoritos":
+                _ = OpenCoursePickerAsync(onlyFavorites: true);
+                return true;
+
+            case "dds://agenda":
+                NavigateToTag("agenda");
+                return true;
+
+            case "dds://config":
+            case "dds://settings":
+                NavigateToTag("settings");
+                return true;
+
+            case "dds://feedback":
+                OpenFeedbackLink();
+                return true;
+
+            default:
+                ShowAliasNotFoundPage(alias);
+                return true;
         }
     }
 
     private void Go_Click(object sender, RoutedEventArgs e) => Go(AddressBox.Text);
-    private void Home_Click(object sender, RoutedEventArgs e) => ShowHomePage();
+    private async void Home_Click(object sender, RoutedEventArgs e)
+    {
+        if (!await EnsureWebViewReadySafeAsync())
+        {
+            return;
+        }
+
+        ShowHomePage();
+    }
+
     private async void Courses_Click(object sender, RoutedEventArgs e)
+    {
+        await OpenCoursePickerAsync(onlyFavorites: false);
+    }
+
+    private async void Favorites_Click(object sender, RoutedEventArgs e)
+    {
+        await OpenCoursePickerAsync(onlyFavorites: true);
+    }
+
+    private async Task OpenCoursePickerAsync(bool onlyFavorites)
     {
         try
         {
             await _db.EnsureCreatedAsync();
 
-            var allCourses = await _courseRepo.ListAsync();
-            if (allCourses.Count == 0)
+            var courses = onlyFavorites
+                ? await _courseRepo.ListFavoritesAsync()
+                : await _courseRepo.ListAsync();
+
+            if (courses.Count == 0)
             {
-                await ShowInfoDialogAsync("Cursos", "Nenhum curso cadastrado ainda. Vá em “Cursos” para criar seu primeiro.");
+                var msg = onlyFavorites
+                    ? "Nenhum curso favorito encontrado. Marque cursos com estrela na tela de Cursos."
+                    : "Nenhum curso cadastrado ainda. Vá em “Cursos” para criar seu primeiro.";
+                await ShowInfoDialogAsync("Cursos", msg);
                 return;
             }
 
@@ -219,7 +342,7 @@ public sealed partial class BrowserPage : Page
             var listView = new ListView
             {
                 SelectionMode = ListViewSelectionMode.Single,
-                Height = 360
+                Height = 380
             };
 
             var templateXaml = """
@@ -227,6 +350,7 @@ public sealed partial class BrowserPage : Page
   <StackPanel Spacing="2" Padding="6">
     <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
     <TextBlock Text="{Binding Platform}" Opacity="0.7" FontSize="12" TextTrimming="CharacterEllipsis"/>
+    <TextBlock Text="{Binding FavoriteBadge}" Foreground="#FFD28A00" FontSize="11"/>
   </StackPanel>
 </DataTemplate>
 """;
@@ -238,7 +362,7 @@ public sealed partial class BrowserPage : Page
 
             var dialog = new ContentDialog
             {
-                Title = "Cursos",
+                Title = onlyFavorites ? "Favoritos" : "Cursos",
                 Content = contentPanel,
                 PrimaryButtonText = "Abrir",
                 CloseButtonText = "Cancelar",
@@ -252,11 +376,11 @@ public sealed partial class BrowserPage : Page
                 query = (query ?? string.Empty).Trim();
                 if (string.IsNullOrWhiteSpace(query))
                 {
-                    listView.ItemsSource = allCourses;
+                    listView.ItemsSource = courses;
                     return;
                 }
 
-                listView.ItemsSource = allCourses
+                listView.ItemsSource = courses
                     .Where(c =>
                         c.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                         (c.Platform?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false))
@@ -288,24 +412,52 @@ public sealed partial class BrowserPage : Page
                 return;
             }
 
-            AppState.CurrentCourseId = selected.Id;
-            await LoadCourseNotes(selected.Id);
-
-            try
-            {
-                await _courseRepo.UpdateLastAccessedAsync(selected.Id);
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Warn($"BrowserPage: falha ao atualizar 'ultimo acesso' do curso. Motivo: {ex.Message}");
-            }
-
-            Go(selected.Url);
+            await OpenCourseAsync(selected);
         }
         catch (Exception ex)
         {
             AppLogger.Error("BrowserPage: falha ao abrir seletor de cursos.", ex);
             await ShowInfoDialogAsync("Cursos", "Falha ao abrir a lista de cursos.");
+        }
+    }
+
+    private async Task OpenCourseAsync(Course selected)
+    {
+        AppState.CurrentCourseId = selected.Id;
+        await LoadCourseNotes(selected.Id);
+
+        try
+        {
+            await _courseRepo.UpdateLastAccessedAsync(selected.Id);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"BrowserPage: falha ao atualizar 'ultimo acesso' do curso. Motivo: {ex.Message}");
+        }
+
+        Go(selected.Url!);
+    }
+
+    private void OpenFeedbackLink()
+    {
+        var url = SettingsService.FeedbackFormUrl;
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return;
+        }
+
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"BrowserPage: falha ao abrir feedback. Motivo: {ex.Message}");
         }
     }
 
@@ -317,16 +469,23 @@ public sealed partial class BrowserPage : Page
 
     private void Back_Click(object sender, RoutedEventArgs e)
     {
+        if (Web.CoreWebView2 is null) return;
         if (Web.CanGoBack) Web.GoBack();
         UpdateNavigationButtons();
     }
     private void Forward_Click(object sender, RoutedEventArgs e)
     {
+        if (Web.CoreWebView2 is null) return;
         if (Web.CanGoForward) Web.GoForward();
         UpdateNavigationButtons();
     }
-    private void Reload_Click(object sender, RoutedEventArgs e)
+    private async void Reload_Click(object sender, RoutedEventArgs e)
     {
+        if (!await EnsureWebViewReadySafeAsync())
+        {
+            return;
+        }
+
         if (_isInternalHomePage)
         {
             ShowHomePage();
@@ -360,7 +519,7 @@ public sealed partial class BrowserPage : Page
         Web.CoreWebView2.Settings.AreDevToolsEnabled = false;
         Web.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = false;
 
-        Web.CoreWebView2.NewWindowRequested += (_, e) =>
+        Web.CoreWebView2.NewWindowRequested += (sender, e) =>
         {
             if (!_isPageActive)
             {
@@ -375,7 +534,7 @@ public sealed partial class BrowserPage : Page
             }
         };
 
-        Web.CoreWebView2.NavigationStarting += (_, e) =>
+        Web.CoreWebView2.NavigationStarting += (sender, e) =>
         {
             if (!_isPageActive)
             {
@@ -384,6 +543,16 @@ public sealed partial class BrowserPage : Page
 
             if (string.IsNullOrWhiteSpace(e.Uri)) return;
             _lastRequestedAddress = e.Uri;
+
+            if (e.Uri.StartsWith("dds://", StringComparison.OrdinalIgnoreCase))
+            {
+                e.Cancel = true;
+                _ = DispatcherQueue.TryEnqueue(() =>
+                {
+                    TryHandleInternalAlias(e.Uri);
+                });
+                return;
+            }
 
             // Evita paginas internas do Edge e redireciona para Home DDS
             if (e.Uri.StartsWith("edge://", StringComparison.OrdinalIgnoreCase) ||
@@ -436,15 +605,24 @@ public sealed partial class BrowserPage : Page
             return;
         }
 
-        BackBtn.IsEnabled = Web.CanGoBack;
-        ForwardBtn.IsEnabled = Web.CanGoForward;
-        ReloadBtn.IsEnabled = true;
-        HomeBtn.IsEnabled = true;
-        VaultFillBtn.IsEnabled = Web.CoreWebView2 is not null;
+        var coreReady = Web.CoreWebView2 is not null;
+        BackBtn.IsEnabled = coreReady && Web.CanGoBack;
+        ForwardBtn.IsEnabled = coreReady && Web.CanGoForward;
+        ReloadBtn.IsEnabled = coreReady;
+        HomeBtn.IsEnabled = coreReady;
+        FavoritesBtn.IsEnabled = true;
+        CoursesBtn.IsEnabled = true;
+        VaultFillBtn.IsEnabled = coreReady;
     }
 
     private void ShowHomePage()
     {
+        if (Web.CoreWebView2 is null)
+        {
+            AppLogger.Warn("BrowserPage: Home ignorado porque o WebView2 ainda não está pronto.");
+            return;
+        }
+
         _isInternalHomePage = true;
         _internalPageAlias = HomeAddressAlias;
         _lastRequestedAddress = HomeAddressAlias;
@@ -455,10 +633,31 @@ public sealed partial class BrowserPage : Page
 
     private void ShowNavigationErrorPage(CoreWebView2WebErrorStatus status, string attemptedUrl)
     {
+        if (Web.CoreWebView2 is null)
+        {
+            AppLogger.Warn("BrowserPage: página de erro ignorada porque o WebView2 ainda não está pronto.");
+            return;
+        }
+
         _isInternalHomePage = true;
         _internalPageAlias = ErrorAddressAlias;
         AddressBox.Text = _internalPageAlias;
         Web.NavigateToString(BuildErrorPageHtml(status, attemptedUrl));
+        UpdateNavigationButtons();
+    }
+
+    private void ShowAliasNotFoundPage(string alias)
+    {
+        if (Web.CoreWebView2 is null)
+        {
+            AppLogger.Warn("BrowserPage: página 404 interna ignorada porque o WebView2 ainda não está pronto.");
+            return;
+        }
+
+        _isInternalHomePage = true;
+        _internalPageAlias = AliasNotFoundAddressAlias;
+        AddressBox.Text = _internalPageAlias;
+        Web.NavigateToString(BuildAliasNotFoundPageHtml(alias));
         UpdateNavigationButtons();
     }
 
@@ -668,6 +867,7 @@ public sealed partial class BrowserPage : Page
     private static string BuildHomePageHtml()
     {
         var now = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+        var feedbackUrl = WebUtility.HtmlEncode(SettingsService.FeedbackFormUrl);
 
         return $$"""
 <!doctype html>
@@ -675,16 +875,17 @@ public sealed partial class BrowserPage : Page
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DDS Browser</title>
+  <title>DDS StudyOS Browser</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #070a14;
-      --card: #10162a;
+      --bg: #060818;
+      --card: #0f1730;
       --text: #eef3ff;
-      --muted: #a3b0d0;
-      --line: #2a3558;
-      --acc: #6ea8ff;
+      --muted: #aab7d8;
+      --line: #31467f;
+      --acc: #7d89ff;
+      --acc2: #44d5ff;
     }
     * { box-sizing: border-box; }
     body {
@@ -692,17 +893,16 @@ public sealed partial class BrowserPage : Page
       min-height: 100vh;
       font-family: "Segoe UI", system-ui, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(900px 480px at 8% -12%, #24408966 0%, transparent 62%),
-        radial-gradient(900px 480px at 100% 0%, #2a206266 0%, transparent 55%),
-        var(--bg);
+      background: radial-gradient(900px 480px at 5% -15%, #24408966 0%, transparent 62%),
+                  radial-gradient(900px 480px at 100% 0%, #3a1f7066 0%, transparent 55%),
+                  var(--bg);
       display: grid;
       place-items: center;
       padding: 24px;
     }
     .card {
       width: min(860px, 96vw);
-      background: linear-gradient(180deg, #121b31, #0f1729);
+      background: linear-gradient(180deg, #121b38, #0f162c);
       border: 1px solid var(--line);
       border-radius: 18px;
       padding: 28px;
@@ -714,19 +914,28 @@ public sealed partial class BrowserPage : Page
       gap: 12px;
     }
     .logo {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
-      border: 1px solid #3f5b95;
+      border: 1px solid #4e6ec0;
       display: grid;
       place-items: center;
       font-weight: 800;
       letter-spacing: .08em;
       color: #b9d3ff;
-      background: radial-gradient(circle at 32% 25%, #3f63d6, #121931 70%);
+      background: radial-gradient(circle at 32% 25%, #3f63d6, #0f1736 70%);
     }
-    h1 { margin: 8px 0 4px; font-size: 1.8rem; }
+    h1 { margin: 8px 0 4px; font-size: 1.75rem; }
     p { margin: 0; color: var(--muted); }
+    .tip {
+      margin-top: 12px;
+      background: #112145;
+      border: 1px solid #35539a;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: .9rem;
+      color: #d2defd;
+    }
     .links {
       margin-top: 22px;
       display: grid;
@@ -737,14 +946,14 @@ public sealed partial class BrowserPage : Page
       text-decoration: none;
       color: var(--text);
       background: #101a33;
-      border: 1px solid #2b3b67;
+      border: 1px solid #2f4477;
       border-radius: 10px;
       padding: 12px;
       transition: transform .15s ease, border-color .15s ease;
     }
     .links a:hover {
       transform: translateY(-1px);
-      border-color: var(--acc);
+      border-color: var(--acc2);
     }
     .footer {
       margin-top: 16px;
@@ -763,13 +972,23 @@ public sealed partial class BrowserPage : Page
       </div>
     </div>
     <h1>Bem-vinda ao navegador integrado</h1>
-    <p>Navegação com identidade visual DDS, sem pagina inicial de terceiros.</p>
+    <p>Página inicial oficial do DDS StudyOS. Use os atalhos abaixo para continuar seus estudos.</p>
+
+    <div class="tip">
+      Dica: você pode digitar <strong>dds://cursos</strong>, <strong>dds://favoritos</strong> ou
+      <strong>dds://config</strong> diretamente na barra de endereço.
+    </div>
 
     <div class="links">
+      <a href="dds://cursos">Abrir lista de cursos</a>
+      <a href="dds://favoritos">Abrir cursos favoritos</a>
+      <a href="dds://agenda">Abrir agenda de estudos</a>
+      <a href="dds://config">Abrir configurações</a>
+      <a href="dds://feedback">Enviar feedback beta</a>
       <a href="https://177.71.165.60/">Site oficial DDS StudyOS</a>
       <a href="https://github.com/Erikalellis/DDSStudyOS">Repositorio no GitHub</a>
-      <a href="https://www.youtube.com/">YouTube</a>
-      <a href="https://duckduckgo.com/">Busca web</a>
+      <a href="{{feedbackUrl}}">Google Forms (feedback direto)</a>
+      <a href="https://www.google.com/">Busca web</a>
     </div>
 
     <div class="footer">Inicializado em {{now}}</div>
@@ -850,6 +1069,72 @@ public sealed partial class BrowserPage : Page
     <p>Endereco solicitado:</p>
     <code>{{encodedUrl}}</code>
     <div class="hint">Dica: verifique conexao com a internet e tente novamente pelo botao de recarregar.</div>
+  </section>
+</body>
+</html>
+""";
+    }
+
+    private static string BuildAliasNotFoundPageHtml(string alias)
+    {
+        var encodedAlias = WebUtility.HtmlEncode(alias);
+
+        return $$"""
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DDS Browser - Alias não encontrado</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(980px 520px at 8% -10%, #302f7a77 0%, transparent 60%), #060818;
+      color: #eef3ff;
+      padding: 24px;
+    }
+    .card {
+      width: min(760px, 96vw);
+      background: linear-gradient(180deg, #141f3b, #0f172e);
+      border: 1px solid #324985;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 18px 45px #0007;
+    }
+    h1 { margin: 0 0 8px; }
+    p { color: #b9c7ea; }
+    code {
+      display: block;
+      margin: 12px 0;
+      background: #0b1429;
+      border: 1px solid #29407a;
+      padding: 10px 12px;
+      border-radius: 10px;
+      word-break: break-all;
+    }
+    a {
+      color: #8dd4ff;
+      text-decoration: none;
+      margin-right: 14px;
+    }
+  </style>
+</head>
+<body>
+  <section class="card">
+    <h1>Página interna não encontrada (404)</h1>
+    <p>O atalho interno informado não existe no DDS Browser:</p>
+    <code>{{encodedAlias}}</code>
+    <p>Use um dos atalhos válidos:</p>
+    <p>
+      <a href="dds://inicio">dds://inicio</a>
+      <a href="dds://cursos">dds://cursos</a>
+      <a href="dds://favoritos">dds://favoritos</a>
+      <a href="dds://config">dds://config</a>
+    </p>
   </section>
 </body>
 </html>

@@ -24,9 +24,9 @@ public sealed class CourseRepository
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
 INSERT INTO courses
-(name, platform, url, username, password_blob, start_date, due_date, status, notes, updated_at)
+(name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, updated_at)
 VALUES
-($name, $platform, $url, $username, $password_blob, $start_date, $due_date, $status, $notes, datetime('now'));
+($name, $platform, $url, $username, $password_blob, $is_favorite, $start_date, $due_date, $status, $notes, datetime('now'));
 SELECT last_insert_rowid();";
 
         cmd.Parameters.AddWithValue("$name", course.Name);
@@ -34,6 +34,7 @@ SELECT last_insert_rowid();";
         cmd.Parameters.AddWithValue("$url", (object?)course.Url ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$username", (object?)course.Username ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$password_blob", (object?)course.PasswordBlob ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$is_favorite", course.IsFavorite ? 1 : 0);
         cmd.Parameters.AddWithValue("$start_date", ToDbDate(course.StartDate));
         cmd.Parameters.AddWithValue("$due_date", ToDbDate(course.DueDate));
         cmd.Parameters.AddWithValue("$status", (object?)course.Status ?? DBNull.Value);
@@ -52,9 +53,9 @@ SELECT last_insert_rowid();";
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, start_date, due_date, status, notes, last_accessed
+SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
 FROM courses
-ORDER BY last_accessed DESC, updated_at DESC, id DESC;"; // Ordenado por acesso recente primeiro
+ORDER BY is_favorite DESC, last_accessed DESC, updated_at DESC, id DESC;";
 
         await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -72,7 +73,7 @@ ORDER BY last_accessed DESC, updated_at DESC, id DESC;"; // Ordenado por acesso 
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, start_date, due_date, status, notes, last_accessed
+SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
 FROM courses
 WHERE id = $id
 LIMIT 1;";
@@ -100,6 +101,7 @@ SET name=$name,
     url=$url,
     username=$username,
     password_blob=$password_blob,
+    is_favorite=$is_favorite,
     start_date=$start_date,
     due_date=$due_date,
     status=$status,
@@ -114,6 +116,7 @@ WHERE id=$id;";
         cmd.Parameters.AddWithValue("$url", (object?)course.Url ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$username", (object?)course.Username ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$password_blob", (object?)course.PasswordBlob ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$is_favorite", course.IsFavorite ? 1 : 0);
         cmd.Parameters.AddWithValue("$start_date", ToDbDate(course.StartDate));
         cmd.Parameters.AddWithValue("$due_date", ToDbDate(course.DueDate));
         cmd.Parameters.AddWithValue("$status", (object?)course.Status ?? DBNull.Value);
@@ -140,9 +143,9 @@ WHERE id=$id;";
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, start_date, due_date, status, notes, last_accessed
+SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
 FROM courses
-ORDER BY last_accessed DESC
+ORDER BY last_accessed DESC, updated_at DESC
 LIMIT 1;";
 
         await using var reader = await cmd.ExecuteReaderAsync();
@@ -150,6 +153,45 @@ LIMIT 1;";
             return ReadCourse(reader);
 
         return null;
+    }
+
+    public async Task<List<Course>> ListFavoritesAsync()
+    {
+        var list = new List<Course>();
+
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+
+        var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
+FROM courses
+WHERE is_favorite = 1
+ORDER BY last_accessed DESC, updated_at DESC, id DESC;";
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(ReadCourse(reader));
+        }
+
+        return list;
+    }
+
+    public async Task SetFavoriteAsync(long courseId, bool isFavorite)
+    {
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+
+        var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+UPDATE courses
+SET is_favorite = $is_favorite,
+    updated_at = datetime('now')
+WHERE id = $id;";
+        cmd.Parameters.AddWithValue("$id", courseId);
+        cmd.Parameters.AddWithValue("$is_favorite", isFavorite ? 1 : 0);
+        await cmd.ExecuteNonQueryAsync();
     }
 
     public async Task DeleteAsync(long id)
@@ -177,8 +219,8 @@ LIMIT 1;";
 
     private static Course ReadCourse(SqliteDataReader reader)
     {
-        // Adjust column indices based on SELECT queries above
-        // 0:id, 1:name, 2:platform, 3:url, 4:username, 5:password_blob, 6:start_date, 7:due_date, 8:status, 9:notes, 10:last_accessed
+        // 0:id, 1:name, 2:platform, 3:url, 4:username, 5:password_blob, 6:is_favorite,
+        // 7:start_date, 8:due_date, 9:status, 10:notes, 11:last_accessed
         return new Course
         {
             Id = reader.GetInt64(0),
@@ -187,11 +229,12 @@ LIMIT 1;";
             Url = reader.IsDBNull(3) ? null : reader.GetString(3),
             Username = reader.IsDBNull(4) ? null : reader.GetString(4),
             PasswordBlob = reader.IsDBNull(5) ? null : (byte[])reader[5],
-            StartDate = FromDbDate(reader.IsDBNull(6) ? DBNull.Value : reader.GetString(6)),
-            DueDate = FromDbDate(reader.IsDBNull(7) ? DBNull.Value : reader.GetString(7)),
-            Status = reader.IsDBNull(8) ? null : reader.GetString(8),
-            Notes = reader.IsDBNull(9) ? null : reader.GetString(9),
-            LastAccessed = reader.FieldCount > 10 ? FromDbDate(reader.IsDBNull(10) ? DBNull.Value : reader.GetString(10)) : null
+            IsFavorite = !reader.IsDBNull(6) && reader.GetInt64(6) == 1,
+            StartDate = FromDbDate(reader.IsDBNull(7) ? DBNull.Value : reader.GetString(7)),
+            DueDate = FromDbDate(reader.IsDBNull(8) ? DBNull.Value : reader.GetString(8)),
+            Status = reader.IsDBNull(9) ? null : reader.GetString(9),
+            Notes = reader.IsDBNull(10) ? null : reader.GetString(10),
+            LastAccessed = reader.FieldCount > 11 ? FromDbDate(reader.IsDBNull(11) ? DBNull.Value : reader.GetString(11)) : null
         };
     }
 }

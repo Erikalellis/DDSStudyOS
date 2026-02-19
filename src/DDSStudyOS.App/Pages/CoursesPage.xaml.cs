@@ -2,6 +2,7 @@ using DDSStudyOS.App.Models;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,17 +114,23 @@ public sealed partial class CoursesPage : Page
         StartNewCourse();
     }
 
-    private async void CoursesList_ItemClick(object sender, ItemClickEventArgs e)
+    private void CoursesList_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is not Course c)
             return;
 
         CoursesList.SelectedItem = c;
         ShowDetails(c);
+    }
+
+    private async void CoursesList_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (CoursesList.SelectedItem is not Course c)
+            return;
 
         if (string.IsNullOrWhiteSpace(c.Url))
         {
-            DetailsMsgText.Text = "Esse curso ainda não tem link. Clique em “Editar” para adicionar.";
+            DetailsMsgText.Text = "Esse curso não possui link para abrir. Edite o curso e adicione o link.";
             return;
         }
 
@@ -189,6 +196,27 @@ public sealed partial class CoursesPage : Page
 
         await ReloadAsync();
         ShowEmptyState();
+    }
+
+    private async void DetailsFavorite_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (_repo is null || _selectedCourse is null)
+            return;
+
+        _selectedCourse.IsFavorite = !_selectedCourse.IsFavorite;
+        await _repo.SetFavoriteAsync(_selectedCourse.Id, _selectedCourse.IsFavorite);
+
+        var selectedId = _selectedCourse.Id;
+        await ReloadAsync(reselectId: selectedId);
+        _selectedCourse = _cache.FirstOrDefault(c => c.Id == selectedId);
+
+        if (_selectedCourse is not null)
+        {
+            ShowDetails(_selectedCourse);
+            DetailsMsgText.Text = _selectedCourse.IsFavorite
+                ? "Curso marcado como favorito."
+                : "Curso removido dos favoritos.";
+        }
     }
 
     private void CancelEdit_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -277,6 +305,7 @@ public sealed partial class CoursesPage : Page
                 Url = NullIfEmpty(UrlBox.Text),
                 Username = NullIfEmpty(UsernameBox.Text),
                 PasswordBlob = blob,
+                IsFavorite = false,
                 Status = status,
                 Notes = NullIfEmpty(NotesBox.Text)
             };
@@ -345,6 +374,7 @@ public sealed partial class CoursesPage : Page
         DetailsNotesText.Text = string.IsNullOrWhiteSpace(c.Notes) ? "-" : c.Notes;
 
         DetailsOpenBtn.IsEnabled = !string.IsNullOrWhiteSpace(c.Url);
+        DetailsFavoriteBtn.Content = c.IsFavorite ? "Desfavoritar" : "Favoritar";
         DetailsMsgText.Text = "";
     }
 
@@ -390,7 +420,33 @@ public sealed partial class CoursesPage : Page
 
         AppState.PendingBrowserUrl = c.Url;
         AppState.CurrentCourseId = c.Id;
-        AppState.RequestNavigateTag?.Invoke("browser");
+        NavigateToTag("browser");
+    }
+
+    private void NavigateToTag(string tag)
+    {
+        if (AppState.RequestNavigateTag is { } navigate)
+        {
+            navigate(tag);
+            return;
+        }
+
+        var pageType = tag switch
+        {
+            "dashboard" => typeof(DashboardPage),
+            "courses" => typeof(CoursesPage),
+            "materials" => typeof(MaterialsPage),
+            "agenda" => typeof(AgendaPage),
+            "browser" => typeof(BrowserPage),
+            "settings" => typeof(SettingsPage),
+            "dev" => typeof(DevelopmentPage),
+            _ => typeof(DashboardPage)
+        };
+
+        if (Frame?.CurrentSourcePageType != pageType)
+        {
+            Frame?.Navigate(pageType);
+        }
     }
 
     private static string StatusToDisplay(string? status)

@@ -38,7 +38,8 @@
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
                 <Button x:Name="GoBtn" Content="Ir" Click="Go_Click" Style="{StaticResource AccentButtonStyle}" />
-                <Button x:Name="CoursesBtn" Content="&#xE734;" FontFamily="Segoe MDL2 Assets" Click="Courses_Click" ToolTipService.ToolTip="Cursos (Favoritos)"/>
+                <Button x:Name="FavoritesBtn" Content="&#xE734;" FontFamily="Segoe MDL2 Assets" Click="Favorites_Click" ToolTipService.ToolTip="Favoritos (Cursos marcados)"/>
+                <Button x:Name="CoursesBtn" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" Click="Courses_Click" ToolTipService.ToolTip="Todos os cursos"/>
                 <Button x:Name="VaultFillBtn" Content="&#xE13D;" FontFamily="Segoe MDL2 Assets" Click="VaultFill_Click" ToolTipService.ToolTip="Preencher login pelo Cofre DDS"/>
                 <AppBarSeparator />
                 <ToggleButton x:Name="NotesToggle" Content="&#xE70F;" FontFamily="Segoe MDL2 Assets" Click="NotesToggle_Click" ToolTipService.ToolTip="Smart Notes (Anotações)" IsChecked="False"/>

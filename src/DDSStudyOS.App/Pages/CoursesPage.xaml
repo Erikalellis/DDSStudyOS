@@ -47,6 +47,7 @@
                           SelectionMode="Single"
                           IsItemClickEnabled="True"
                           ItemClick="CoursesList_ItemClick"
+                          DoubleTapped="CoursesList_DoubleTapped"
                           SelectionChanged="CoursesList_SelectionChanged"
                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                           BorderThickness="1"
@@ -56,6 +57,7 @@
                             <StackPanel Padding="12">
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Text="{Binding Platform}" FontSize="12" Opacity="0.6"/>
+                                <TextBlock Text="{Binding FavoriteBadge}" FontSize="11" Foreground="#FFD28A00"/>
                                 <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" HorizontalAlignment="Left" CornerRadius="4" Padding="4,2" Margin="0,4,0,0">
                                     <TextBlock Text="{Binding Status}" FontSize="10"/>
                                 </Border>
@@ -144,6 +146,7 @@
 
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
                                 <Button x:Name="DetailsOpenBtn" Content="Abrir" Style="{StaticResource AccentButtonStyle}" Click="DetailsOpen_Click"/>
+                                <Button x:Name="DetailsFavoriteBtn" Content="Favoritar" Click="DetailsFavorite_Click"/>
                                 <Button x:Name="DetailsEditBtn" Content="Editar" Click="DetailsEdit_Click"/>
                                 <Button x:Name="DetailsDeleteBtn" Content="Excluir" Click="DetailsDelete_Click" Foreground="Red" BorderBrush="Red"/>
                             </StackPanel>

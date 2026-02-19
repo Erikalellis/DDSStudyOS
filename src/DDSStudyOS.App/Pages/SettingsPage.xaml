@@ -54,6 +54,45 @@
                     </Border>
                 </StackPanel>
 
+                <!-- Pomodoro -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Pomodoro Focus" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <NumberBox x:Name="PomoFocusBox"
+                                           Grid.Column="0"
+                                           Header="Foco (minutos)"
+                                           Minimum="5"
+                                           Maximum="180"
+                                           SpinButtonPlacementMode="Compact"/>
+                                <NumberBox x:Name="PomoBreakBox"
+                                           Grid.Column="1"
+                                           Header="Pausa (minutos)"
+                                           Minimum="1"
+                                           Maximum="60"
+                                           SpinButtonPlacementMode="Compact"/>
+                            </Grid>
+
+                            <ToggleSwitch x:Name="PomoAutoBreakToggle"
+                                          Header="Iniciar pausa automaticamente ao fim do foco"/>
+                            <ToggleSwitch x:Name="PomoAutoWorkToggle"
+                                          Header="Iniciar foco automaticamente ao fim da pausa"/>
+                            <ToggleSwitch x:Name="PomoNotifyToggle"
+                                          Header="Notificar ao concluir ciclo"
+                                          IsOn="True"/>
+
+                            <Button Content="Salvar configurações do Pomodoro"
+                                    Click="SavePomodoro_Click"
+                                    Style="{StaticResource AccentButtonStyle}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
                 <!-- Feedback -->
                 <StackPanel Spacing="12">
                     <TextBlock Text="Feedback (Beta)" Style="{StaticResource SubtitleTextBlockStyle}"/>

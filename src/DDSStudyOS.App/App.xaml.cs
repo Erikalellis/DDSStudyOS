@@ -24,6 +24,8 @@ public partial class App : Application
     private void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         Services.AppLogger.Error("Exceção não tratada na UI.", e.Exception);
+        // Mantém o app vivo em beta sempre que possível; a exceção já fica registrada no log.
+        e.Handled = true;
     }
 
     private void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
