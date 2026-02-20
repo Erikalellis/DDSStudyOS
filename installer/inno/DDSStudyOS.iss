@@ -41,6 +41,9 @@
 #ifndef MyPrereqLogName
   #define MyPrereqLogName "DDSStudyOS-Prereqs.log"
 #endif
+#ifndef MyUninstallFeedbackURL
+  #define MyUninstallFeedbackURL "https://docs.google.com/forms/d/e/1FAIpQLScN1a0_ISFNIbfOx3XMY6L8Na5Utf9lZCoO3S8efGn4934GCQ/viewform"
+#endif
 
 [Setup]
 AppId={{A5F4F364-3F77-470A-BD5C-641AA103D8AA}
@@ -86,6 +89,7 @@ Filename: "{app}\app\{#MyAppExeName}"; Description: "Abrir {#MyAppName}"; Flags:
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\app"
+Type: filesandordirs; Name: "{localappdata}\DDSStudyOS"
 
 [Code]
 function GetPowerShellExePath(): string;
@@ -139,5 +143,23 @@ begin
       'Falha ao validar/instalar pre-requisitos (codigo ' + IntToStr(ResultCode) + ').' + #13#10 +
       'Log: ' + LogPath;
     Exit;
+  end;
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  ErrorCode: Integer;
+  OpenFeedbackAnswer: Integer;
+begin
+  if CurUninstallStep = usPostUninstall then
+  begin
+    OpenFeedbackAnswer := MsgBox(
+      'Desinstalacao concluida.' + #13#10 + #13#10 +
+      'Quer nos contar o motivo da desinstalacao?' + #13#10 +
+      'Seu feedback ajuda a melhorar o DDS StudyOS.',
+      mbInformation, MB_YESNO);
+
+    if OpenFeedbackAnswer = IDYES then
+      ShellExec('open', '{#MyUninstallFeedbackURL}', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
   end;
 end;

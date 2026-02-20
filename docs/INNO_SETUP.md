@@ -65,7 +65,8 @@ Habilitar tambem .NET Desktop Runtime (somente se necessario):
 2. Confirmar tela de licenca em pt-BR.
 3. Confirmar abertura do app ao fim do setup.
 4. Confirmar atalho no Menu Iniciar e atalho Desktop conforme task.
-5. Confirmar desinstalacao removendo somente arquivos do app.
+5. Confirmar desinstalacao removendo arquivos do app e dados locais em `%LOCALAPPDATA%\DDSStudyOS`.
+6. Confirmar popup final de feedback de desinstalacao (abertura opcional do Google Forms).
 
 ## 5) Arquivos do fluxo Inno
 - `installer/inno/DDSStudyOS.iss`
