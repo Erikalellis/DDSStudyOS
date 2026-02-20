@@ -21,7 +21,7 @@ public sealed partial class MainWindow : Window
     private TaskCompletionSource<bool>? _tourCompletion;
     private int _tourStepIndex;
     private TourStep[] _tourSteps = Array.Empty<TourStep>();
-    private bool _suppressNavSelectionChanged;
+    private bool _ignoreNextNavSelectionChanged;
 
     private sealed record TourStep(FrameworkElement Target, string Title, string Subtitle);
 
@@ -521,9 +521,12 @@ public sealed partial class MainWindow : Window
         _tourStepIndex = Math.Clamp(_tourStepIndex, 0, _tourSteps.Length - 1);
         var step = _tourSteps[_tourStepIndex];
 
+        GuidedTourTip.IsOpen = false;
         GuidedTourTip.Target = step.Target;
-        GuidedTourTip.Title = step.Title;
-        GuidedTourTip.Subtitle = step.Subtitle;
+        GuidedTourTip.Title = $"Passo {_tourStepIndex + 1} de {_tourSteps.Length}";
+        GuidedTourTip.Subtitle = string.Empty;
+        GuidedTourTitleText.Text = step.Title;
+        GuidedTourSubtitleText.Text = step.Subtitle;
         GuidedTourTip.CloseButtonContent = _tourStepIndex > 0 ? "Voltar" : "Pular";
         GuidedTourTip.ActionButtonContent = _tourStepIndex >= _tourSteps.Length - 1 ? "Concluir" : "Próximo";
         GuidedTourTip.IsOpen = true;
@@ -780,6 +783,12 @@ public sealed partial class MainWindow : Window
     private void PomoSettings_Click(object sender, RoutedEventArgs e)
     {
         NavigateToTag("settings");
+
+        // Fallback defensivo para casos em que a seleção da NavigationView não dispara corretamente.
+        if (ContentFrame.CurrentSourcePageType != typeof(SettingsPage))
+        {
+            ContentFrame.Navigate(typeof(SettingsPage));
+        }
     }
 
     // --- System Handlers ---
@@ -888,8 +897,9 @@ public sealed partial class MainWindow : Window
 
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
-        if (_suppressNavSelectionChanged)
+        if (_ignoreNextNavSelectionChanged)
         {
+            _ignoreNextNavSelectionChanged = false;
             return;
         }
 
@@ -902,22 +912,21 @@ public sealed partial class MainWindow : Window
     {
         var pageType = tag switch
         {
-            "dashboard" => typeof(DashboardPage),
+            "dashboard" => typeof(HomePage),
             "courses" => typeof(CoursesPage),
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
-            _ => typeof(DashboardPage)
+            _ => typeof(HomePage)
         };
 
         var navItem = FindNavItemByTag(tag);
         if (navItem is not null && !ReferenceEquals(NavView.SelectedItem, navItem))
         {
-            _suppressNavSelectionChanged = true;
+            _ignoreNextNavSelectionChanged = true;
             NavView.SelectedItem = navItem;
-            _suppressNavSelectionChanged = false;
         }
 
         if (ContentFrame.CurrentSourcePageType != pageType)

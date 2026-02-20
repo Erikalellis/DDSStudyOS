@@ -1,5 +1,5 @@
 param(
-    [string]$SetupPath = "artifacts\installer-output\DDSStudyOS-Setup-Inno.exe",
+    [string]$SetupPath = "artifacts\installer-output\DDSStudyOS-Setup.exe",
     [string]$LogDirectory = "artifacts\installer-logs",
     [ValidateSet("auto", "inno", "advanced")]
     [string]$Mode = "auto",
@@ -25,12 +25,12 @@ if (-not (Test-Path $resolvedLogDirectory)) {
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $resolvedMode = $Mode
 if ($resolvedMode -eq "auto") {
-    $setupFileName = [System.IO.Path]::GetFileName($resolvedSetupPath)
-    if ($setupFileName -like "*Inno*") {
-        $resolvedMode = "inno"
+    $setupFileName = [System.IO.Path]::GetFileNameWithoutExtension($resolvedSetupPath).ToLowerInvariant()
+    if ($setupFileName -like "*advanced*" -or $setupFileName -like "*msi*") {
+        $resolvedMode = "advanced"
     }
     else {
-        $resolvedMode = "advanced"
+        $resolvedMode = "inno"
     }
 }
 
@@ -43,7 +43,7 @@ if ($resolvedMode -eq "inno") {
     $logPaths += $innoLog
 
     if ($NoPrereqs) {
-        Write-Warning "Parametro -NoPrereqs nao se aplica ao setup Inno. Recompile com -InstallWebView2 0 e -InstallDotNetDesktopRuntime 0 se precisar."
+        Write-Warning "Parametro -NoPrereqs nao se aplica ao setup oficial. Recompile com -InstallWebView2 0 e -InstallDotNetDesktopRuntime 0 se precisar."
     }
 
     if ($Quiet) {

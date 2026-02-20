@@ -7,7 +7,7 @@ param(
     [string]$PrepareInput = "true",
     [string]$InstallerInputPath = "artifacts\installer-input\app",
     [string]$OutputPath = "artifacts\installer-output",
-    [string]$SetupBaseName = "DDSStudyOS-Setup-Inno",
+    [string]$SetupBaseName = "DDSStudyOS-Setup",
     [string]$InstallWebView2 = "true",
     [string]$InstallDotNetDesktopRuntime = "false",
     [int]$DotNetDesktopRuntimeMajor = 8,
@@ -167,7 +167,7 @@ if (-not (Test-Path $resolvedOutputPath)) {
 $iscc = Resolve-InnoCompilerPath -PathOverride $InnoCompilerPath
 $version = Resolve-ProductVersion -RepoRoot $repoRoot
 
-Write-Host "==> Compilando instalador com Inno Setup"
+Write-Host "==> Compilando instalador oficial"
 Write-Host "ISCC: $iscc"
 Write-Host "Versao: $version"
 Write-Host "Entrada: $resolvedInputPath"
@@ -189,7 +189,7 @@ $isccArgs = @(
 
 & $iscc @isccArgs
 if ($LASTEXITCODE -ne 0) {
-    throw "Falha ao compilar instalador com Inno Setup."
+    throw "Falha ao compilar instalador oficial."
 }
 
 $setupPath = Join-Path $resolvedOutputPath "$SetupBaseName.exe"
@@ -207,6 +207,6 @@ if (-not (Test-Path $setupPath)) {
 }
 
 Write-Host ""
-Write-Host "Setup Inno gerado com sucesso:"
+Write-Host "Setup oficial gerado com sucesso:"
 Write-Host $setupPath
 

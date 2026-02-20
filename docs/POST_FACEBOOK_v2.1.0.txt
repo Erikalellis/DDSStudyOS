@@ -12,7 +12,7 @@ Download (instalador oficial):
 https://github.com/Erikalellis/DDSStudyOS/releases/tag/v2.1.0
 
 Download direto (Inno):
-https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup-Inno.exe
+https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup.exe
 
 Por favor, teste e envie feedback (bugs, sugestões e prints) nos comentários ou por mensagem.
 Deep Darkness Studios

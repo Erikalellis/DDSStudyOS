@@ -17,7 +17,7 @@ Baixar para teste:
 https://github.com/Erikalellis/DDSStudyOS/releases/tag/v2.1.0
 
 Download direto do instalador:
-https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup-Inno.exe
+https://github.com/Erikalellis/DDSStudyOS/releases/download/v2.1.0/DDSStudyOS-Setup.exe
 
 Canal de suporte:
 https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md

@@ -17,7 +17,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Logger com rotação automática e leitura de tail
 - Tela de Configurações com versão dinâmica da aplicação
 - Documentação de release/empacotamento atualizada
-- `update-info.json` dos canais stable/beta apontando para asset do Inno (`DDSStudyOS-Setup-Inno.exe`)
+- `update-info.json` dos canais stable/beta apontando para asset oficial (`DDSStudyOS-Setup.exe`)
 - Documentação do Advanced Installer marcada como legado/backup
 
 ### Corrigido

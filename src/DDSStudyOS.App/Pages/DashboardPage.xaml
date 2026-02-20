@@ -6,102 +6,115 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="24" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,24">
-            <TextBlock Text="DDS StudyOS" Style="{StaticResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-            <TextBlock Text="Seu sistema operacional de conhecimento." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6"/>
-        </StackPanel>
-
-        <!-- Content Grid -->
-        <Grid Grid.Row="1" ColumnSpacing="24" RowSpacing="24">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" /> <!-- Main Area -->
-                <ColumnDefinition Width="1*" /> <!-- Sidebar -->
-            </Grid.ColumnDefinitions>
-
-            <!-- Main Area -->
-            <StackPanel Grid.Column="0" Spacing="24">
-                <!-- Continue Learning Card -->
-                <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="CONTINUAR ESTUDANDO" FontSize="12" Opacity="0.6" FontWeight="Bold"/>
-                            <TextBlock x:Name="LastCourseTitle" Text="Nenhum curso recente" Style="{StaticResource SubtitleTextBlockStyle}" TextTrimming="CharacterEllipsis"/>
-                            <TextBlock x:Name="LastCoursePlatform" Text="Comece agora!" Opacity="0.8"/>
-                        </StackPanel>
-                        <Button x:Name="ContinueBtn" Grid.Column="1" Content="Retomar" Style="{StaticResource AccentButtonStyle}" Click="Continue_Click" IsEnabled="False"/>
-                    </Grid>
-                </Border>
-
-                <!-- Quick Actions -->
-                <TextBlock Text="Acesso Rápido" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,0"/>
-                <WrapGrid Orientation="Horizontal" MaximumRowsOrColumns="4">
-                    <Button Click="QuickActionButton_Click" Tag="new_course" Margin="0,0,12,12">
-                        <StackPanel Width="120" Height="92" Spacing="8">
-                            <FontIcon Glyph="&#xE710;" FontSize="24" HorizontalAlignment="Left" />
-                            <TextBlock Text="Novo Curso" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Click="QuickActionButton_Click" Tag="agenda" Margin="0,0,12,12">
-                        <StackPanel Width="120" Height="92" Spacing="8">
-                            <FontIcon Glyph="&#xE787;" FontSize="24" HorizontalAlignment="Left" />
-                            <TextBlock Text="Ver Agenda" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Click="QuickActionButton_Click" Tag="browser" Margin="0,0,12,12">
-                        <StackPanel Width="120" Height="92" Spacing="8">
-                            <FontIcon Glyph="&#xE774;" FontSize="24" HorizontalAlignment="Left" />
-                            <TextBlock Text="Navegador" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Click="QuickActionButton_Click" Tag="browser_favorites" Margin="0,0,12,12">
-                        <StackPanel Width="120" Height="92" Spacing="8">
-                            <FontIcon Glyph="&#xE734;" FontSize="24" HorizontalAlignment="Left" />
-                            <TextBlock Text="Favoritos" TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Button>
-                </WrapGrid>
+    <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel Padding="24" Spacing="20">
+            <StackPanel Spacing="4">
+                <TextBlock Text="DDS StudyOS"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                <TextBlock Text="Seu sistema operacional de conhecimento."
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Opacity="0.7" />
             </StackPanel>
 
-            <!-- Sidebar -->
-            <StackPanel Grid.Column="1" Spacing="24">
-                <!-- Streak Widget -->
-                <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
-                    <StackPanel HorizontalAlignment="Center" Spacing="4">
-                        <FontIcon Glyph="&#xE735;" FontSize="32" Foreground="#FFD700"/>
-                        <TextBlock x:Name="StreakText" Text="0" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Dias seguidos" Opacity="0.7" HorizontalAlignment="Center"/>
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                    CornerRadius="8"
+                    Padding="16">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="CONTINUAR ESTUDANDO"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               Opacity="0.65" />
+                    <TextBlock x:Name="LastCourseTitle"
+                               Text="Nenhum curso recente"
+                               Style="{StaticResource SubtitleTextBlockStyle}"
+                               TextWrapping="Wrap" />
+                    <TextBlock x:Name="LastCoursePlatform"
+                               Text="Comece agora!"
+                               Opacity="0.8" />
+                    <Button x:Name="ContinueBtn"
+                            Content="Retomar"
+                            HorizontalAlignment="Left"
+                            Style="{StaticResource AccentButtonStyle}"
+                            IsEnabled="False" />
+                </StackPanel>
+            </Border>
+
+            <StackPanel Spacing="10">
+                <TextBlock Text="Acesso Rápido"
+                           Style="{StaticResource SubtitleTextBlockStyle}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button x:Name="QuickActionNewCourseBtn" Tag="new_course">
+                        <StackPanel Width="120" Height="88" Spacing="8">
+                            <FontIcon Glyph="&#xE710;" FontSize="22" />
+                            <TextBlock Text="Novo Curso" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="QuickActionAgendaBtn" Tag="agenda">
+                        <StackPanel Width="120" Height="88" Spacing="8">
+                            <FontIcon Glyph="&#xE787;" FontSize="22" />
+                            <TextBlock Text="Ver Agenda" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="QuickActionBrowserBtn" Tag="browser">
+                        <StackPanel Width="120" Height="88" Spacing="8">
+                            <FontIcon Glyph="&#xE774;" FontSize="22" />
+                            <TextBlock Text="Navegador" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="QuickActionFavoritesBtn" Tag="browser_favorites">
+                        <StackPanel Width="120" Height="88" Spacing="8">
+                            <FontIcon Glyph="&#xE734;" FontSize="22" />
+                            <TextBlock Text="Favoritos" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                        CornerRadius="8"
+                        Padding="14"
+                        Width="220">
+                    <StackPanel Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE735;" FontSize="26" Foreground="#FFD7B400" />
+                        <TextBlock x:Name="StreakText"
+                                   Text="0"
+                                   FontSize="30"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Dias seguidos"
+                                   Opacity="0.7"
+                                   HorizontalAlignment="Center" />
                     </StackPanel>
                 </Border>
 
-                <!-- Reminders Widget -->
-                <StackPanel Spacing="8">
-                    <TextBlock Text="Próximos Lembretes" Style="{StaticResource SubtitleTextBlockStyle}"/>
-                    <ListView x:Name="RemindersList" Height="300" SelectionMode="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Spacing="2" Padding="0,4">
-                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding DueAt}" FontSize="12" Opacity="0.6"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
+                <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                        CornerRadius="8"
+                        Padding="14"
+                        MinWidth="360">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Próximos Lembretes"
+                                   Style="{StaticResource SubtitleTextBlockStyle}" />
+                        <ListView x:Name="RemindersList"
+                                  Height="220"
+                                  SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Spacing="2" Padding="0,4">
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding DueAt}" FontSize="12" Opacity="0.65" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-        </Grid>
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

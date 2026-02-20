@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DDSStudyOS.App.Pages;
 
-public sealed partial class DashboardPage : Page
+public sealed partial class HomePage : Page
 {
     private readonly DatabaseService _db;
     private readonly UserStatsService _statsService;
@@ -15,33 +15,23 @@ public sealed partial class DashboardPage : Page
     private readonly ReminderRepository _reminderRepo;
     private Course? _lastCourse;
 
-    public DashboardPage()
+    public HomePage()
     {
-        AppLogger.Info("DashboardPage: inicializando componente XAML.");
         this.InitializeComponent();
-        AppLogger.Info("DashboardPage: InitializeComponent concluído.");
         _db = new DatabaseService();
         _statsService = new UserStatsService(_db);
         _courseRepo = new CourseRepository(_db);
         _reminderRepo = new ReminderRepository(_db);
 
-        ContinueBtn.Click += Continue_Click;
-        QuickActionNewCourseBtn.Click += QuickActionButton_Click;
-        QuickActionAgendaBtn.Click += QuickActionButton_Click;
-        QuickActionBrowserBtn.Click += QuickActionButton_Click;
-        QuickActionFavoritesBtn.Click += QuickActionButton_Click;
-
-        Loaded += DashboardPage_Loaded;
+        Loaded += HomePage_Loaded;
     }
 
-    private async void DashboardPage_Loaded(object sender, RoutedEventArgs e)
+    private async void HomePage_Loaded(object sender, RoutedEventArgs e)
     {
-        AppLogger.Info("DashboardPage: evento Loaded acionado.");
         await _db.EnsureCreatedAsync();
         await UpdateStreak();
         await UpdateContinueCard();
         await UpdateReminders();
-        AppLogger.Info("DashboardPage: carregamento concluído.");
     }
 
     private async Task UpdateStreak()
@@ -49,12 +39,11 @@ public sealed partial class DashboardPage : Page
         try
         {
             var streak = await _statsService.UpdateAndGetStreakAsync();
-            if (StreakText != null) 
-                StreakText.Text = streak.ToString();
+            StreakText.Text = streak.ToString();
         }
         catch (Exception ex)
         {
-            AppLogger.Error("Falha ao atualizar streak no dashboard.", ex);
+            AppLogger.Error("HomePage: falha ao atualizar streak.", ex);
         }
     }
 
@@ -65,20 +54,20 @@ public sealed partial class DashboardPage : Page
             _lastCourse = await _courseRepo.GetMostRecentAsync();
             if (_lastCourse != null)
             {
-                if (LastCourseTitle != null) LastCourseTitle.Text = _lastCourse.Name;
-                if (LastCoursePlatform != null) LastCoursePlatform.Text = !string.IsNullOrEmpty(_lastCourse.Platform) ? _lastCourse.Platform : "Curso Online";
-                if (ContinueBtn != null) ContinueBtn.IsEnabled = !string.IsNullOrEmpty(_lastCourse.Url);
+                LastCourseTitle.Text = _lastCourse.Name;
+                LastCoursePlatform.Text = !string.IsNullOrEmpty(_lastCourse.Platform) ? _lastCourse.Platform : "Curso Online";
+                ContinueBtn.IsEnabled = !string.IsNullOrEmpty(_lastCourse.Url);
             }
             else
             {
-                if (LastCourseTitle != null) LastCourseTitle.Text = "Nenhum curso recente";
-                if (LastCoursePlatform != null) LastCoursePlatform.Text = "Comece seus estudos!";
-                if (ContinueBtn != null) ContinueBtn.IsEnabled = false;
+                LastCourseTitle.Text = "Nenhum curso recente";
+                LastCoursePlatform.Text = "Comece seus estudos!";
+                ContinueBtn.IsEnabled = false;
             }
         }
         catch (Exception ex)
         {
-            AppLogger.Error("Falha ao atualizar card de continuidade no dashboard.", ex);
+            AppLogger.Error("HomePage: falha ao atualizar card de continuidade.", ex);
         }
     }
 
@@ -87,11 +76,11 @@ public sealed partial class DashboardPage : Page
         try
         {
             var reminders = await _reminderRepo.GetUpcomingAsync(5);
-            if (RemindersList != null) RemindersList.ItemsSource = reminders;
+            RemindersList.ItemsSource = reminders;
         }
         catch (Exception ex)
         {
-            AppLogger.Error("Falha ao carregar lembretes no dashboard.", ex);
+            AppLogger.Error("HomePage: falha ao carregar lembretes.", ex);
         }
     }
 
@@ -99,9 +88,7 @@ public sealed partial class DashboardPage : Page
     {
         if (_lastCourse != null && !string.IsNullOrEmpty(_lastCourse.Url))
         {
-            // Update last accessed again to keep it at top
             await _courseRepo.UpdateLastAccessedAsync(_lastCourse.Id);
-
             AppState.PendingBrowserUrl = _lastCourse.Url;
             AppState.CurrentCourseId = _lastCourse.Id;
             NavigateToTag("browser");
@@ -111,7 +98,9 @@ public sealed partial class DashboardPage : Page
     private void QuickActionButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement element || element.Tag is not string tag)
+        {
             return;
+        }
 
         if (tag == "new_course")
         {
@@ -129,7 +118,6 @@ public sealed partial class DashboardPage : Page
 
         if (tag == "browser")
         {
-            // Garante abertura consistente na página inicial do navegador DDS.
             AppState.PendingBrowserUrl = "dds://inicio";
             NavigateToTag("browser");
             return;
@@ -148,14 +136,14 @@ public sealed partial class DashboardPage : Page
 
         var pageType = tag switch
         {
-            "dashboard" => typeof(DashboardPage),
+            "dashboard" => typeof(HomePage),
             "courses" => typeof(CoursesPage),
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
-            _ => typeof(DashboardPage)
+            _ => typeof(HomePage)
         };
 
         if (Frame?.CurrentSourcePageType != pageType)

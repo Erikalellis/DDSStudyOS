@@ -1,6 +1,7 @@
 #define MyAppName "DDS StudyOS"
 #define MyAppPublisher "Deep Darkness Studios"
 #define MyAppURL "https://github.com/Erikalellis/DDSStudyOS"
+#define MyAppId "{{A5F4F364-3F77-470A-BD5C-641AA103D8AA}"
 
 #ifndef MyAppVersion
   #define MyAppVersion "2.1.0"
@@ -12,7 +13,7 @@
   #define MyOutputDir "..\..\artifacts\installer-output"
 #endif
 #ifndef MySetupBaseName
-  #define MySetupBaseName "DDSStudyOS-Setup-Inno"
+  #define MySetupBaseName "DDSStudyOS-Setup"
 #endif
 #ifndef MyAppExeName
   #define MyAppExeName "DDSStudyOS.App.exe"
@@ -46,7 +47,7 @@
 #endif
 
 [Setup]
-AppId={{A5F4F364-3F77-470A-BD5C-641AA103D8AA}
+AppId={#MyAppId}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -55,6 +56,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppPublisher}\{#MyAppName}
+DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible

@@ -10,7 +10,7 @@ No raiz do repositorio:
 ```
 
 Saida esperada:
-- `artifacts/installer-output/DDSStudyOS-Setup-Inno.exe`
+- `artifacts/installer-output/DDSStudyOS-Setup.exe`
 
 Padrao oficial:
 - `InstallWebView2=1`
@@ -28,7 +28,7 @@ Opcao recomendada:
 Opcao manual:
 
 ```powershell
-.\artifacts\installer-output\DDSStudyOS-Setup-Inno.exe /LOG="C:\Temp\DDSStudyOS-Inno.log"
+.\artifacts\installer-output\DDSStudyOS-Setup.exe /LOG="C:\Temp\DDSStudyOS-Setup.log"
 ```
 
 Logs gerados:

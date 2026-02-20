@@ -54,7 +54,15 @@
         </NavigationView>
 
         <!-- Onboarding / "login" overlay (first run). -->
-        <Grid x:Name="OnboardingOverlay" IsHitTestVisible="True" Visibility="Collapsed">
+        <Grid x:Name="OnboardingOverlay" IsHitTestVisible="True" Visibility="Collapsed" RequestedTheme="Dark">
+            <Grid.Resources>
+                <!-- Melhor contraste para cabeçalhos e campos do cadastro inicial -->
+                <SolidColorBrush x:Key="TextControlForeground" Color="#F2FFFFFF" />
+                <SolidColorBrush x:Key="TextControlBackground" Color="#1FFFFFFF" />
+                <SolidColorBrush x:Key="TextControlBorderBrush" Color="#66FFFFFF" />
+                <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#96FFFFFF" />
+                <SolidColorBrush x:Key="TextControlHeaderForeground" Color="#E0FFFFFF" />
+            </Grid.Resources>
             <Grid.Background>
                 <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
             </Grid.Background>
@@ -67,8 +75,8 @@
                           MaxWidth="720"
                           MaxHeight="820"
                           Margin="24">
-                <Border Background="#B30B1220"
-                        BorderBrush="#22FFFFFF"
+                <Border Background="#D30A1228"
+                        BorderBrush="#44FFFFFF"
                         BorderThickness="1"
                         CornerRadius="18"
                         Padding="22">
@@ -223,8 +231,23 @@
         <TeachingTip x:Name="GuidedTourTip"
                      IsOpen="False"
                      IsLightDismissEnabled="False"
+                     RequestedTheme="Dark"
+                     MinWidth="360"
+                     MaxWidth="460"
                      PreferredPlacement="Auto"
                      ActionButtonClick="GuidedTourTip_ActionButtonClick"
-                     CloseButtonClick="GuidedTourTip_CloseButtonClick" />
+                     CloseButtonClick="GuidedTourTip_CloseButtonClick">
+            <StackPanel Spacing="6" MaxWidth="420">
+                <TextBlock x:Name="GuidedTourTitleText"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="#F2FFFFFF"
+                           TextWrapping="WrapWholeWords" />
+                <TextBlock x:Name="GuidedTourSubtitleText"
+                           FontSize="13"
+                           Foreground="#CCFFFFFF"
+                           TextWrapping="WrapWholeWords" />
+            </StackPanel>
+        </TeachingTip>
     </Grid>
 </Window>

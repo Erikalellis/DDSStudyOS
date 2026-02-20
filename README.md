@@ -53,7 +53,7 @@ Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 - `Release Notes URL`: usar `CHANGELOG.md` publicado no GitHub.
 
 ## Scripts úteis
-- `scripts/build-inno-installer.ps1`: fluxo oficial de build do setup Inno (`DDSStudyOS-Setup-Inno.exe`)
+- `scripts/build-inno-installer.ps1`: fluxo oficial de build do setup (`DDSStudyOS-Setup.exe`)
 - `scripts/run-setup-with-log.ps1`: executa setup com log de instalação para diagnóstico
 - `scripts/build-release.ps1`: build + publish usando MSBuild do Visual Studio (via `vswhere`)
 - `scripts/sign-release.ps1`: assinatura de artefatos com `.pfx` ou certificado do store por thumbprint
