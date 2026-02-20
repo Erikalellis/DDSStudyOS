@@ -439,8 +439,34 @@ public sealed partial class SettingsPage : Page
 
         AppState.PendingBrowserUrl = selected.Url;
         AppState.PendingVaultCredentialId = selected.Id;
-        AppState.RequestNavigateTag?.Invoke("browser");
+        NavigateToTag("browser");
         MsgText.Text = "Abrindo navegador com preenchimento automático do cofre.";
+    }
+
+    private void NavigateToTag(string tag)
+    {
+        if (AppState.RequestNavigateTag is { } navigate)
+        {
+            navigate(tag);
+            return;
+        }
+
+        var pageType = tag switch
+        {
+            "dashboard" => typeof(DashboardPage),
+            "courses" => typeof(CoursesPage),
+            "materials" => typeof(MaterialsPage),
+            "agenda" => typeof(AgendaPage),
+            "browser" => typeof(BrowserPage),
+            "settings" => typeof(SettingsPage),
+            "dev" => typeof(DevelopmentPage),
+            _ => typeof(DashboardPage)
+        };
+
+        if (Frame?.CurrentSourcePageType != pageType)
+        {
+            Frame?.Navigate(pageType);
+        }
     }
 
     private async Task<Windows.Storage.StorageFile?> PickBackupFileAsync()

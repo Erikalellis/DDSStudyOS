@@ -200,44 +200,115 @@ public sealed partial class BrowserPage : Page
         };
     }
 
+    private static bool LooksLikeUrlCandidate(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return false;
+        }
+
+        // Se tem espaços, tratamos como consulta de busca.
+        if (raw.IndexOfAny(new[] { ' ', '\t', '\r', '\n' }) >= 0)
+        {
+            return false;
+        }
+
+        if (raw.StartsWith("localhost", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (raw.Contains("://", StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        if (raw.StartsWith("www.", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (raw.Contains('.'))
+        {
+            return true;
+        }
+
+        // Host:porta sem esquema (ex.: 127.0.0.1:8080, meuhost:5000)
+        var colonIndex = raw.LastIndexOf(':');
+        if (colonIndex > 0 && colonIndex < raw.Length - 1)
+        {
+            var portPart = raw[(colonIndex + 1)..];
+            if (int.TryParse(portPart, out _))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryBuildNavigableUri(string raw, out Uri? uri)
+    {
+        uri = null;
+
+        if (Uri.TryCreate(raw, UriKind.Absolute, out var absoluteUri))
+        {
+            var scheme = absoluteUri.Scheme.ToLowerInvariant();
+            if (scheme is "http" or "https" or "about")
+            {
+                uri = absoluteUri;
+                return true;
+            }
+
+            return false;
+        }
+
+        if (!LooksLikeUrlCandidate(raw))
+        {
+            return false;
+        }
+
+        var withScheme = raw.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                         raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
+                         raw.StartsWith("about:", StringComparison.OrdinalIgnoreCase)
+            ? raw
+            : $"https://{raw}";
+
+        if (!Uri.TryCreate(withScheme, UriKind.Absolute, out var normalizedUri))
+        {
+            return false;
+        }
+
+        var normalizedScheme = normalizedUri.Scheme.ToLowerInvariant();
+        if (normalizedScheme is not ("http" or "https" or "about"))
+        {
+            return false;
+        }
+
+        uri = normalizedUri;
+        return true;
+    }
+
     private void Go(string raw)
     {
         if (string.IsNullOrWhiteSpace(raw)) return;
-        raw = raw.Trim();
+        raw = raw.Trim().Trim('"');
 
         if (TryHandleInternalAlias(raw))
         {
             return;
         }
 
-        string targetAddress;
-        if (Uri.TryCreate(raw, UriKind.Absolute, out var absoluteUri))
+        if (TryBuildNavigableUri(raw, out var navigableUri) && navigableUri is not null)
         {
-            var scheme = absoluteUri.Scheme.ToLowerInvariant();
-            if (scheme is "http" or "https" or "about")
-            {
-                targetAddress = absoluteUri.ToString();
-            }
-            else
-            {
-                targetAddress = BuildSearchUrl(raw);
-            }
-        }
-        else
-        {
-            var shouldTreatAsUrl =
-                raw.StartsWith("localhost", StringComparison.OrdinalIgnoreCase) ||
-                raw.Contains('.') ||
-                raw.Contains(':');
-
-            targetAddress = shouldTreatAsUrl
-                ? $"https://{raw}"
-                : BuildSearchUrl(raw);
+            NavigateToUri(navigableUri);
+            return;
         }
 
-        if (Uri.TryCreate(targetAddress, UriKind.Absolute, out var uri))
+        var searchAddress = BuildSearchUrl(raw);
+        if (Uri.TryCreate(searchAddress, UriKind.Absolute, out var searchUri))
         {
-            NavigateToUri(uri);
+            NavigateToUri(searchUri);
         }
     }
 

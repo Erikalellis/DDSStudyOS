@@ -117,6 +117,14 @@ public sealed partial class DashboardPage : Page
             return;
         }
 
+        if (tag == "browser")
+        {
+            // Garante abertura consistente na página inicial do navegador DDS.
+            AppState.PendingBrowserUrl = "dds://inicio";
+            NavigateToTag("browser");
+            return;
+        }
+
         NavigateToTag(tag);
     }
 
