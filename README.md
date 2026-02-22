@@ -42,6 +42,7 @@ Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 - Guia legado (Advanced Installer): `docs/ADVANCED_INSTALLER_SETUP.md`
 - Projeto legado do instalador (Advanced Installer): `installer/advanced-installer/README.md`
 - Checklist oficial de regressão beta: `docs/BETA_REGRESSION_CHECKLIST.md`
+- Gate de promoção para versão 3.0: `docs/RELEASE_3_0_GATE.md`
 - Guia de release e empacotamento: `docs/MSIX_CICD.md`
 - Arquivos legais do instalador: `installer/legal/`
 - Informações de atualização (feeds/links): `docs/UPDATE_INFO.md`
