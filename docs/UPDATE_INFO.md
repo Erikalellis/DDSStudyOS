@@ -31,8 +31,8 @@ Este documento centraliza as URLs usadas no release do instalador oficial (Inno 
 - Script de assinatura: `scripts/sign-release.ps1`
 
 ## Checklist rapido
-1. Gerar build/publish: `scripts/build-release.ps1`
-2. Gerar setup oficial: `scripts/build-inno-installer.ps1 -InstallWebView2 1 -InstallDotNetDesktopRuntime 0`
-3. Assinar artefatos apos publish.
-4. Atualizar release notes e update info no GitHub.
+1. Gerar pacote completo de release: `scripts/build-release-package.ps1`
+2. Assinar artefatos apos publish.
+3. Atualizar release notes no GitHub (CHANGELOG).
+4. Publicar juntos: setup estavel, setup beta, portatil e SHA256.
 5. Validar upgrade em maquina limpa.

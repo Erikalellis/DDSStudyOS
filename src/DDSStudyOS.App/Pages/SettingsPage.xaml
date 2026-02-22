@@ -17,16 +17,16 @@
                     <TextBlock Text="Backup &amp; Exportação" Style="{StaticResource SubtitleTextBlockStyle}"/>
                     <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
                         <StackPanel Spacing="16">
-                            <PasswordBox x:Name="MasterPassBox" Header="Senha Mestra (Recomendado)" />
-                            <TextBox x:Name="PathBox" Header="Caminho do Arquivo" PlaceholderText="C:\...\ddsstudyos-backup.json" />
+                            <PasswordBox x:Name="MasterPassBox" Header="Senha Mestra (Obrigatória)" />
+                            <TextBox x:Name="PathBox" Header="Caminho do Arquivo" PlaceholderText="C:\...\ddsstudyos-backup.ddsbackup" />
                             
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <Button Content="Exportar Backup" Click="Export_Click" Style="{StaticResource AccentButtonStyle}" />
+                                <Button Content="Exportar Backup Criptografado" Click="Export_Click" Style="{StaticResource AccentButtonStyle}" />
                                 <Button Content="Restaurar Backup" Click="Import_Click" />
                                 <Button Content="Validar Backup" Click="ValidateBackup_Click" />
                             </StackPanel>
                             
-                            <InfoBar x:Name="WarnBar" Title="Segurança" Message="Sem senha mestra, o arquivo exportado conterá senhas em texto plano. Proteja seus dados." IsOpen="True" Severity="Warning" />
+                            <InfoBar x:Name="WarnBar" Title="Segurança" Message="Para beta forte, o export exige senha mestra (mínimo 8 caracteres)." IsOpen="True" Severity="Warning" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

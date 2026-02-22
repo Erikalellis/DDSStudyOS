@@ -24,13 +24,17 @@ public sealed class BackupService
         _reminderRepo = new ReminderRepository(_db);
     }
 
-    public async Task<string> ExportToJsonAsync(string outputPath)
-        => await ExportToJsonAsync(outputPath, masterPassword: null);
+    public Task<string> ExportToJsonAsync(string outputPath)
+        => throw new InvalidOperationException("Exportação sem senha foi desativada. Informe uma senha mestra.");
 
     public async Task<string> ExportToJsonAsync(string outputPath, string? masterPassword)
     {
         if (string.IsNullOrWhiteSpace(outputPath))
             throw new ArgumentException("O caminho de saída do backup é obrigatório.", nameof(outputPath));
+        if (string.IsNullOrWhiteSpace(masterPassword))
+            throw new InvalidOperationException("Defina uma senha mestra para exportar o backup.");
+        if (masterPassword.Length < 8)
+            throw new InvalidOperationException("Use uma senha mestra com pelo menos 8 caracteres.");
 
         await _db.EnsureCreatedAsync();
 
@@ -44,7 +48,7 @@ public sealed class BackupService
             AppName = AppReleaseInfo.ProductName,
             AppVersion = AppReleaseInfo.VersionString,
             ExportedAtUtc = DateTimeOffset.UtcNow.ToString("o"),
-            Encrypted = !string.IsNullOrWhiteSpace(masterPassword),
+            Encrypted = true,
             Courses = courses.Select(c => new CourseExport
             {
                 Id = c.Id,
@@ -90,15 +94,8 @@ public sealed class BackupService
             WriteIndented = true
         });
 
-        if (!string.IsNullOrWhiteSpace(masterPassword))
-        {
-            var enc = MasterPasswordCrypto.Encrypt(json, masterPassword);
-            await File.WriteAllBytesAsync(outputPath, enc);
-        }
-        else
-        {
-            await File.WriteAllTextAsync(outputPath, json);
-        }
+        var enc = MasterPasswordCrypto.Encrypt(json, masterPassword);
+        await File.WriteAllBytesAsync(outputPath, enc);
 
         return outputPath;
     }

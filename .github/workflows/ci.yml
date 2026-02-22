@@ -1,0 +1,52 @@
+name: DDSStudyOS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-validate:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore DDSStudyOS.sln
+
+      - name: Build Debug x64
+        run: dotnet build DDSStudyOS.sln -c Debug -p:Platform=x64 --no-restore
+
+      - name: Build Release x64
+        run: dotnet build DDSStudyOS.sln -c Release -p:Platform=x64 --no-restore
+
+      - name: Run tests (if any test project exists)
+        shell: pwsh
+        run: |
+          $testProjects = Get-ChildItem -Recurse -Filter *.csproj | Where-Object { $_.FullName -match '(?i)test' }
+          if ($testProjects.Count -eq 0) {
+            Write-Host "Nenhum projeto de teste encontrado. Etapa de testes ignorada."
+            exit 0
+          }
+
+          foreach ($project in $testProjects) {
+            Write-Host "Executando testes em $($project.FullName)"
+            dotnet test $project.FullName -c Release --no-build
+          }
+
+      - name: Publish self-contained win-x64
+        run: dotnet publish src/DDSStudyOS.App/DDSStudyOS.App.csproj -c Release -r win-x64 -p:Platform=x64 -p:SelfContained=true -p:WindowsAppSDKSelfContained=true --no-restore -o artifacts/ci-publish
+
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDSStudyOS-ci-publish-win-x64
+          path: artifacts/ci-publish

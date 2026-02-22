@@ -12,6 +12,23 @@ No raiz do repositorio:
 Saida esperada:
 - `artifacts/installer-output/DDSStudyOS-Setup.exe`
 
+## 1.1) Build do pacote completo de release (recomendado)
+Gera os artefatos padronizados de distribuicao em um unico comando:
+
+```powershell
+.\scripts\build-release-package.ps1
+```
+
+Saida esperada:
+- `artifacts/installer-output/DDSStudyOS-Setup.exe`
+- `artifacts/installer-output/DDSStudyOS-Beta-Setup.exe`
+- `artifacts/installer-output/DDSStudyOS-Portable.zip`
+- `artifacts/installer-output/DDSStudyOS-SHA256.txt`
+
+Esse fluxo tambem sincroniza:
+- `installer/update/stable/update-info.json`
+- `installer/update/beta/update-info.json`
+
 Padrao oficial:
 - `InstallWebView2=1`
 - `InstallDotNetDesktopRuntime=0`

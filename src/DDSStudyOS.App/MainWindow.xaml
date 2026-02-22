@@ -72,6 +72,7 @@
                           VerticalAlignment="Center"
                           HorizontalScrollMode="Disabled"
                           VerticalScrollMode="Auto"
+                          VerticalScrollBarVisibility="Auto"
                           MaxWidth="720"
                           MaxHeight="820"
                           Margin="24">
@@ -118,44 +119,58 @@
                                      Header="Telefone"
                                      PlaceholderText="(11) 90000-0000 (opcional)" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Grid ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="1.3*" />
+                                </Grid.ColumnDefinitions>
                                 <TextBox x:Name="OnboardingCityBox"
-                                         Header="Cidade"
-                                         PlaceholderText="Ex.: Osasco (opcional)"
-                                         Width="240" />
+                                         Grid.Column="0"
+                                          Header="Cidade"
+                                          PlaceholderText="Ex.: Osasco (opcional)"
+                                          MinWidth="180" />
                                 <TextBox x:Name="OnboardingStateBox"
-                                         Header="Estado"
-                                         PlaceholderText="Ex.: SP (opcional)"
-                                         Width="110" />
+                                         Grid.Column="1"
+                                          Header="Estado"
+                                          PlaceholderText="Ex.: SP (opcional)"
+                                          MinWidth="100" />
                                 <TextBox x:Name="OnboardingCountryBox"
-                                         Header="País"
-                                         PlaceholderText="Ex.: Brasil (opcional)"
-                                         Width="140" />
-                            </StackPanel>
+                                         Grid.Column="2"
+                                          Header="País"
+                                          PlaceholderText="Ex.: Brasil (opcional)"
+                                          MinWidth="130" />
+                            </Grid>
 
                             <TextBox x:Name="OnboardingStudyAreaBox"
                                      Header="Área principal de estudo"
                                      PlaceholderText="Ex.: Desenvolvimento de Software (opcional)" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Grid ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
                                 <ComboBox x:Name="OnboardingExperienceLevelCombo"
-                                          Header="Nível atual"
-                                          Width="240">
+                                          Grid.Column="0"
+                                           Header="Nível atual"
+                                           MinWidth="220">
                                     <x:String>Iniciante</x:String>
                                     <x:String>Intermediário</x:String>
                                     <x:String>Avançado</x:String>
                                 </ComboBox>
 
                                 <ComboBox x:Name="OnboardingStudyShiftCombo"
-                                          Header="Turno preferido"
-                                          Width="240">
+                                          Grid.Column="1"
+                                           Header="Turno preferido"
+                                           MinWidth="220">
                                     <x:String>Manhã</x:String>
                                     <x:String>Tarde</x:String>
                                     <x:String>Noite</x:String>
                                     <x:String>Madrugada</x:String>
                                     <x:String>Flexível</x:String>
                                 </ComboBox>
-                            </StackPanel>
+                            </Grid>
 
                             <NumberBox x:Name="OnboardingDailyGoalNumber"
                                        Header="Meta diária (minutos)"

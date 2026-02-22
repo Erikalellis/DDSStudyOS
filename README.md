@@ -1,6 +1,6 @@
 # DDS StudyOS - WinUI 3 (.NET 8)
 
-Projeto desktop em WinUI 3 para gestão de cursos, materiais, lembretes, navegação e backup local com criptografia opcional.
+Projeto desktop em WinUI 3 para gestão de cursos, materiais, lembretes, navegação e backup local criptografado.
 
 ## Pré-requisitos
 - Visual Studio 2022 ou superior
@@ -41,6 +41,7 @@ Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 - Guia oficial do instalador (Inno Setup): `docs/INNO_SETUP.md`
 - Guia legado (Advanced Installer): `docs/ADVANCED_INSTALLER_SETUP.md`
 - Projeto legado do instalador (Advanced Installer): `installer/advanced-installer/README.md`
+- Checklist oficial de regressão beta: `docs/BETA_REGRESSION_CHECKLIST.md`
 - Guia de release e empacotamento: `docs/MSIX_CICD.md`
 - Arquivos legais do instalador: `installer/legal/`
 - Informações de atualização (feeds/links): `docs/UPDATE_INFO.md`
@@ -54,6 +55,7 @@ Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 
 ## Scripts úteis
 - `scripts/build-inno-installer.ps1`: fluxo oficial de build do setup (`DDSStudyOS-Setup.exe`)
+- `scripts/build-release-package.ps1`: gera pacote completo de release (setup estavel + setup beta + portatil + SHA256 + sync de `update-info.json`)
 - `scripts/run-setup-with-log.ps1`: executa setup com log de instalação para diagnóstico
 - `scripts/build-release.ps1`: build + publish usando MSBuild do Visual Studio (via `vswhere`)
 - `scripts/sign-release.ps1`: assinatura de artefatos com `.pfx` ou certificado do store por thumbprint
@@ -63,6 +65,10 @@ Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 - `scripts/prepare-installer-input.ps1`: gera pasta de entrada do instalador
 - `scripts/build-installer.ps1`: fluxo legado (Advanced Installer)
 - `scripts/create-advanced-installer-project.ps1`: fluxo legado para projeto `.aip`
+
+## CI
+- Workflow de integração contínua: `.github/workflows/ci.yml`
+- Valida restore, build Debug/Release e publish self-contained (`win-x64`) a cada push/PR em `main`.
 
 ## Observação de release
 Após cada `publish`, assine novamente o executável com `scripts/sign-release.ps1`, pois o arquivo é recriado durante o publish.

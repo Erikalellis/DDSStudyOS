@@ -1,11 +1,11 @@
-{
-  "channel": "beta",
-  "product": "DDS StudyOS",
-  "company": "Deep Darkness Studios",
-  "currentVersion": "2.1.0-beta.1",
-  "installerAssetName": "DDSStudyOS-Beta-Setup.exe",
-  "releasePageUrl": "https://github.com/Erikalellis/DDSStudyOS/releases",
-  "releaseNotesUrl": "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
-  "supportUrl": "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
-  "updatedAtUtc": "2026-02-17T00:00:00Z"
+﻿{
+    "channel":  "beta",
+    "product":  "DDS StudyOS",
+    "company":  "Deep Darkness Studios",
+    "currentVersion":  "2.1.0-beta.1",
+    "installerAssetName":  "DDSStudyOS-Beta-Setup.exe",
+    "releasePageUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases",
+    "releaseNotesUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
+    "supportUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
+    "updatedAtUtc":  "2026-02-22T16:32:07.2578207Z"
 }

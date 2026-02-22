@@ -11,6 +11,9 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Metadata de release (produto, versão e companhia) no projeto
 - Fluxo oficial de instalador com Inno Setup (`scripts/build-inno-installer.ps1`)
 - Guia oficial de setup em `docs/INNO_SETUP.md`
+- Checklist oficial de regressão beta em `docs/BETA_REGRESSION_CHECKLIST.md`
+- Pipeline CI em `.github/workflows/ci.yml` (restore, build e publish self-contained)
+- Script `scripts/build-release-package.ps1` para gerar release completo (setup estavel, setup beta, portatil e SHA256)
 
 ### Alterado
 - Criptografia de backup reforçada (formato v2) com compatibilidade para backups legados
@@ -19,10 +22,19 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Documentação de release/empacotamento atualizada
 - `update-info.json` dos canais stable/beta apontando para asset oficial (`DDSStudyOS-Setup.exe`)
 - Documentação do Advanced Installer marcada como legado/backup
+- Onboarding com layout mais responsivo para escalas de tela maiores
+- Tour guiado com alvo resiliente para evitar passos sem texto/posição inválida
+- Exportacao de backup agora exige senha mestra obrigatoria (arquivo `.ddsbackup` criptografado)
+- Fluxo de release com sincronizacao automatica de `installer/update/stable/update-info.json` e `installer/update/beta/update-info.json`
 
 ### Corrigido
 - Tratamento de exceções não observadas no ciclo de vida da aplicação
 - Script `run-setup-with-log.ps1` ajustado para fluxo de log com setup Inno por padrão
+- Tratamento de exceção global na UI para não mascarar falhas críticas
+
+## [2.1.0] - 2026-02-22
+### Alterado
+- Linha de release oficial padronizada para o ciclo 2.1.0 (setup estavel, setup beta, portatil e checksum).
 
 ## [0.1.0] - 2026-02-12
 ### Adicionado

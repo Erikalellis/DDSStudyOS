@@ -520,9 +520,10 @@ public sealed partial class MainWindow : Window
 
         _tourStepIndex = Math.Clamp(_tourStepIndex, 0, _tourSteps.Length - 1);
         var step = _tourSteps[_tourStepIndex];
+        var target = ResolveTourTarget(step.Target);
 
         GuidedTourTip.IsOpen = false;
-        GuidedTourTip.Target = step.Target;
+        GuidedTourTip.Target = target;
         GuidedTourTip.Title = $"Passo {_tourStepIndex + 1} de {_tourSteps.Length}";
         GuidedTourTip.Subtitle = string.Empty;
         GuidedTourTitleText.Text = step.Title;
@@ -530,6 +531,31 @@ public sealed partial class MainWindow : Window
         GuidedTourTip.CloseButtonContent = _tourStepIndex > 0 ? "Voltar" : "Pular";
         GuidedTourTip.ActionButtonContent = _tourStepIndex >= _tourSteps.Length - 1 ? "Concluir" : "Próximo";
         GuidedTourTip.IsOpen = true;
+    }
+
+    private FrameworkElement ResolveTourTarget(FrameworkElement? rawTarget)
+    {
+        if (rawTarget is null)
+        {
+            return NavView;
+        }
+
+        if (!rawTarget.IsLoaded || rawTarget.XamlRoot is null)
+        {
+            return NavView;
+        }
+
+        if (rawTarget.Visibility != Visibility.Visible)
+        {
+            return NavView;
+        }
+
+        if (rawTarget.ActualWidth < 8 || rawTarget.ActualHeight < 8)
+        {
+            return NavView;
+        }
+
+        return rawTarget;
     }
 
     private void GuidedTourTip_ActionButtonClick(TeachingTip sender, object args)

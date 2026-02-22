@@ -28,7 +28,7 @@ public sealed partial class SettingsPage : Page
     {
         var defaultPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-            "studyos-backup.json"); // Updated filename
+            "studyos-backup.ddsbackup");
         PathBox.Text = defaultPath;
         DiagPathBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
@@ -166,22 +166,27 @@ public sealed partial class SettingsPage : Page
         {
             await _db.EnsureCreatedAsync();
             var path = PathBox.Text.Trim();
-            var mp = string.IsNullOrWhiteSpace(MasterPassBox.Password) ? null : MasterPassBox.Password;
+            var mp = MasterPassBox.Password?.Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(path))
             {
                 MsgText.Text = "Informe um caminho de arquivo válido para exportar.";
                 return;
             }
-            
-            // Ensure .json extension
-            if (mp == null && !path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) path += ".json";
-            if (mp != null && !path.EndsWith(".ddsbackup", StringComparison.OrdinalIgnoreCase)) path += ".ddsbackup";
+
+            if (string.IsNullOrWhiteSpace(mp))
+            {
+                MsgText.Text = "Informe a senha mestra para exportar o backup.";
+                return;
+            }
+
+            if (!path.EndsWith(".ddsbackup", StringComparison.OrdinalIgnoreCase))
+            {
+                path += ".ddsbackup";
+            }
 
             await _backup.ExportToJsonAsync(path, mp);
-            MsgText.Text = mp is null
-                ? "Exportado com sucesso: " + path
-                : "Exportado (Criptografado) com sucesso: " + path;
+            MsgText.Text = "Backup criptografado exportado com sucesso: " + path;
         }
         catch (Exception ex)
         {
