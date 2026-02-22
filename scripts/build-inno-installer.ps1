@@ -17,7 +17,13 @@ param(
     [string]$BrandingOutputDir = "installer\inno\branding",
     [string]$GenerateBranding = "true",
     [switch]$SignExecutable,
-    [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422"
+    [switch]$SignInstaller,
+    [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
+    [string]$PfxPath = "",
+    [string]$PfxPassword = "",
+    [ValidateSet("CurrentUser", "LocalMachine")]
+    [string]$CertStoreScope = "CurrentUser",
+    [string]$TimestampUrl = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -147,6 +153,13 @@ if ($prepareInputValue) {
         if (-not [string]::IsNullOrWhiteSpace($CertThumbprint)) {
             $prepareArgs += @("-CertThumbprint", $CertThumbprint)
         }
+        if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
+            $prepareArgs += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
+            $prepareArgs += @("-TimestampUrl", $TimestampUrl)
+        }
+        $prepareArgs += @("-CertStoreScope", $CertStoreScope)
     }
 
     Write-Host "==> Preparando arquivos para o instalador"
@@ -204,6 +217,40 @@ if (-not (Test-Path $setupPath)) {
 
 if (-not (Test-Path $setupPath)) {
     throw "Compilacao concluida, mas setup nao encontrado em: $resolvedOutputPath"
+}
+
+if ($SignInstaller) {
+    $signScript = Join-Path $PSScriptRoot "sign-release.ps1"
+    if (-not (Test-Path $signScript)) {
+        throw "Script de assinatura nao encontrado: $signScript"
+    }
+
+    Write-Host "==> Assinando instalador"
+    $signArgs = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", $signScript,
+        "-TargetPaths", $setupPath
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
+        $signArgs += @("-TimestampUrl", $TimestampUrl)
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
+        $signArgs += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+    }
+    else {
+        if ([string]::IsNullOrWhiteSpace($CertThumbprint)) {
+            throw "Para assinar o instalador, informe -CertThumbprint ou -PfxPath."
+        }
+        $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
+    }
+
+    powershell @signArgs
+    if ($LASTEXITCODE -ne 0) {
+        throw "Falha ao assinar instalador: $setupPath"
+    }
 }
 
 Write-Host ""

@@ -26,6 +26,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Tour guiado com alvo resiliente para evitar passos sem texto/posição inválida
 - Exportacao de backup agora exige senha mestra obrigatoria (arquivo `.ddsbackup` criptografado)
 - Fluxo de release com sincronizacao automatica de `installer/update/stable/update-info.json` e `installer/update/beta/update-info.json`
+- Scripts de release atualizados para assinatura automatica do `Setup.exe` (timestamp opcional)
 
 ### Corrigido
 - Tratamento de exceções não observadas no ciclo de vida da aplicação

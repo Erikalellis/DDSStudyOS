@@ -77,6 +77,20 @@ Habilitar tambem .NET Desktop Runtime (somente se necessario):
 .\scripts\build-inno-installer.ps1 -InstallWebView2 1 -InstallDotNetDesktopRuntime 1 -DotNetDesktopRuntimeMajor 8
 ```
 
+Assinar o instalador para evitar `Fornecedor desconhecido`:
+
+```powershell
+.\scripts\build-inno-installer.ps1 -SignInstaller -TimestampUrl "http://timestamp.digicert.com"
+```
+
+Assinar pacote completo de release (setup estavel + beta):
+
+```powershell
+.\scripts\build-release-package.ps1 -SignArtifacts
+```
+
+> Observacao: certificado autoassinado ainda pode gerar alerta SmartScreen em PCs sem o certificado confiado e sem reputacao online.
+
 ## 4) Validacao minima antes de release
 1. Instalar em maquina de teste.
 2. Confirmar tela de licenca em pt-BR.

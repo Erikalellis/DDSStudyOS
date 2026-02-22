@@ -6,7 +6,12 @@ param(
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
     [switch]$SignExecutable,
-    [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422"
+    [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
+    [string]$PfxPath = "",
+    [string]$PfxPassword = "",
+    [ValidateSet("CurrentUser", "LocalMachine")]
+    [string]$CertStoreScope = "CurrentUser",
+    [string]$TimestampUrl = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -67,7 +72,25 @@ if ($SignExecutable) {
         throw "Script de assinatura nao encontrado: $signScript"
     }
     Write-Host "==> Assinando executavel"
-    powershell -NoProfile -ExecutionPolicy Bypass -File $signScript -CertThumbprint $CertThumbprint -TargetPaths @($exePath)
+    $signArgs = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", $signScript,
+        "-TargetPaths", $exePath
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
+        $signArgs += @("-TimestampUrl", $TimestampUrl)
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
+        $signArgs += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+    }
+    else {
+        $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
+    }
+
+    powershell @signArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Falha na assinatura do executavel."
     }

@@ -15,7 +15,15 @@ param(
     [string]$BetaVersion = "",
     [switch]$SkipBeta,
     [switch]$SkipPortable,
-    [switch]$SkipChangelogCheck
+    [switch]$SkipChangelogCheck,
+    [switch]$SignArtifacts,
+    [switch]$SignAppExecutable,
+    [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
+    [string]$PfxPath = "",
+    [string]$PfxPassword = "",
+    [ValidateSet("CurrentUser", "LocalMachine")]
+    [string]$CertStoreScope = "CurrentUser",
+    [string]$TimestampUrl = "http://timestamp.digicert.com"
 )
 
 $ErrorActionPreference = "Stop"
@@ -86,7 +94,14 @@ function Invoke-InnoBuild {
         [string]$InstallWebView2,
         [string]$InstallDotNetDesktopRuntime,
         [int]$DotNetDesktopRuntimeMajor,
-        [string]$PrepareInput
+        [string]$PrepareInput,
+        [switch]$SignInstaller,
+        [switch]$SignExecutable,
+        [string]$CertThumbprint,
+        [string]$PfxPath,
+        [string]$PfxPassword,
+        [string]$CertStoreScope,
+        [string]$TimestampUrl
     )
 
     $args = @(
@@ -105,6 +120,30 @@ function Invoke-InnoBuild {
         "-DotNetDesktopRuntimeMajor", $DotNetDesktopRuntimeMajor,
         "-PrepareInput", $PrepareInput
     )
+
+    if ($SignInstaller) {
+        $args += "-SignInstaller"
+    }
+
+    if ($SignExecutable) {
+        $args += "-SignExecutable"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($CertThumbprint)) {
+        $args += @("-CertThumbprint", $CertThumbprint)
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
+        $args += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($CertStoreScope)) {
+        $args += @("-CertStoreScope", $CertStoreScope)
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
+        $args += @("-TimestampUrl", $TimestampUrl)
+    }
 
     powershell @args
     if ($LASTEXITCODE -ne 0) {
@@ -151,7 +190,14 @@ Invoke-InnoBuild `
     -InstallWebView2 $InstallWebView2 `
     -InstallDotNetDesktopRuntime $InstallDotNetDesktopRuntime `
     -DotNetDesktopRuntimeMajor $DotNetDesktopRuntimeMajor `
-    -PrepareInput "1"
+    -PrepareInput "1" `
+    -SignInstaller:$SignArtifacts `
+    -SignExecutable:$SignAppExecutable `
+    -CertThumbprint $CertThumbprint `
+    -PfxPath $PfxPath `
+    -PfxPassword $PfxPassword `
+    -CertStoreScope $CertStoreScope `
+    -TimestampUrl $TimestampUrl
 
 $stableSetupPath = Join-Path $resolvedOutputPath "$StableSetupBaseName.exe"
 if (-not (Test-Path $stableSetupPath)) {
@@ -174,7 +220,14 @@ if (-not $SkipBeta) {
         -InstallWebView2 $InstallWebView2 `
         -InstallDotNetDesktopRuntime $InstallDotNetDesktopRuntime `
         -DotNetDesktopRuntimeMajor $DotNetDesktopRuntimeMajor `
-        -PrepareInput "0"
+        -PrepareInput "0" `
+        -SignInstaller:$SignArtifacts `
+        -SignExecutable:$false `
+        -CertThumbprint $CertThumbprint `
+        -PfxPath $PfxPath `
+        -PfxPassword $PfxPassword `
+        -CertStoreScope $CertStoreScope `
+        -TimestampUrl $TimestampUrl
 
     $betaSetupPath = Join-Path $resolvedOutputPath "$BetaSetupBaseName.exe"
     if (-not (Test-Path $betaSetupPath)) {
