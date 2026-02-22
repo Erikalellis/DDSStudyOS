@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
+using DDSStudyOS.App.Services;
 
 namespace DDSStudyOS.App.Pages;
 
@@ -9,6 +10,20 @@ public sealed partial class DevelopmentPage : Page
     public DevelopmentPage()
     {
         this.InitializeComponent();
+        InitializeRoadmapHeader();
+    }
+
+    private void InitializeRoadmapHeader()
+    {
+        CurrentVersionText.Text = $"Versão atual: v{AppReleaseInfo.VersionString} (beta)";
+        NextUpdateTitleText.Text = $"O que esperar da próxima atualização (meta: v{GetNextTargetVersion()})";
+    }
+
+    private static string GetNextTargetVersion()
+    {
+        var current = AppReleaseInfo.Version;
+        var nextMinor = current.Minor + 1;
+        return $"{current.Major}.{nextMinor}.0-beta";
     }
 
     private void Email_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
