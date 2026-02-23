@@ -1,4 +1,4 @@
-using DDSStudyOS.App.Models;
+﻿using DDSStudyOS.App.Models;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -36,6 +37,9 @@ public sealed partial class BrowserPage : Page
     private string? _pendingVaultCredentialId;
     private bool _isPageActive;
     private bool _coreEventsAttached;
+    private readonly object _webViewInitSync = new();
+    private Task<bool>? _webViewInitTask;
+    private static readonly TimeSpan WebViewInitTimeout = TimeSpan.FromSeconds(20);
 
     public BrowserPage()
     {
@@ -100,6 +104,11 @@ public sealed partial class BrowserPage : Page
         if (ReferenceEquals(AppState.WebViewInstance, Web.CoreWebView2))
         {
             AppState.WebViewInstance = null;
+        }
+
+        lock (_webViewInitSync)
+        {
+            _webViewInitTask = null;
         }
 
         _ = SaveNotesOnUnloadAsync();
@@ -168,29 +177,98 @@ public sealed partial class BrowserPage : Page
             return;
         }
 
-        Directory.CreateDirectory(WebView2UserDataFolder);
-        CoreWebView2Environment? env = null;
-
-        try
+        var initTask = GetOrCreateWebViewInitializationTask();
+        var isReady = await initTask;
+        if (!isReady)
         {
-            // Mantemos GPU desativada para reduzir tela cinza/preta em alguns drivers.
-            var options = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--disable-gpu --disable-gpu-compositing" };
-            env = await CoreWebView2Environment.CreateWithOptionsAsync(null, WebView2UserDataFolder, options);
-            await Web.EnsureCoreWebView2Async(env);
+            throw new InvalidOperationException("WebView2 nao inicializou em nenhuma tentativa.");
         }
-        catch (Exception firstInitEx)
+    }
+
+    private Task<bool> GetOrCreateWebViewInitializationTask()
+    {
+        lock (_webViewInitSync)
         {
-            AppLogger.Warn($"BrowserPage: falha na inicializacao padrao do WebView2. Tentando perfil limpo. Motivo: {firstInitEx.Message}");
+            if (_webViewInitTask is null ||
+                _webViewInitTask.IsFaulted ||
+                _webViewInitTask.IsCanceled ||
+                (_webViewInitTask.IsCompletedSuccessfully && !_webViewInitTask.Result))
+            {
+                _webViewInitTask = InitializeWebViewWithFallbackAsync();
+            }
 
-            var fallbackFolder = Path.Combine(WebView2UserDataFolder, "fallback");
-            Directory.CreateDirectory(fallbackFolder);
-            var fallbackOptions = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--disable-gpu --disable-gpu-compositing --inprivate" };
-            env = await CoreWebView2Environment.CreateWithOptionsAsync(null, fallbackFolder, fallbackOptions);
-            await Web.EnsureCoreWebView2Async(env);
+            return _webViewInitTask;
+        }
+    }
+
+    private async Task<bool> InitializeWebViewWithFallbackAsync()
+    {
+        var fallbackFolder = Path.Combine(WebView2UserDataFolder, "fallback");
+        var attempts = new (string Label, string Folder, string? BrowserArgs, bool ResetFolder)[]
+        {
+            ("perfil padrao", WebView2UserDataFolder, null, false),
+            ("renderizacao segura", WebView2UserDataFolder, "--disable-gpu --disable-gpu-compositing", false),
+            ("perfil limpo", fallbackFolder, "--disable-gpu --disable-gpu-compositing --inprivate", true)
+        };
+
+        Exception? lastError = null;
+
+        foreach (var attempt in attempts)
+        {
+            try
+            {
+                if (attempt.ResetFolder && Directory.Exists(attempt.Folder))
+                {
+                    Directory.Delete(attempt.Folder, recursive: true);
+                }
+
+                Directory.CreateDirectory(attempt.Folder);
+                AppLogger.Info($"BrowserPage: iniciando WebView2 ({attempt.Label}). Pasta: {attempt.Folder}");
+
+                var options = new CoreWebView2EnvironmentOptions();
+                if (!string.IsNullOrWhiteSpace(attempt.BrowserArgs))
+                {
+                    options.AdditionalBrowserArguments = attempt.BrowserArgs;
+                }
+
+                var env = await CoreWebView2Environment.CreateWithOptionsAsync(null, attempt.Folder, options);
+                await EnsureCoreWithTimeoutAsync(env, attempt.Label);
+
+                ConfigureCoreWebView();
+                AppLogger.Info($"BrowserPage: WebView2 inicializada com sucesso ({attempt.Label}).");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                lastError = ex;
+                AppLogger.Warn($"BrowserPage: falha ao inicializar WebView2 ({attempt.Label}). Motivo: {ex.Message}");
+            }
         }
 
-        ConfigureCoreWebView();
-        AppLogger.Info("BrowserPage: WebView2 inicializada com sucesso.");
+        if (lastError is not null)
+        {
+            AppLogger.Error("BrowserPage: WebView2 nao inicializou apos todas as tentativas.", lastError);
+        }
+
+        return false;
+    }
+
+    private async Task EnsureCoreWithTimeoutAsync(CoreWebView2Environment env, string attemptLabel)
+    {
+        var ensureTask = Web.EnsureCoreWebView2Async(env).AsTask();
+        var completedTask = await Task.WhenAny(ensureTask, Task.Delay(WebViewInitTimeout));
+
+        if (!ReferenceEquals(completedTask, ensureTask))
+        {
+            throw new TimeoutException($"Tempo excedido ao inicializar WebView2 ({attemptLabel}) apos {WebViewInitTimeout.TotalSeconds:0}s.");
+        }
+
+        await ensureTask;
+
+        if (Web.CoreWebView2 is null)
+        {
+            throw new InvalidOperationException($"CoreWebView2 nao disponivel apos inicializacao ({attemptLabel}).");
+        }
     }
 
     private async Task<bool> EnsureWebViewReadySafeAsync()
@@ -203,7 +281,7 @@ public sealed partial class BrowserPage : Page
         catch (Exception ex)
         {
             AppLogger.Error("BrowserPage: falha ao inicializar WebView2.", ex);
-            await ShowInfoDialogAsync("Navegador", "Falha ao iniciar o navegador interno (WebView2). Verifique se o WebView2 Runtime está instalado.");
+            await ShowInfoDialogAsync("Navegador", "Falha ao iniciar o navegador interno (WebView2). Verifique se o WebView2 Runtime esta instalado.");
             return false;
         }
     }
@@ -1447,3 +1525,4 @@ public sealed partial class BrowserPage : Page
         }
     }
 }
+

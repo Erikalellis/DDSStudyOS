@@ -1,4 +1,4 @@
-using DDSStudyOS.App.Services;
+﻿using DDSStudyOS.App.Services;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -32,7 +32,7 @@ public sealed partial class SettingsPage : Page
         PathBox.Text = defaultPath;
         DiagPathBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-        VersionText.Text = $"Versão {AppReleaseInfo.VersionString}";
+        VersionText.Text = $"Versao {AppReleaseInfo.VersionString} ({AppReleaseInfo.BetaChannelLabel})";
         CompanyText.Text = $"Desenvolvido por {AppReleaseInfo.CompanyName}";
         DownloadsToggle.IsOn = SettingsService.DownloadsOrganizerEnabled;
 
@@ -493,3 +493,4 @@ public sealed partial class SettingsPage : Page
         return await picker.PickSingleFileAsync();
     }
 }
+

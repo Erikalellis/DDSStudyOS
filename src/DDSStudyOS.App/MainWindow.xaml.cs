@@ -1,4 +1,4 @@
-using DDSStudyOS.App.Pages;
+﻿using DDSStudyOS.App.Pages;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -32,7 +32,7 @@ public sealed partial class MainWindow : Window
 
         // Custom Window Title
         this.Title = AppTitle;
-        SplashVersionText.Text = $"v{AppReleaseInfo.VersionString}";
+        SplashVersionText.Text = AppReleaseInfo.BetaSplashLabel;
         UpdateUserGreeting();
 
         NavigateToTag("dashboard");
@@ -522,7 +522,6 @@ public sealed partial class MainWindow : Window
         var step = _tourSteps[_tourStepIndex];
         var target = ResolveTourTarget(step.Target);
 
-        GuidedTourTip.IsOpen = false;
         GuidedTourTip.Target = target;
         GuidedTourTip.Title = $"Passo {_tourStepIndex + 1} de {_tourSteps.Length}";
         GuidedTourTip.Subtitle = string.Empty;
@@ -581,7 +580,9 @@ public sealed partial class MainWindow : Window
         if (_tourStepIndex > 0)
         {
             _tourStepIndex--;
-            ShowTourStep();
+            // O botao de fechar do TeachingTip executa fechamento padrao apos o evento.
+            // Reabrimos no passo anterior no proximo ciclo da UI para garantir o "Voltar".
+            _ = DispatcherQueue.TryEnqueue(ShowTourStep);
             return;
         }
 
@@ -992,3 +993,4 @@ public sealed partial class MainWindow : Window
         return null;
     }
 }
+

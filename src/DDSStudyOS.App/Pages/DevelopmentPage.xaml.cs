@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
 using DDSStudyOS.App.Services;
@@ -15,7 +15,7 @@ public sealed partial class DevelopmentPage : Page
 
     private void InitializeRoadmapHeader()
     {
-        CurrentVersionText.Text = $"Versão atual: v{AppReleaseInfo.VersionString} (beta)";
+        CurrentVersionText.Text = $"Versao atual: {AppReleaseInfo.BetaVersionDisplay}";
         NextUpdateTitleText.Text = $"O que esperar da próxima atualização (meta: v{GetNextTargetVersion()})";
     }
 
@@ -34,7 +34,7 @@ public sealed partial class DevelopmentPage : Page
 
     private void Site_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        var url = "https://177.71.165.60/";
+        var url = "http://177.71.165.60/";
         Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
 
@@ -54,3 +54,4 @@ public sealed partial class DevelopmentPage : Page
         Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true });
     }
 }
+
