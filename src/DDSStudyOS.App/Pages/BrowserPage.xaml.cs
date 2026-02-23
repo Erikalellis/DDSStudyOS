@@ -57,6 +57,7 @@ public sealed partial class BrowserPage : Page
     private async void BrowserPage_Loaded(object sender, RoutedEventArgs e)
     {
         _isPageActive = true;
+        AppLogger.Info("BrowserPage: carregando pagina do navegador.");
 
         try
         {
@@ -69,6 +70,7 @@ public sealed partial class BrowserPage : Page
 
         if (!await EnsureWebViewReadySafeAsync())
         {
+            AppLogger.Warn("BrowserPage: WebView2 nao ficou pronta no carregamento.");
             return;
         }
 
@@ -167,9 +169,28 @@ public sealed partial class BrowserPage : Page
         }
 
         Directory.CreateDirectory(WebView2UserDataFolder);
-        var env = await CoreWebView2Environment.CreateWithOptionsAsync(null, WebView2UserDataFolder, null);
-        await Web.EnsureCoreWebView2Async(env);
+        CoreWebView2Environment? env = null;
+
+        try
+        {
+            // Mantemos GPU desativada para reduzir tela cinza/preta em alguns drivers.
+            var options = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--disable-gpu --disable-gpu-compositing" };
+            env = await CoreWebView2Environment.CreateWithOptionsAsync(null, WebView2UserDataFolder, options);
+            await Web.EnsureCoreWebView2Async(env);
+        }
+        catch (Exception firstInitEx)
+        {
+            AppLogger.Warn($"BrowserPage: falha na inicializacao padrao do WebView2. Tentando perfil limpo. Motivo: {firstInitEx.Message}");
+
+            var fallbackFolder = Path.Combine(WebView2UserDataFolder, "fallback");
+            Directory.CreateDirectory(fallbackFolder);
+            var fallbackOptions = new CoreWebView2EnvironmentOptions { AdditionalBrowserArguments = "--disable-gpu --disable-gpu-compositing --inprivate" };
+            env = await CoreWebView2Environment.CreateWithOptionsAsync(null, fallbackFolder, fallbackOptions);
+            await Web.EnsureCoreWebView2Async(env);
+        }
+
         ConfigureCoreWebView();
+        AppLogger.Info("BrowserPage: WebView2 inicializada com sucesso.");
     }
 
     private async Task<bool> EnsureWebViewReadySafeAsync()
@@ -320,6 +341,16 @@ public sealed partial class BrowserPage : Page
         if (string.IsNullOrWhiteSpace(raw)) return;
         raw = raw.Trim().Trim('"');
 
+        if (Web.CoreWebView2 is null)
+        {
+            // Se a navegacao vier antes da engine ficar pronta, salva e retenta.
+            AppState.PendingBrowserUrl = raw;
+            AddressBox.Text = raw;
+            _ = EnsureWebViewReadySafeAsync();
+            AppLogger.Warn("BrowserPage: navegacao recebida antes do WebView2 ficar pronto; pendenciando URL.");
+            return;
+        }
+
         if (TryHandleInternalAlias(raw))
         {
             return;
@@ -342,8 +373,16 @@ public sealed partial class BrowserPage : Page
     {
         _isInternalHomePage = false;
         _lastRequestedAddress = uri.ToString();
-        Web.Source = uri;
+        if (Web.CoreWebView2 is not null)
+        {
+            Web.CoreWebView2.Navigate(uri.ToString());
+        }
+        else
+        {
+            Web.Source = uri;
+        }
         AddressBox.Text = uri.ToString();
+        AppLogger.Info($"BrowserPage: navegando para {uri}");
     }
 
     private bool TryHandleInternalAlias(string raw)
@@ -606,6 +645,13 @@ public sealed partial class BrowserPage : Page
         }
 
         ConfigureCoreWebView();
+
+        if (!string.IsNullOrWhiteSpace(AppState.PendingBrowserUrl))
+        {
+            var pending = AppState.PendingBrowserUrl!;
+            AppState.PendingBrowserUrl = null;
+            Go(pending);
+        }
     }
 
     private void ConfigureCoreWebView()
@@ -717,6 +763,7 @@ public sealed partial class BrowserPage : Page
 
             if (!args.IsSuccess && !_isInternalHomePage)
             {
+                AppLogger.Warn($"BrowserPage: navegacao falhou ({args.WebErrorStatus}) para {_lastRequestedAddress}");
                 ShowNavigationErrorPage(args.WebErrorStatus, _lastRequestedAddress);
                 return;
             }
@@ -728,6 +775,11 @@ public sealed partial class BrowserPage : Page
             else if (Web.Source != null)
             {
                 AddressBox.Text = Web.Source.ToString();
+            }
+
+            if (!_isInternalHomePage)
+            {
+                AppLogger.Info($"BrowserPage: navegacao concluida com sucesso para {_lastRequestedAddress}");
             }
 
             if (!string.IsNullOrWhiteSpace(_pendingVaultCredentialId) && !_isInternalHomePage)
