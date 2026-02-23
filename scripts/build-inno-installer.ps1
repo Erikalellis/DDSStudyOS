@@ -122,8 +122,9 @@ if ($generateBrandingValue) {
     }
 
     Write-Host "==> Gerando branding do instalador Inno"
-    powershell -NoProfile -ExecutionPolicy Bypass -File $brandingScript -SourceImage $BrandingSourceImage -OutputDir $BrandingOutputDir -Force
-    if ($LASTEXITCODE -ne 0) {
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File $brandingScript -SourceImage $BrandingSourceImage -OutputDir $BrandingOutputDir -Force
+    $brandingExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+    if ($brandingExitCode -ne 0) {
         throw "Falha ao gerar branding do instalador Inno."
     }
 }
@@ -163,8 +164,9 @@ if ($prepareInputValue) {
     }
 
     Write-Host "==> Preparando arquivos para o instalador"
-    powershell @prepareArgs
-    if ($LASTEXITCODE -ne 0) {
+    powershell.exe @prepareArgs
+    $prepareExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+    if ($prepareExitCode -ne 0) {
         throw "Falha ao preparar arquivos de entrada."
     }
 }
@@ -201,7 +203,8 @@ $isccArgs = @(
 )
 
 & $iscc @isccArgs
-if ($LASTEXITCODE -ne 0) {
+$isccExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+if ($isccExitCode -ne 0) {
     throw "Falha ao compilar instalador oficial."
 }
 
@@ -247,7 +250,7 @@ if ($SignInstaller) {
         $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
     }
 
-    powershell @signArgs
+    powershell.exe @signArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Falha ao assinar instalador: $setupPath"
     }

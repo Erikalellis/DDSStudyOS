@@ -35,6 +35,7 @@ public sealed partial class BrowserPage : Page
     private string _lastRequestedAddress = HomeAddressAlias;
     private string? _pendingVaultCredentialId;
     private bool _isPageActive;
+    private bool _coreEventsAttached;
 
     public BrowserPage()
     {
@@ -74,16 +75,7 @@ public sealed partial class BrowserPage : Page
         _pendingVaultCredentialId = AppState.PendingVaultCredentialId;
         AppState.PendingVaultCredentialId = null;
 
-        var url = AppState.PendingBrowserUrl;
-        if (!string.IsNullOrWhiteSpace(url))
-        {
-            AppState.PendingBrowserUrl = null; // Consume
-            Go(url);
-        }
-        else if (Web.Source is null || string.Equals(Web.Source.ToString(), "about:blank", StringComparison.OrdinalIgnoreCase))
-        {
-            ShowHomePage();
-        }
+        await RestoreNavigationStateAsync();
 
         if (AppState.CurrentCourseId.HasValue)
         {
@@ -109,6 +101,38 @@ public sealed partial class BrowserPage : Page
         }
 
         _ = SaveNotesOnUnloadAsync();
+    }
+
+    private Task RestoreNavigationStateAsync()
+    {
+        try
+        {
+            var pendingUrl = AppState.PendingBrowserUrl;
+            if (!string.IsNullOrWhiteSpace(pendingUrl))
+            {
+                AppState.PendingBrowserUrl = null;
+                Go(pendingUrl);
+                return Task.CompletedTask;
+            }
+
+            if (Web.Source is null || string.Equals(Web.Source.ToString(), "about:blank", StringComparison.OrdinalIgnoreCase))
+            {
+                ShowHomePage();
+                return Task.CompletedTask;
+            }
+
+            AddressBox.Text = _isInternalHomePage
+                ? _internalPageAlias
+                : Web.Source?.ToString() ?? _lastRequestedAddress;
+
+            return Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"BrowserPage: falha ao restaurar estado de navegacao. Motivo: {ex.Message}");
+            ShowHomePage();
+            return Task.CompletedTask;
+        }
     }
 
     private async Task LoadCourseNotes(long courseId)
@@ -138,12 +162,14 @@ public sealed partial class BrowserPage : Page
     {
         if (Web.CoreWebView2 is not null)
         {
+            ConfigureCoreWebView();
             return;
         }
 
         Directory.CreateDirectory(WebView2UserDataFolder);
         var env = await CoreWebView2Environment.CreateWithOptionsAsync(null, WebView2UserDataFolder, null);
         await Web.EnsureCoreWebView2Async(env);
+        ConfigureCoreWebView();
     }
 
     private async Task<bool> EnsureWebViewReadySafeAsync()
@@ -574,101 +600,150 @@ public sealed partial class BrowserPage : Page
             return;
         }
 
-        if (!_isPageActive)
+        if (!_isPageActive || Web.CoreWebView2 is null)
         {
             return;
         }
 
-        if (Web.CoreWebView2 is null) return;
+        ConfigureCoreWebView();
+    }
+
+    private void ConfigureCoreWebView()
+    {
+        if (Web.CoreWebView2 is null)
+        {
+            return;
+        }
 
         AppState.WebViewInstance = Web.CoreWebView2;
 
-        // Remove elementos padrao que exibem branding do mecanismo
-        Web.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-        Web.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false;
-        Web.CoreWebView2.Settings.IsStatusBarEnabled = false;
-        Web.CoreWebView2.Settings.AreDevToolsEnabled = false;
-        Web.CoreWebView2.Settings.IsBuiltInErrorPageEnabled = false;
+        // Remove elementos padrão que exibem branding do mecanismo
+        var settings = Web.CoreWebView2.Settings;
+        settings.AreDefaultContextMenusEnabled = false;
+        settings.AreBrowserAcceleratorKeysEnabled = false;
+        settings.IsStatusBarEnabled = false;
+        settings.AreDevToolsEnabled = false;
+        settings.IsBuiltInErrorPageEnabled = false;
 
-        Web.CoreWebView2.NewWindowRequested += (sender, e) =>
+        if (_coreEventsAttached)
         {
-            if (!_isPageActive)
-            {
-                e.Handled = true;
-                return;
-            }
+            return;
+        }
 
-            e.Handled = true;
-            if (!string.IsNullOrWhiteSpace(e.Uri))
-            {
-                Go(e.Uri);
-            }
-        };
-
-        Web.CoreWebView2.NavigationStarting += (sender, e) =>
-        {
-            if (!_isPageActive)
-            {
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(e.Uri)) return;
-            _lastRequestedAddress = e.Uri;
-
-            if (e.Uri.StartsWith("dds://", StringComparison.OrdinalIgnoreCase))
-            {
-                e.Cancel = true;
-                _ = DispatcherQueue.TryEnqueue(() =>
-                {
-                    TryHandleInternalAlias(e.Uri);
-                });
-                return;
-            }
-
-            // Evita paginas internas do Edge e redireciona para Home DDS
-            if (e.Uri.StartsWith("edge://", StringComparison.OrdinalIgnoreCase) ||
-                e.Uri.StartsWith("msedge://", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(e.Uri, "about:newtab", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(e.Uri, "about:newtab/", StringComparison.OrdinalIgnoreCase))
-            {
-                e.Cancel = true;
-                ShowHomePage();
-            }
-        };
+        _coreEventsAttached = true;
+        Web.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        Web.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
+        Web.CoreWebView2.ProcessFailed += CoreWebView2_ProcessFailed;
     }
 
-    private void Web_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+    private void CoreWebView2_NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs e)
+    {
+        if (!_isPageActive)
+        {
+            e.Handled = true;
+            return;
+        }
+
+        e.Handled = true;
+        if (!string.IsNullOrWhiteSpace(e.Uri))
+        {
+            Go(e.Uri);
+        }
+    }
+
+    private void CoreWebView2_NavigationStarting(CoreWebView2 sender, CoreWebView2NavigationStartingEventArgs e)
     {
         if (!_isPageActive)
         {
             return;
         }
 
-        if (!args.IsSuccess && !_isInternalHomePage)
+        if (string.IsNullOrWhiteSpace(e.Uri))
         {
-            ShowNavigationErrorPage(args.WebErrorStatus, _lastRequestedAddress);
             return;
         }
 
-        if (_isInternalHomePage)
+        _lastRequestedAddress = e.Uri;
+
+        if (e.Uri.StartsWith("dds://", StringComparison.OrdinalIgnoreCase))
         {
-            AddressBox.Text = _internalPageAlias;
-        }
-        else if (Web.Source != null)
-        {
-            AddressBox.Text = Web.Source.ToString();
+            e.Cancel = true;
+            _ = DispatcherQueue.TryEnqueue(() =>
+            {
+                TryHandleInternalAlias(e.Uri);
+            });
+            return;
         }
 
-        if (!string.IsNullOrWhiteSpace(_pendingVaultCredentialId) && !_isInternalHomePage)
+        // Evita páginas internas do Edge e redireciona para Home DDS
+        if (e.Uri.StartsWith("edge://", StringComparison.OrdinalIgnoreCase) ||
+            e.Uri.StartsWith("msedge://", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(e.Uri, "about:newtab", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(e.Uri, "about:newtab/", StringComparison.OrdinalIgnoreCase))
         {
-            var credentialId = _pendingVaultCredentialId;
-            _pendingVaultCredentialId = null;
-            _ = TryFillByCredentialIdAsync(credentialId!, showFeedback: false);
+            e.Cancel = true;
+            ShowHomePage();
         }
-
-        UpdateNavigationButtons();
     }
 
+    private void CoreWebView2_ProcessFailed(CoreWebView2 sender, CoreWebView2ProcessFailedEventArgs e)
+    {
+        if (!_isPageActive)
+        {
+            return;
+        }
+
+        AppLogger.Warn($"BrowserPage: processo WebView2 falhou ({e.ProcessFailedKind}).");
+
+        _ = DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!_isPageActive)
+            {
+                return;
+            }
+
+            ShowNavigationErrorPage(CoreWebView2WebErrorStatus.UnexpectedError, _lastRequestedAddress);
+        });
+    }
+
+    private void Web_NavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+    {
+        try
+        {
+            if (!_isPageActive)
+            {
+                return;
+            }
+
+            if (!args.IsSuccess && !_isInternalHomePage)
+            {
+                ShowNavigationErrorPage(args.WebErrorStatus, _lastRequestedAddress);
+                return;
+            }
+
+            if (_isInternalHomePage)
+            {
+                AddressBox.Text = _internalPageAlias;
+            }
+            else if (Web.Source != null)
+            {
+                AddressBox.Text = Web.Source.ToString();
+            }
+
+            if (!string.IsNullOrWhiteSpace(_pendingVaultCredentialId) && !_isInternalHomePage)
+            {
+                var credentialId = _pendingVaultCredentialId;
+                _pendingVaultCredentialId = null;
+                _ = TryFillByCredentialIdAsync(credentialId!, showFeedback: false);
+            }
+
+            UpdateNavigationButtons();
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("BrowserPage: falha no NavigationCompleted.", ex);
+        }
+    }
     private void UpdateNavigationButtons()
     {
         if (!_isPageActive)
@@ -690,16 +765,24 @@ public sealed partial class BrowserPage : Page
     {
         if (Web.CoreWebView2 is null)
         {
-            AppLogger.Warn("BrowserPage: Home ignorado porque o WebView2 ainda não está pronto.");
+            AppState.PendingBrowserUrl = HomeAddressAlias;
+            AppLogger.Warn("BrowserPage: Home adiado porque o WebView2 ainda nao esta pronto.");
             return;
         }
 
-        _isInternalHomePage = true;
-        _internalPageAlias = HomeAddressAlias;
-        _lastRequestedAddress = HomeAddressAlias;
-        AddressBox.Text = _internalPageAlias;
-        Web.NavigateToString(BuildHomePageHtml());
-        UpdateNavigationButtons();
+        try
+        {
+            _isInternalHomePage = true;
+            _internalPageAlias = HomeAddressAlias;
+            _lastRequestedAddress = HomeAddressAlias;
+            AddressBox.Text = _internalPageAlias;
+            Web.NavigateToString(BuildHomePageHtml());
+            UpdateNavigationButtons();
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("BrowserPage: falha ao renderizar home interna.", ex);
+        }
     }
 
     private void ShowNavigationErrorPage(CoreWebView2WebErrorStatus status, string attemptedUrl)

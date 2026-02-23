@@ -12,7 +12,8 @@
             x:Name="NavView"
             PaneDisplayMode="Left"
             IsBackButtonVisible="Collapsed"
-            SelectionChanged="NavView_SelectionChanged">
+            SelectionChanged="NavView_SelectionChanged"
+            ItemInvoked="NavView_ItemInvoked">
 
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Name="NavItemDashboard" Content="Dashboard" Icon="Home" Tag="dashboard" />
@@ -55,14 +56,6 @@
 
         <!-- Onboarding / "login" overlay (first run). -->
         <Grid x:Name="OnboardingOverlay" IsHitTestVisible="True" Visibility="Collapsed" RequestedTheme="Dark">
-            <Grid.Resources>
-                <!-- Melhor contraste para cabeçalhos e campos do cadastro inicial -->
-                <SolidColorBrush x:Key="TextControlForeground" Color="#F2FFFFFF" />
-                <SolidColorBrush x:Key="TextControlBackground" Color="#1FFFFFFF" />
-                <SolidColorBrush x:Key="TextControlBorderBrush" Color="#66FFFFFF" />
-                <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#96FFFFFF" />
-                <SolidColorBrush x:Key="TextControlHeaderForeground" Color="#E0FFFFFF" />
-            </Grid.Resources>
             <Grid.Background>
                 <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
             </Grid.Background>
@@ -71,7 +64,7 @@
             <ScrollViewer HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           HorizontalScrollMode="Disabled"
-                          VerticalScrollMode="Auto"
+                          VerticalScrollMode="Enabled"
                           VerticalScrollBarVisibility="Auto"
                           MaxWidth="720"
                           MaxHeight="820"
@@ -96,7 +89,7 @@
                                            FontSize="24"
                                            FontWeight="SemiBold" />
                                 <TextBlock Text="Crie seu perfil para personalizar a experiência. Você pode editar depois em Configurações."
-                                           Foreground="#CCFFFFFF"
+                                           Foreground="#E6FFFFFF"
                                            FontSize="12"
                                            TextWrapping="WrapWholeWords" />
                             </StackPanel>
@@ -247,6 +240,9 @@
                      IsOpen="False"
                      IsLightDismissEnabled="False"
                      RequestedTheme="Dark"
+                     Background="#FF111827"
+                     BorderBrush="#FF365080"
+                     BorderThickness="1"
                      MinWidth="360"
                      MaxWidth="460"
                      PreferredPlacement="Auto"
@@ -256,11 +252,11 @@
                 <TextBlock x:Name="GuidedTourTitleText"
                            FontSize="16"
                            FontWeight="SemiBold"
-                           Foreground="#F2FFFFFF"
+                           Foreground="#FFF6F7FB"
                            TextWrapping="WrapWholeWords" />
                 <TextBlock x:Name="GuidedTourSubtitleText"
                            FontSize="13"
-                           Foreground="#CCFFFFFF"
+                           Foreground="#E6FFFFFF"
                            TextWrapping="WrapWholeWords" />
             </StackPanel>
         </TeachingTip>

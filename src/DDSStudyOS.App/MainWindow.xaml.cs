@@ -921,6 +921,23 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        if (args.IsSettingsInvoked)
+        {
+            NavigateToTag("settings");
+            return;
+        }
+
+        if (args.InvokedItemContainer is not NavigationViewItem item)
+        {
+            return;
+        }
+
+        var tag = item.Tag?.ToString() ?? "dashboard";
+        NavigateToTag(tag);
+    }
+
     private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
         if (_ignoreNextNavSelectionChanged)
@@ -938,14 +955,14 @@ public sealed partial class MainWindow : Window
     {
         var pageType = tag switch
         {
-            "dashboard" => typeof(HomePage),
+            "dashboard" => typeof(DashboardPage),
             "courses" => typeof(CoursesPage),
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
-            _ => typeof(HomePage)
+            _ => typeof(DashboardPage)
         };
 
         var navItem = FindNavItemByTag(tag);
