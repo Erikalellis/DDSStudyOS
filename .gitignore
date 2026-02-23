@@ -28,3 +28,6 @@ installer/advanced-installer/*.back*.aip
 # Certificates and secrets (keep public .cer only if needed)
 *.pfx
 *.snk
+src/DDSStudyOS.App/0
+src/DDSStudyOS.App/1
+src/DDSStudyOS.App/Assets/SplashBackground.bmp
