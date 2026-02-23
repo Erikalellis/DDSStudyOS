@@ -58,8 +58,18 @@ $selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfConta
 $windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
 $selfContainedArg = if ($selfContainedValue) { "1" } else { "0" }
 $windowsAppSdkSelfContainedArg = if ($windowsAppSdkSelfContainedValue) { "1" } else { "0" }
-powershell -NoProfile -ExecutionPolicy Bypass -File $publishScript -Configuration $Configuration -Platform $Platform -RuntimeIdentifier $RuntimeIdentifier -SelfContained $selfContainedArg -WindowsAppSDKSelfContained $windowsAppSdkSelfContainedArg
-if ($LASTEXITCODE -ne 0) {
+$publishArgs = @(
+    "-NoProfile",
+    "-ExecutionPolicy", "Bypass",
+    "-File", ('"{0}"' -f $publishScript),
+    "-Configuration", $Configuration,
+    "-Platform", $Platform,
+    "-RuntimeIdentifier", $RuntimeIdentifier,
+    "-SelfContained", $selfContainedArg,
+    "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
+)
+$publishProc = Start-Process -FilePath "powershell.exe" -ArgumentList $publishArgs -NoNewWindow -Wait -PassThru
+if ($publishProc.ExitCode -ne 0) {
     throw "Falha no build/publish."
 }
 
@@ -90,8 +100,8 @@ if ($SignExecutable) {
         $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
     }
 
-    powershell @signArgs
-    if ($LASTEXITCODE -ne 0) {
+    $signProc = Start-Process -FilePath "powershell.exe" -ArgumentList $signArgs -NoNewWindow -Wait -PassThru
+    if ($signProc.ExitCode -ne 0) {
         throw "Falha na assinatura do executavel."
     }
 }

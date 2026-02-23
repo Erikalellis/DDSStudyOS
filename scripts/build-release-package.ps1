@@ -145,7 +145,7 @@ function Invoke-InnoBuild {
         $args += @("-TimestampUrl", $TimestampUrl)
     }
 
-    powershell @args
+    powershell.exe @args
     if ($LASTEXITCODE -ne 0) {
         throw "Falha ao gerar instalador: $SetupBaseName"
     }

@@ -54,7 +54,27 @@ function Resolve-MsBuildPath {
         }
     }
 
-    throw "MSBuild nao encontrado. Instale Visual Studio 2022/2026 com workload de desktop Windows."
+    return $null
+}
+
+function Resolve-DotnetPath {
+    $candidates = @(
+        "C:\Program Files\dotnet\dotnet.exe",
+        "F:\Program Files\dotnet\dotnet.exe"
+    )
+
+    foreach ($candidate in $candidates) {
+        if (Test-Path $candidate) {
+            return (Resolve-Path $candidate).Path
+        }
+    }
+
+    $cmd = Get-Command dotnet -ErrorAction SilentlyContinue
+    if ($cmd) {
+        return $cmd.Source
+    }
+
+    throw "dotnet nao encontrado. Instale o SDK .NET 8."
 }
 
 function Assert-PublishOutput {
@@ -180,9 +200,16 @@ if (-not (Test-Path $projectPath)) {
 }
 
 $resolvedMsBuild = Resolve-MsBuildPath
+$resolvedDotnet = Resolve-DotnetPath
 $selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfContained"
 $windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
-Write-Host "MSBuild: $resolvedMsBuild"
+if ($resolvedMsBuild) {
+    Write-Host "MSBuild: $resolvedMsBuild"
+}
+else {
+    Write-Host "MSBuild: nao encontrado (fallback dotnet publish)"
+}
+Write-Host "dotnet: $resolvedDotnet"
 Write-Host "Configuration: $Configuration"
 Write-Host "Platform: $Platform"
 Write-Host "RuntimeIdentifier: $RuntimeIdentifier"
@@ -201,17 +228,36 @@ if (-not $effectiveSkipSolutionBuild -and $windowsAppSdkSelfContainedValue) {
 if (-not $effectiveSkipSolutionBuild) {
     Write-Host ""
     Write-Host "==> Build da solution"
-    & $resolvedMsBuild $solutionPath /t:Build /p:Configuration=$Configuration /m /nologo
-    if ($LASTEXITCODE -ne 0) {
-        throw "Falha no build da solution."
+
+    if ($resolvedMsBuild) {
+        & $resolvedMsBuild $solutionPath /t:Build /p:Configuration=$Configuration /m /nologo
+        if ($LASTEXITCODE -ne 0) {
+            throw "Falha no build da solution."
+        }
+    }
+    else {
+        $buildArgs = "build `"$solutionPath`" -c $Configuration -p:Platform=$Platform --tl:off -v minimal"
+        $buildProc = Start-Process -FilePath $resolvedDotnet -ArgumentList $buildArgs -NoNewWindow -Wait -PassThru
+        if ($buildProc.ExitCode -ne 0) {
+            throw "Falha no build da solution (dotnet)."
+        }
     }
 }
 
 Write-Host ""
 Write-Host "==> Publish do app"
-& $resolvedMsBuild $projectPath /t:Publish /p:Configuration=$Configuration /p:Platform=$Platform /p:RuntimeIdentifier=$RuntimeIdentifier /p:SelfContained=$selfContainedValue /p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue /m /nologo
-if ($LASTEXITCODE -ne 0) {
-    throw "Falha no publish do app."
+if ($resolvedMsBuild) {
+    & $resolvedMsBuild $projectPath /t:Publish /p:Configuration=$Configuration /p:Platform=$Platform /p:RuntimeIdentifier=$RuntimeIdentifier /p:SelfContained=$selfContainedValue /p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue /m /nologo
+    if ($LASTEXITCODE -ne 0) {
+        throw "Falha no publish do app."
+    }
+}
+else {
+    $publishArgs = "publish `"$projectPath`" -c $Configuration -r $RuntimeIdentifier -p:Platform=$Platform -p:SelfContained=$selfContainedValue -p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue --tl:off -v minimal"
+    $publishProc = Start-Process -FilePath $resolvedDotnet -ArgumentList $publishArgs -NoNewWindow -Wait -PassThru
+    if ($publishProc.ExitCode -ne 0) {
+        throw "Falha no publish do app (dotnet)."
+    }
 }
 
 $buildOutputPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier"

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Configuration = "Release",
     [string]$Platform = "x64",
     [string]$RuntimeIdentifier = "win-x64",
@@ -99,6 +99,18 @@ function Resolve-ProductVersion {
     return ($raw -split '[\+\-]')[0]
 }
 
+function Invoke-PowerShellScript {
+    param(
+        [string[]]$Arguments,
+        [string]$ErrorMessage
+    )
+
+    & powershell.exe @Arguments
+    if (-not $?) {
+        throw $ErrorMessage
+    }
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $resolvedScriptPath = if ([System.IO.Path]::IsPathRooted($ScriptPath)) { $ScriptPath } else { Join-Path $repoRoot $ScriptPath }
 $resolvedInputPath = if ([System.IO.Path]::IsPathRooted($InstallerInputPath)) { $InstallerInputPath } else { Join-Path $repoRoot $InstallerInputPath }
@@ -122,11 +134,15 @@ if ($generateBrandingValue) {
     }
 
     Write-Host "==> Gerando branding do instalador Inno"
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File $brandingScript -SourceImage $BrandingSourceImage -OutputDir $BrandingOutputDir -Force
-    $brandingExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
-    if ($brandingExitCode -ne 0) {
-        throw "Falha ao gerar branding do instalador Inno."
-    }
+    $brandingArgs = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", $brandingScript,
+        "-SourceImage", $BrandingSourceImage,
+        "-OutputDir", $BrandingOutputDir,
+        "-Force"
+    )
+    Invoke-PowerShellScript -Arguments $brandingArgs -ErrorMessage "Falha ao gerar branding do instalador Inno."
 }
 
 if ($prepareInputValue) {
@@ -164,11 +180,7 @@ if ($prepareInputValue) {
     }
 
     Write-Host "==> Preparando arquivos para o instalador"
-    powershell.exe @prepareArgs
-    $prepareExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
-    if ($prepareExitCode -ne 0) {
-        throw "Falha ao preparar arquivos de entrada."
-    }
+    Invoke-PowerShellScript -Arguments $prepareArgs -ErrorMessage "Falha ao preparar arquivos de entrada."
 }
 
 if (-not (Test-Path $resolvedInputPath)) {
@@ -203,8 +215,7 @@ $isccArgs = @(
 )
 
 & $iscc @isccArgs
-$isccExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
-if ($isccExitCode -ne 0) {
+if (-not $?) {
     throw "Falha ao compilar instalador oficial."
 }
 
@@ -250,13 +261,13 @@ if ($SignInstaller) {
         $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
     }
 
-    powershell.exe @signArgs
-    if ($LASTEXITCODE -ne 0) {
-        throw "Falha ao assinar instalador: $setupPath"
-    }
+    Invoke-PowerShellScript -Arguments $signArgs -ErrorMessage "Falha ao assinar instalador: $setupPath"
 }
 
 Write-Host ""
 Write-Host "Setup oficial gerado com sucesso:"
 Write-Host $setupPath
+
+
+
 

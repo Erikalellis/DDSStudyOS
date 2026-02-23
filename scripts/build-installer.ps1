@@ -96,7 +96,7 @@ if ($SignExecutable) {
     }
 }
 
-powershell @createArgs
+powershell.exe @createArgs
 if ($LASTEXITCODE -ne 0) {
     throw "Falha ao recriar o projeto do instalador."
 }

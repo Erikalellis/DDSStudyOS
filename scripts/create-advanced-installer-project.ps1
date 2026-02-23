@@ -213,7 +213,7 @@ if ($PrepareInput) {
         }
     }
 
-    powershell @prepareArgs
+    powershell.exe @prepareArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Falha ao preparar arquivos de entrada do instalador."
     }
