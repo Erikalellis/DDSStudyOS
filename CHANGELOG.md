@@ -32,6 +32,11 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Tratamento de exceções não observadas no ciclo de vida da aplicação
 - Script `run-setup-with-log.ps1` ajustado para fluxo de log com setup Inno por padrão
 - Tratamento de exceção global na UI para não mascarar falhas críticas
+- Navegador interno ajustado para usar diretório de dados do WebView2 em caminho gravável (fora de `Program Files`)
+- Navegação para IP/local sem certificado mantém `http://` e evita promoção automática para `https://`
+- Lista de "Materiais & Certificados" passou a ocultar/limpar registros temporários `.tmp` gerados por captura provisória
+- Instalador Inno protegido contra falha de pós-instalação com `skipifdoesntexist` ao abrir o app
+- Preparação do input do instalador reforçada com retries para limpeza/cópia, reduzindo falhas por arquivos bloqueados
 
 ## [2.1.0] - 2026-02-22
 ### Alterado
