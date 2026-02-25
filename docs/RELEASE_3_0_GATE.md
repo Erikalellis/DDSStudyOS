@@ -47,4 +47,5 @@ dotnet build DDSStudyOS.sln -c Debug -p:Platform=x64
 dotnet build DDSStudyOS.sln -c Release -p:Platform=x64
 .\scripts\build-release-package.ps1
 .\scripts\run-setup-with-log.ps1
+.\scripts\validate-clean-machine-smoke.ps1 -RunSetup -KeepInstalled
 ```
