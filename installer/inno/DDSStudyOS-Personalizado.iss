@@ -6,7 +6,7 @@
 #define MyAppName "DDS StudyOS"
 #define MyAppVersion "2.1.0"
 #define MyAppPublisher "Deep Darkness Studios"
-#define MyAppURL "https://github.com/Erikalellis/DDSStudyOS"
+#define MyAppURL "https://github.com/<OWNER>/<REPO>"
 #define MyAppExeName "DDSStudyOS.App.exe"
 #define MyAppId "{{A5F4F364-3F77-470A-BD5C-641AA103D8AA}"
 #define MyUninstallFeedbackURL "https://docs.google.com/forms/d/e/1FAIpQLScN1a0_ISFNIbfOx3XMY6L8Na5Utf9lZCoO3S8efGn4934GCQ/viewform"
@@ -63,7 +63,7 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; Work
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MySetupIcon}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\app\{#MyAppExeName}"; Description: "Abrir {#MyAppName} agora"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\app\{#MyAppExeName}"; Description: "Abrir {#MyAppName} agora"; Flags: nowait postinstall skipifsilent skipifdoesntexist
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\app"

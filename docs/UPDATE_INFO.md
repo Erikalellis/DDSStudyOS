@@ -3,17 +3,17 @@
 Este documento centraliza as URLs usadas no release do instalador oficial (Inno Setup) e no suporte do produto.
 
 ## Repositorio oficial
-- GitHub: `https://github.com/Erikalellis/DDSStudyOS`
+- GitHub: `https://github.com/<OWNER>/<REPO>`
 
 ## Canais de update
 - `stable`: producao
 - `beta`: homologacao interna
 
 ## URLs publicas
-- `Update Info URL (stable)`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/installer/update/stable/update-info.json`
-- `Update Info URL (beta)`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/installer/update/beta/update-info.json`
-- `Release Notes URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
-- `Support URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
+- `Update Info URL (stable)`: `https://github.com/<OWNER>/<REPO>/blob/main/installer/update/stable/update-info.json`
+- `Update Info URL (beta)`: `https://github.com/<OWNER>/<REPO>/blob/main/installer/update/beta/update-info.json`
+- `Release Notes URL`: `https://github.com/<OWNER>/<REPO>/blob/main/CHANGELOG.md`
+- `Support URL`: `https://github.com/<OWNER>/<REPO>/blob/main/SUPPORT.md`
 
 ## Observacao sobre auto-update
 - O arquivo acima e informativo.

@@ -3,6 +3,8 @@ param(
     [string]$Platform = "x64",
     [string]$RuntimeIdentifier = "win-x64",
     [string]$OutputDirectory = "",
+    [string]$GitHubOwner = "",
+    [string]$GitHubRepo = "",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
     [switch]$SignExecutable,
@@ -15,6 +17,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$repoLinksScript = Join-Path $PSScriptRoot "repo-links.ps1"
+if (-not (Test-Path $repoLinksScript)) {
+    throw "Script de links do repositorio nao encontrado: $repoLinksScript"
+}
+. $repoLinksScript
 
 function ConvertTo-BoolValue {
     param(
@@ -39,7 +46,66 @@ function ConvertTo-BoolValue {
     }
 }
 
+function Invoke-WithRetry {
+    param(
+        [scriptblock]$Action,
+        [string]$Description,
+        [int]$MaxAttempts = 20,
+        [int]$DelayMilliseconds = 500
+    )
+
+    if ($MaxAttempts -lt 1) { $MaxAttempts = 1 }
+    if ($DelayMilliseconds -lt 0) { $DelayMilliseconds = 0 }
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        try {
+            return & $Action
+        }
+        catch {
+            if ($attempt -ge $MaxAttempts) {
+                throw
+            }
+
+            Write-Host "Tentativa $attempt/$MaxAttempts falhou em '$Description'. Aguardando $DelayMilliseconds ms..."
+            Start-Sleep -Milliseconds $DelayMilliseconds
+        }
+    }
+}
+
+function Reset-DirectoryBestEffort {
+    param(
+        [string]$Path
+    )
+
+    if (-not (Test-Path $Path)) {
+        return
+    }
+
+    try {
+        Invoke-WithRetry -Description "limpar diretorio $Path" -MaxAttempts 30 -DelayMilliseconds 500 -Action {
+            Remove-Item $Path -Recurse -Force -ErrorAction Stop
+        } | Out-Null
+        return
+    }
+    catch {
+        Write-Warning "Nao foi possivel limpar completamente '$Path'. Continuando com limpeza parcial. Detalhe: $($_.Exception.Message)"
+    }
+
+    $children = Get-ChildItem -Path $Path -Force -ErrorAction SilentlyContinue
+    foreach ($child in $children) {
+        try {
+            Invoke-WithRetry -Description "remover item $($child.FullName)" -MaxAttempts 10 -DelayMilliseconds 500 -Action {
+                Remove-Item $child.FullName -Recurse -Force -ErrorAction Stop
+            } | Out-Null
+        }
+        catch {
+            Write-Warning "Item bloqueado/inalteravel mantido em '$($child.FullName)'. Detalhe: $($_.Exception.Message)"
+        }
+    }
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $GitHubOwner -Repo $GitHubRepo
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
     $OutputDirectory = Join-Path $repoRoot "artifacts\installer-input"
 }
@@ -107,9 +173,7 @@ if ($SignExecutable) {
 }
 
 Write-Host "==> Preparando pasta do instalador em: $OutputDirectory"
-if (Test-Path $OutputDirectory) {
-    Remove-Item $OutputDirectory -Recurse -Force
-}
+Reset-DirectoryBestEffort -Path $OutputDirectory
 
 $appOut = Join-Path $OutputDirectory "app"
 $scriptsOut = Join-Path $OutputDirectory "scripts"
@@ -139,8 +203,46 @@ foreach ($item in $items) {
         }
     }
 
-    Copy-Item -Path $item.FullName -Destination $appOut -Recurse -Force
+    Invoke-WithRetry -Description "copiar item de publish: $($item.Name)" -MaxAttempts 20 -DelayMilliseconds 500 -Action {
+        Copy-Item -Path $item.FullName -Destination $appOut -Recurse -Force -ErrorAction Stop
+    } | Out-Null
 }
+
+# Garante que os artefatos principais do app estejam no input do instalador.
+# Em alguns ambientes, a copia por enumeracao pode falhar silenciosamente para arquivos bloqueados.
+$requiredAppFiles = @(
+    "DDSStudyOS.App.exe",
+    "DDSStudyOS.App.dll",
+    "DDSStudyOS.App.deps.json",
+    "DDSStudyOS.App.runtimeconfig.json",
+    "DDSStudyOS.App.pri"
+)
+
+$missingRequired = @()
+foreach ($requiredFile in $requiredAppFiles) {
+    $sourceFile = Join-Path $publishDir $requiredFile
+    $destinationFile = Join-Path $appOut $requiredFile
+
+    if (-not (Test-Path $sourceFile)) {
+        throw "Arquivo obrigatorio nao encontrado no publish: $sourceFile"
+    }
+
+    if (-not (Test-Path $destinationFile)) {
+        Write-Host "Copiando arquivo obrigatorio ausente para o instalador: $requiredFile"
+        Invoke-WithRetry -Description "copiar arquivo obrigatorio: $requiredFile" -MaxAttempts 20 -DelayMilliseconds 500 -Action {
+            Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Stop
+        } | Out-Null
+    }
+
+    if (-not (Test-Path $destinationFile)) {
+        $missingRequired += $requiredFile
+    }
+}
+
+if ($missingRequired.Count -gt 0) {
+    throw "Falha ao preparar input do instalador. Arquivos obrigatorios ausentes: $($missingRequired -join ', ')"
+}
+
 Copy-Item (Join-Path $repoRoot "scripts\install-internal-cert.ps1") $scriptsOut -Force
 Copy-Item (Join-Path $repoRoot "scripts\Instalar_DDS.bat") $scriptsOut -Force
 Copy-Item (Join-Path $repoRoot "scripts\DDS_Studios_Final.cer") $scriptsOut -Force
@@ -170,9 +272,9 @@ $manifest = [pscustomobject]@{
     EulaPtBrPath = "legal\\EULA.pt-BR.rtf"
     EulaEsPath = "legal\\EULA.es.rtf"
     InstallerReadmePath = "legal\\README_INSTALLER.pt-BR.rtf"
-    SupportUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md"
-    UpdateInfoUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md"
-    ReleaseNotesUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md"
+    SupportUrl = $repoLinks.SupportUrl
+    UpdateInfoUrl = $repoLinks.UpdateInfoUrl
+    ReleaseNotesUrl = $repoLinks.ReleaseNotesUrl
 }
 
 $manifestPath = Join-Path $OutputDirectory "installer-manifest.json"
@@ -183,4 +285,3 @@ Write-Host "Pacote para instalador gerado com sucesso."
 Write-Host "Pasta: $OutputDirectory"
 Write-Host "Executavel: $exePath"
 Write-Host "Manifesto: $manifestPath"
-

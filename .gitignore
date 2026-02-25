@@ -24,6 +24,7 @@ installer/advanced-installer/*.back*.aip
 # Local config
 .idea/
 .vscode/
+scripts/release-profile.local.ps1
 
 # Certificates and secrets (keep public .cer only if needed)
 *.pfx

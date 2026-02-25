@@ -54,4 +54,3 @@ public sealed partial class DevelopmentPage : Page
         Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true });
     }
 }
-

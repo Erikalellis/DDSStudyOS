@@ -9,10 +9,12 @@ param(
     [string]$AdvancedInstallerPath = "",
     [string]$ProductName = "DDS StudyOS",
     [string]$CompanyName = "Deep Darkness Studios",
-    [string]$HomepageUrl = "https://177.71.165.60/",
-    [string]$SupportUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
-    [string]$UpdateInfoUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md",
-    [string]$ReleaseNotesUrl = "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
+    [string]$HomepageUrl = "http://177.71.165.60/",
+    [string]$SupportUrl = "",
+    [string]$UpdateInfoUrl = "",
+    [string]$ReleaseNotesUrl = "",
+    [string]$GitHubOwner = "",
+    [string]$GitHubRepo = "",
     [string]$SetupFileName = "DDSStudyOS-Setup.exe",
     [string]$AppIconPath = "src\DDSStudyOS.App\Assets\DDSStudyOS.ico",
     [string]$Version = "",
@@ -32,6 +34,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$repoLinksScript = Join-Path $PSScriptRoot "repo-links.ps1"
+if (-not (Test-Path $repoLinksScript)) {
+    throw "Script de links do repositorio nao encontrado: $repoLinksScript"
+}
+. $repoLinksScript
 
 function ConvertTo-BoolValue {
     param(
@@ -169,6 +176,10 @@ function Resolve-DotNetDesktopSearchPath {
 }
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $GitHubOwner -Repo $GitHubRepo
+$SupportUrl = if ([string]::IsNullOrWhiteSpace($SupportUrl)) { $repoLinks.SupportUrl } else { $SupportUrl }
+$UpdateInfoUrl = if ([string]::IsNullOrWhiteSpace($UpdateInfoUrl)) { $repoLinks.UpdateInfoUrl } else { $UpdateInfoUrl }
+$ReleaseNotesUrl = if ([string]::IsNullOrWhiteSpace($ReleaseNotesUrl)) { $repoLinks.ReleaseNotesUrl } else { $ReleaseNotesUrl }
 $installerInput = if ([System.IO.Path]::IsPathRooted($InstallerInputPath)) { $InstallerInputPath } else { Join-Path $repoRoot $InstallerInputPath }
 $outputLocation = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
 $aipPath = if ([System.IO.Path]::IsPathRooted($ProjectPath)) { $ProjectPath } else { Join-Path $repoRoot $ProjectPath }
@@ -356,4 +367,3 @@ Write-Host "Output Setup: $outputLocation"
 Write-Host "Versao: $resolvedVersion"
 Write-Host ""
 Write-Host "Proximo passo: abrir o .aip no Advanced Installer e compilar o Setup."
-

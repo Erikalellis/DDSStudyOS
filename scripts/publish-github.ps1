@@ -4,7 +4,7 @@ param(
     [string]$Visibility = "public",
     [string]$Owner = "",
     [string]$Description = "DDS StudyOS - WinUI 3 (.NET 8)",
-    [string]$Homepage = "https://177.71.165.60/"
+    [string]$Homepage = "http://177.71.165.60/"
 )
 
 $ErrorActionPreference = "Stop"
@@ -43,7 +43,12 @@ function Update-LinkPlaceholders {
 
     $targets = @(
         (Join-Path $RepoRoot ".github\ISSUE_TEMPLATE\config.yml"),
-        (Join-Path $RepoRoot "docs\README.md")
+        (Join-Path $RepoRoot "docs\README.md"),
+        (Join-Path $RepoRoot "docs\UPDATE_INFO.md"),
+        (Join-Path $RepoRoot "installer\update\stable\update-info.json"),
+        (Join-Path $RepoRoot "installer\update\beta\update-info.json"),
+        (Join-Path $RepoRoot "installer\inno\DDSStudyOS.iss"),
+        (Join-Path $RepoRoot "installer\inno\DDSStudyOS-Personalizado.iss")
     )
 
     foreach ($file in $targets) {
@@ -94,7 +99,7 @@ try {
 
     Update-LinkPlaceholders -RepoRoot $repoRoot -OwnerName $ownerName.Trim() -Repository $repoName.Trim()
 
-    git -c core.safecrlf=false add ".github/ISSUE_TEMPLATE/config.yml" "docs/README.md" 2>$null
+    git -c core.safecrlf=false add ".github/ISSUE_TEMPLATE/config.yml" "docs/README.md" "docs/UPDATE_INFO.md" "installer/update/stable/update-info.json" "installer/update/beta/update-info.json" "installer/inno/DDSStudyOS.iss" "installer/inno/DDSStudyOS-Personalizado.iss" 2>$null
     if (-not [string]::IsNullOrWhiteSpace((git status --porcelain))) {
         git commit -m "docs: bind GitHub support/update links to repository URL"
         git push

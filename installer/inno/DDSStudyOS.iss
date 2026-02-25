@@ -1,8 +1,10 @@
 #define MyAppName "DDS StudyOS"
 #define MyAppPublisher "Deep Darkness Studios"
-#define MyAppURL "https://github.com/Erikalellis/DDSStudyOS"
 #define MyAppId "{{A5F4F364-3F77-470A-BD5C-641AA103D8AA}"
 
+#ifndef MyAppURL
+  #define MyAppURL "https://github.com/<OWNER>/<REPO>"
+#endif
 #ifndef MyAppVersion
   #define MyAppVersion "2.1.0"
 #endif
@@ -87,7 +89,7 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; Work
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MyAppIcon}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\app\{#MyAppExeName}"; Description: "Abrir {#MyAppName}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\app\{#MyAppExeName}"; Description: "Abrir {#MyAppName}"; Flags: nowait postinstall skipifsilent skipifdoesntexist
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\app"

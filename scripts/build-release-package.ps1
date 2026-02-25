@@ -23,10 +23,63 @@ param(
     [string]$PfxPassword = "",
     [ValidateSet("CurrentUser", "LocalMachine")]
     [string]$CertStoreScope = "CurrentUser",
+    [string]$GitHubOwner = "",
+    [string]$GitHubRepo = "",
     [string]$TimestampUrl = "http://timestamp.digicert.com"
 )
 
 $ErrorActionPreference = "Stop"
+$repoLinksScript = Join-Path $PSScriptRoot "repo-links.ps1"
+if (-not (Test-Path $repoLinksScript)) {
+    throw "Script de links do repositorio nao encontrado: $repoLinksScript"
+}
+. $repoLinksScript
+
+function Invoke-WithRetry {
+    param(
+        [scriptblock]$Action,
+        [string]$Description,
+        [int]$MaxAttempts = 20,
+        [int]$DelayMilliseconds = 750
+    )
+
+    if ($MaxAttempts -lt 1) { $MaxAttempts = 1 }
+    if ($DelayMilliseconds -lt 0) { $DelayMilliseconds = 0 }
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        try {
+            return & $Action
+        }
+        catch {
+            if ($attempt -ge $MaxAttempts) {
+                throw
+            }
+
+            Write-Host "Tentativa $attempt/$MaxAttempts falhou em '$Description'. Aguardando $DelayMilliseconds ms..."
+            Start-Sleep -Milliseconds $DelayMilliseconds
+        }
+    }
+}
+
+function Get-FileSha256 {
+    param([string]$Path)
+
+    $stream = [System.IO.File]::Open($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+    try {
+        $hasher = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            $hashBytes = $hasher.ComputeHash($stream)
+        }
+        finally {
+            $hasher.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+
+    return ([System.BitConverter]::ToString($hashBytes)).Replace("-", "").ToLowerInvariant()
+}
 
 function Resolve-ProductVersion {
     param([string]$RepoRoot)
@@ -66,6 +119,9 @@ function Update-UpdateInfo {
         [string]$FilePath,
         [string]$Version,
         [string]$InstallerAssetName,
+        [string]$ReleasePageUrl,
+        [string]$ReleaseNotesUrl,
+        [string]$SupportUrl,
         [string]$UpdatedAtUtc
     )
 
@@ -76,9 +132,14 @@ function Update-UpdateInfo {
     $json = Get-Content $FilePath -Raw -Encoding UTF8 | ConvertFrom-Json
     $json.currentVersion = $Version
     $json.installerAssetName = $InstallerAssetName
+    $json.releasePageUrl = $ReleasePageUrl
+    $json.releaseNotesUrl = $ReleaseNotesUrl
+    $json.supportUrl = $SupportUrl
     $json.updatedAtUtc = $UpdatedAtUtc
 
-    $json | ConvertTo-Json -Depth 10 | Set-Content -Path $FilePath -Encoding UTF8
+    $serialized = ($json | ConvertTo-Json -Depth 10).Replace("`r`n", "`n")
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($FilePath, $serialized, $utf8NoBom)
 }
 
 function Invoke-InnoBuild {
@@ -94,6 +155,8 @@ function Invoke-InnoBuild {
         [string]$InstallWebView2,
         [string]$InstallDotNetDesktopRuntime,
         [int]$DotNetDesktopRuntimeMajor,
+        [string]$GitHubOwner,
+        [string]$GitHubRepo,
         [string]$PrepareInput,
         [switch]$SignInstaller,
         [switch]$SignExecutable,
@@ -104,54 +167,62 @@ function Invoke-InnoBuild {
         [string]$TimestampUrl
     )
 
-    $args = @(
-        "-NoProfile",
-        "-ExecutionPolicy", "Bypass",
-        "-File", $BuildScript,
-        "-Configuration", $Configuration,
-        "-Platform", $Platform,
-        "-RuntimeIdentifier", $RuntimeIdentifier,
-        "-SelfContained", $SelfContained,
-        "-WindowsAppSDKSelfContained", $WindowsAppSDKSelfContained,
-        "-OutputPath", $OutputPath,
-        "-SetupBaseName", $SetupBaseName,
-        "-InstallWebView2", $InstallWebView2,
-        "-InstallDotNetDesktopRuntime", $InstallDotNetDesktopRuntime,
-        "-DotNetDesktopRuntimeMajor", $DotNetDesktopRuntimeMajor,
-        "-PrepareInput", $PrepareInput
-    )
+    $invokeArgs = @{
+        Configuration = $Configuration
+        Platform = $Platform
+        RuntimeIdentifier = $RuntimeIdentifier
+        SelfContained = $SelfContained
+        WindowsAppSDKSelfContained = $WindowsAppSDKSelfContained
+        OutputPath = $OutputPath
+        SetupBaseName = $SetupBaseName
+        InstallWebView2 = $InstallWebView2
+        InstallDotNetDesktopRuntime = $InstallDotNetDesktopRuntime
+        DotNetDesktopRuntimeMajor = $DotNetDesktopRuntimeMajor
+        GitHubOwner = $GitHubOwner
+        GitHubRepo = $GitHubRepo
+        PrepareInput = $PrepareInput
+    }
 
     if ($SignInstaller) {
-        $args += "-SignInstaller"
+        $invokeArgs.SignInstaller = $true
     }
 
     if ($SignExecutable) {
-        $args += "-SignExecutable"
+        $invokeArgs.SignExecutable = $true
     }
 
     if (-not [string]::IsNullOrWhiteSpace($CertThumbprint)) {
-        $args += @("-CertThumbprint", $CertThumbprint)
+        $invokeArgs.CertThumbprint = $CertThumbprint
     }
 
     if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
-        $args += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+        $invokeArgs.PfxPath = $PfxPath
+        $invokeArgs.PfxPassword = $PfxPassword
     }
 
     if (-not [string]::IsNullOrWhiteSpace($CertStoreScope)) {
-        $args += @("-CertStoreScope", $CertStoreScope)
+        $invokeArgs.CertStoreScope = $CertStoreScope
     }
 
     if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
-        $args += @("-TimestampUrl", $TimestampUrl)
+        $invokeArgs.TimestampUrl = $TimestampUrl
     }
 
-    powershell.exe @args
-    if ($LASTEXITCODE -ne 0) {
+    $global:LASTEXITCODE = 0
+    & $BuildScript @invokeArgs
+    $exitCode = $LASTEXITCODE
+
+    if (-not $?) {
+        throw "Falha ao gerar instalador: $SetupBaseName"
+    }
+
+    if ($exitCode -ne 0) {
         throw "Falha ao gerar instalador: $SetupBaseName"
     }
 }
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $GitHubOwner -Repo $GitHubRepo
 $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
 $buildInnoScript = Join-Path $PSScriptRoot "build-inno-installer.ps1"
 
@@ -190,6 +261,8 @@ Invoke-InnoBuild `
     -InstallWebView2 $InstallWebView2 `
     -InstallDotNetDesktopRuntime $InstallDotNetDesktopRuntime `
     -DotNetDesktopRuntimeMajor $DotNetDesktopRuntimeMajor `
+    -GitHubOwner $repoLinks.Owner `
+    -GitHubRepo $repoLinks.Repo `
     -PrepareInput "1" `
     -SignInstaller:$SignArtifacts `
     -SignExecutable:$SignAppExecutable `
@@ -220,6 +293,8 @@ if (-not $SkipBeta) {
         -InstallWebView2 $InstallWebView2 `
         -InstallDotNetDesktopRuntime $InstallDotNetDesktopRuntime `
         -DotNetDesktopRuntimeMajor $DotNetDesktopRuntimeMajor `
+        -GitHubOwner $repoLinks.Owner `
+        -GitHubRepo $repoLinks.Repo `
         -PrepareInput "0" `
         -SignInstaller:$SignArtifacts `
         -SignExecutable:$false `
@@ -249,16 +324,32 @@ if (-not $SkipPortable) {
 
     Write-Host ""
     Write-Host "==> Gerando pacote portatil"
-    Compress-Archive -Path (Join-Path $installerInputAppPath "*") -DestinationPath $portableZipPath -CompressionLevel Optimal -Force
+    Invoke-WithRetry -Description "Compress-Archive portable" -MaxAttempts 180 -DelayMilliseconds 1000 -Action {
+        Compress-Archive -Path (Join-Path $installerInputAppPath "*") -DestinationPath $portableZipPath -CompressionLevel Optimal -Force
+    } | Out-Null
 }
 
 $updatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
 $stableUpdateInfo = Join-Path $repoRoot "installer\update\stable\update-info.json"
 $betaUpdateInfo = Join-Path $repoRoot "installer\update\beta\update-info.json"
 
-Update-UpdateInfo -FilePath $stableUpdateInfo -Version $stableVersion -InstallerAssetName "$StableSetupBaseName.exe" -UpdatedAtUtc $updatedAtUtc
+Update-UpdateInfo `
+    -FilePath $stableUpdateInfo `
+    -Version $stableVersion `
+    -InstallerAssetName "$StableSetupBaseName.exe" `
+    -ReleasePageUrl $repoLinks.LatestReleaseUrl `
+    -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
+    -SupportUrl $repoLinks.SupportUrl `
+    -UpdatedAtUtc $updatedAtUtc
 if (-not $SkipBeta) {
-    Update-UpdateInfo -FilePath $betaUpdateInfo -Version $effectiveBetaVersion -InstallerAssetName "$BetaSetupBaseName.exe" -UpdatedAtUtc $updatedAtUtc
+    Update-UpdateInfo `
+        -FilePath $betaUpdateInfo `
+        -Version $effectiveBetaVersion `
+        -InstallerAssetName "$BetaSetupBaseName.exe" `
+        -ReleasePageUrl $repoLinks.ReleasesUrl `
+        -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
+        -SupportUrl $repoLinks.SupportUrl `
+        -UpdatedAtUtc $updatedAtUtc
 }
 
 $shaPath = Join-Path $resolvedOutputPath $ShaFileName
@@ -271,7 +362,9 @@ if ($portableZipPath) {
 }
 
 $shaLines = foreach ($artifact in $artifacts) {
-    $hash = (Get-FileHash -Path $artifact -Algorithm SHA256).Hash.ToLowerInvariant()
+    $hash = Invoke-WithRetry -Description "SHA256 $artifact" -MaxAttempts 180 -DelayMilliseconds 1000 -Action {
+        Get-FileSha256 -Path $artifact
+    }
     "$hash *$([System.IO.Path]::GetFileName($artifact))"
 }
 

@@ -2,6 +2,8 @@
     [string]$Configuration = "Release",
     [string]$Platform = "x64",
     [string]$RuntimeIdentifier = "win-x64",
+    [string]$GitHubOwner = "",
+    [string]$GitHubRepo = "",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
     [string]$PrepareInput = "true",
@@ -27,6 +29,11 @@
 )
 
 $ErrorActionPreference = "Stop"
+$repoLinksScript = Join-Path $PSScriptRoot "repo-links.ps1"
+if (-not (Test-Path $repoLinksScript)) {
+    throw "Script de links do repositorio nao encontrado: $repoLinksScript"
+}
+. $repoLinksScript
 
 function ConvertTo-BoolValue {
     param(
@@ -99,6 +106,30 @@ function Resolve-ProductVersion {
     return ($raw -split '[\+\-]')[0]
 }
 
+function ConvertTo-RelativePath {
+    param(
+        [string]$BasePath,
+        [string]$TargetPath
+    )
+
+    $baseFullPath = [System.IO.Path]::GetFullPath($BasePath)
+    if (-not $baseFullPath.EndsWith([System.IO.Path]::DirectorySeparatorChar)) {
+        $baseFullPath += [System.IO.Path]::DirectorySeparatorChar
+    }
+
+    $targetFullPath = [System.IO.Path]::GetFullPath($TargetPath)
+    $baseUri = New-Object System.Uri($baseFullPath)
+    $targetUri = New-Object System.Uri($targetFullPath)
+    $relativeUri = $baseUri.MakeRelativeUri($targetUri)
+    $relativePath = [System.Uri]::UnescapeDataString($relativeUri.ToString()).Replace('/', '\')
+
+    if ([string]::IsNullOrWhiteSpace($relativePath)) {
+        return "."
+    }
+
+    return $relativePath
+}
+
 function Invoke-PowerShellScript {
     param(
         [string[]]$Arguments,
@@ -106,15 +137,102 @@ function Invoke-PowerShellScript {
     )
 
     & powershell.exe @Arguments
-    if (-not $?) {
+    $exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+    if ($exitCode -ne 0) {
         throw $ErrorMessage
     }
 }
 
+function Resolve-GeneratedSetupPath {
+    param(
+        [string]$OutputDirectory,
+        [string]$ExpectedSetupPath,
+        [int]$MaxAttempts = 20,
+        [int]$DelayMilliseconds = 500
+    )
+
+    if ($MaxAttempts -lt 1) { $MaxAttempts = 1 }
+    if ($DelayMilliseconds -lt 0) { $DelayMilliseconds = 0 }
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        if (Test-Path $ExpectedSetupPath) {
+            return $ExpectedSetupPath
+        }
+
+        Start-Sleep -Milliseconds $DelayMilliseconds
+    }
+
+    return $null
+}
+
+function Wait-InnoCompilerCompletion {
+    param(
+        [string]$SetupBaseName,
+        [int]$TimeoutSeconds = 300,
+        [int]$PollMilliseconds = 1000
+    )
+
+    if ([string]::IsNullOrWhiteSpace($SetupBaseName)) {
+        return
+    }
+
+    if ($TimeoutSeconds -lt 1) { $TimeoutSeconds = 1 }
+    if ($PollMilliseconds -lt 100) { $PollMilliseconds = 100 }
+
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $argToken = "/DMySetupBaseName=$SetupBaseName"
+
+    while ((Get-Date) -lt $deadline) {
+        $processes = Get-CimInstance Win32_Process -Filter "Name='ISCC.exe'" -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.CommandLine -and $_.CommandLine.IndexOf($argToken, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+            }
+
+        if (-not $processes) {
+            return
+        }
+
+        Start-Sleep -Milliseconds $PollMilliseconds
+    }
+
+    throw "Timeout aguardando compiladores ISCC finalizarem para '$SetupBaseName'."
+}
+
+function Assert-InstallerInputContainsApp {
+    param(
+        [string]$InputPath
+    )
+
+    $requiredFiles = @(
+        "DDSStudyOS.App.exe",
+        "DDSStudyOS.App.dll",
+        "DDSStudyOS.App.deps.json",
+        "DDSStudyOS.App.runtimeconfig.json",
+        "DDSStudyOS.App.pri"
+    )
+
+    $missing = @()
+    foreach ($file in $requiredFiles) {
+        $fullPath = Join-Path $InputPath $file
+        if (-not (Test-Path $fullPath)) {
+            $missing += $file
+        }
+    }
+
+    if ($missing.Count -gt 0) {
+        throw "Input do instalador incompleto. Arquivos obrigatorios ausentes em '$InputPath': $($missing -join ', ')"
+    }
+}
+
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
+$repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $GitHubOwner -Repo $GitHubRepo
 $resolvedScriptPath = if ([System.IO.Path]::IsPathRooted($ScriptPath)) { $ScriptPath } else { Join-Path $repoRoot $ScriptPath }
 $resolvedInputPath = if ([System.IO.Path]::IsPathRooted($InstallerInputPath)) { $InstallerInputPath } else { Join-Path $repoRoot $InstallerInputPath }
 $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
+$scriptDirectory = Split-Path -Path $resolvedScriptPath -Parent
+$isccScriptPath = ConvertTo-RelativePath -BasePath $repoRoot -TargetPath $resolvedScriptPath
+$isccSourceDir = ConvertTo-RelativePath -BasePath $scriptDirectory -TargetPath $resolvedInputPath
+$isccOutputDir = ConvertTo-RelativePath -BasePath $scriptDirectory -TargetPath $resolvedOutputPath
 
 if (-not (Test-Path $resolvedScriptPath)) {
     throw "Script do Inno Setup nao encontrado: $resolvedScriptPath"
@@ -161,6 +279,8 @@ if ($prepareInputValue) {
         "-Configuration", $Configuration,
         "-Platform", $Platform,
         "-RuntimeIdentifier", $RuntimeIdentifier,
+        "-GitHubOwner", $repoLinks.Owner,
+        "-GitHubRepo", $repoLinks.Repo,
         "-SelfContained", $selfContainedArg,
         "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
     )
@@ -187,6 +307,8 @@ if (-not (Test-Path $resolvedInputPath)) {
     throw "Pasta de entrada nao encontrada: $resolvedInputPath"
 }
 
+Assert-InstallerInputContainsApp -InputPath $resolvedInputPath
+
 if (-not (Test-Path $resolvedOutputPath)) {
     New-Item -ItemType Directory -Path $resolvedOutputPath -Force | Out-Null
 }
@@ -197,6 +319,7 @@ $version = Resolve-ProductVersion -RepoRoot $repoRoot
 Write-Host "==> Compilando instalador oficial"
 Write-Host "ISCC: $iscc"
 Write-Host "Versao: $version"
+Write-Host "Repo URL: $($repoLinks.BaseUrl)"
 Write-Host "Entrada: $resolvedInputPath"
 Write-Host "Saida: $resolvedOutputPath"
 Write-Host "Prereq WebView2: $installWebView2Value"
@@ -205,31 +328,35 @@ Write-Host "Prereq .NET Desktop Runtime: $installDotNetDesktopRuntimeValue (majo
 $isccArgs = @(
     "/Qp",
     "/DMyAppVersion=$version",
-    "/DMySourceDir=$resolvedInputPath",
-    "/DMyOutputDir=$resolvedOutputPath",
+    "/DMySourceDir=$isccSourceDir",
+    "/DMyOutputDir=$isccOutputDir",
     "/DMySetupBaseName=$SetupBaseName",
+    "/DMyAppURL=$($repoLinks.BaseUrl)",
     "/DMyInstallWebView2=$([int]$installWebView2Value)",
     "/DMyInstallDotNetDesktopRuntime=$([int]$installDotNetDesktopRuntimeValue)",
     "/DMyDotNetDesktopRuntimeMajor=$DotNetDesktopRuntimeMajor",
-    $resolvedScriptPath
+    $isccScriptPath
 )
 
-& $iscc @isccArgs
-if (-not $?) {
-    throw "Falha ao compilar instalador oficial."
-}
-
 $setupPath = Join-Path $resolvedOutputPath "$SetupBaseName.exe"
-if (-not (Test-Path $setupPath)) {
-    $fallback = Get-ChildItem -Path $resolvedOutputPath -Filter "*.exe" -File -ErrorAction SilentlyContinue |
-        Sort-Object LastWriteTime -Descending |
-        Select-Object -First 1
-    if ($fallback) {
-        $setupPath = $fallback.FullName
+if (Test-Path $setupPath) {
+    try {
+        Remove-Item $setupPath -Force -ErrorAction Stop
+    }
+    catch {
+        # Mantem melhor esforco: se o arquivo estiver bloqueado, o ISCC pode sobrescrever.
     }
 }
 
-if (-not (Test-Path $setupPath)) {
+$isccProcess = Start-Process -FilePath $iscc -ArgumentList $isccArgs -WorkingDirectory $repoRoot -NoNewWindow -Wait -PassThru
+if ($isccProcess.ExitCode -ne 0) {
+    throw "Falha ao compilar instalador oficial."
+}
+
+Wait-InnoCompilerCompletion -SetupBaseName $SetupBaseName -TimeoutSeconds 300 -PollMilliseconds 1000
+$setupPath = Resolve-GeneratedSetupPath -OutputDirectory $resolvedOutputPath -ExpectedSetupPath $setupPath
+
+if ([string]::IsNullOrWhiteSpace($setupPath) -or -not (Test-Path $setupPath)) {
     throw "Compilacao concluida, mas setup nao encontrado em: $resolvedOutputPath"
 }
 
