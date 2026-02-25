@@ -9,6 +9,8 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Roadmap pós-3.0 documentado em `docs/ROADMAP_3_1.md`
 - Painel de atualização na aba Desenvolvimento com verificação por canal (`stable`/`beta`) e atalho para baixar update.
 - Fluxo de atualização automática no app: download do instalador, validação de assinatura/hash (quando disponível), elevação UAC e início silencioso da instalação.
+- Modo de smoke automatizado de primeiro uso (`--smoke-first-use`) com validação de onboarding, tour guiado e navegador interno.
+- Script `scripts/validate-first-use-smoke.ps1` para executar e gerar evidência de regressão do fluxo inicial.
 
 ## [3.0.0] - 2026-02-25
 ### Adicionado

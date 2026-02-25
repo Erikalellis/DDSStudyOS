@@ -25,6 +25,7 @@ public partial class App : Application
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         Services.WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
+        Services.AppState.LaunchArguments = args.Arguments ?? string.Empty;
 
         var window = new MainWindow();
         Services.AppState.MainWindow = window;

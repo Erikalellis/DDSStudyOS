@@ -22,6 +22,7 @@ public sealed partial class MainWindow : Window
     private int _tourStepIndex;
     private TourStep[] _tourSteps = Array.Empty<TourStep>();
     private bool _ignoreNextNavSelectionChanged;
+    private readonly bool _isSmokeFirstUseMode = AppState.IsSmokeFirstUseMode;
 
     private sealed record TourStep(FrameworkElement Target, string Title, string Subtitle);
 
@@ -48,6 +49,11 @@ public sealed partial class MainWindow : Window
         InitializePomodoro();
 
         InitializeSplashVisualState();
+
+        if (_isSmokeFirstUseMode)
+        {
+            AppLogger.Info("SMOKE_FIRST_USE:MODE_ENABLED");
+        }
     }
 
     private void InitializeSplashVisualState()
@@ -128,6 +134,12 @@ public sealed partial class MainWindow : Window
             await EnsureUserRegistrationAsync();
             await EnsureFirstRunTourAsync();
             StartBackgroundServices();
+
+            if (_isSmokeFirstUseMode)
+            {
+                await RunSmokeFirstUseScenarioAsync();
+                return;
+            }
 
             // Executa diagnostico em background sem travar a interface principal
             _ = RunStartupChecksAsync();
@@ -280,6 +292,21 @@ public sealed partial class MainWindow : Window
             return Task.CompletedTask;
         }
 
+        if (_isSmokeFirstUseMode)
+        {
+            try
+            {
+                SaveMinimalOnboardingProfile("Smoke Tester");
+                AppLogger.Info("SMOKE_FIRST_USE:ONBOARDING_OK");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error("SMOKE_FIRST_USE:ONBOARDING_FAIL", ex);
+            }
+
+            return Task.CompletedTask;
+        }
+
         var tcs = new TaskCompletionSource<bool>();
         _onboardingCompletion = tcs;
 
@@ -303,6 +330,36 @@ public sealed partial class MainWindow : Window
         }
 
         return tcs.Task;
+    }
+
+    private void SaveMinimalOnboardingProfile(string fallbackName)
+    {
+        var normalized = string.IsNullOrWhiteSpace(fallbackName)
+            ? (Environment.UserName ?? "Estudante")
+            : fallbackName.Trim();
+
+        if (string.IsNullOrWhiteSpace(normalized))
+        {
+            normalized = "Estudante";
+        }
+
+        var now = DateTimeOffset.Now;
+        UserProfileService.Save(new UserProfile
+        {
+            Name = normalized,
+            PreferredName = normalized,
+            Country = "Brasil",
+            ExperienceLevel = "Iniciante",
+            StudyShift = "Flexivel",
+            DailyGoalMinutes = 90,
+            ReceiveReminders = true,
+            HasSeenTour = false,
+            RegisteredAt = now,
+            UpdatedAt = now
+        });
+
+        UpdateReminderServiceFromProfile();
+        UpdateUserGreeting();
     }
 
     private void PrepareOnboardingDefaults()
@@ -420,28 +477,7 @@ public sealed partial class MainWindow : Window
         try
         {
             var fallback = (Environment.UserName ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(fallback))
-            {
-                fallback = "Estudante";
-            }
-
-            var now = DateTimeOffset.Now;
-            UserProfileService.Save(new UserProfile
-            {
-                Name = fallback,
-                PreferredName = fallback,
-                Country = "Brasil",
-                ExperienceLevel = "Iniciante",
-                StudyShift = "Flexivel",
-                DailyGoalMinutes = 90,
-                ReceiveReminders = true,
-                HasSeenTour = false,
-                RegisteredAt = now,
-                UpdatedAt = now
-            });
-
-            UpdateReminderServiceFromProfile();
-            UpdateUserGreeting();
+            SaveMinimalOnboardingProfile(fallback);
 
             HideOnboardingOverlay();
 
@@ -478,6 +514,11 @@ public sealed partial class MainWindow : Window
             return Task.CompletedTask;
         }
 
+        if (_isSmokeFirstUseMode)
+        {
+            return RunFirstRunTourSmokeAsync();
+        }
+
         var tcs = new TaskCompletionSource<bool>();
         _tourCompletion = tcs;
 
@@ -501,6 +542,123 @@ public sealed partial class MainWindow : Window
         }
 
         return tcs.Task;
+    }
+
+    private async Task RunFirstRunTourSmokeAsync()
+    {
+        try
+        {
+            await EnqueueOnUIAsync(() =>
+            {
+                EnsureNavigationPaneVisible();
+                BuildTourSteps();
+                if (_tourSteps.Length == 0)
+                {
+                    throw new InvalidOperationException("Tour sem passos para smoke.");
+                }
+
+                _tourStepIndex = Math.Min(1, _tourSteps.Length - 1);
+                ShowTourStep();
+            });
+
+            var backWorked = true;
+            if (_tourSteps.Length > 1)
+            {
+                await EnqueueOnUIAsync(() => GuidedTourTip_CloseButtonClick(GuidedTourTip, new object()));
+                await Task.Delay(120);
+                backWorked = _tourStepIndex == 0;
+            }
+
+            var maxInteractions = Math.Max(3, _tourSteps.Length + 2);
+            for (var i = 0; i < maxInteractions; i++)
+            {
+                if (UserProfileService.TryLoad(out var profile) && profile.HasSeenTour)
+                {
+                    break;
+                }
+
+                await EnqueueOnUIAsync(() => GuidedTourTip_ActionButtonClick(GuidedTourTip, new object()));
+                await Task.Delay(80);
+            }
+
+            var seen = UserProfileService.TryLoad(out var updatedProfile) && updatedProfile.HasSeenTour;
+            if (backWorked && seen)
+            {
+                AppLogger.Info("SMOKE_FIRST_USE:TOUR_OK");
+                return;
+            }
+
+            AppLogger.Warn($"SMOKE_FIRST_USE:TOUR_FAIL back={backWorked} seen={seen}");
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("SMOKE_FIRST_USE:TOUR_FAIL", ex);
+        }
+    }
+
+    private async Task RunSmokeFirstUseScenarioAsync()
+    {
+        try
+        {
+            AppLogger.Info("SMOKE_FIRST_USE:START");
+            var browserOk = await RunBrowserSmokeAsync();
+            var profileOk = UserProfileService.TryLoad(out var profile) && !string.IsNullOrWhiteSpace(profile.Name);
+            var tourOk = profileOk && profile.HasSeenTour;
+
+            if (browserOk && profileOk && tourOk)
+            {
+                AppLogger.Info("SMOKE_FIRST_USE:SUCCESS");
+            }
+            else
+            {
+                AppLogger.Warn($"SMOKE_FIRST_USE:FAIL profile={profileOk} tour={tourOk} browser={browserOk}");
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("SMOKE_FIRST_USE:FAIL", ex);
+        }
+        finally
+        {
+            await Task.Delay(900);
+            await EnqueueOnUIAsync(Close);
+        }
+    }
+
+    private async Task<bool> RunBrowserSmokeAsync()
+    {
+        try
+        {
+            await EnqueueOnUIAsync(() =>
+            {
+                AppState.PendingBrowserUrl = "dds://inicio";
+                NavigateToTag("browser");
+            });
+
+            var timeoutAt = DateTimeOffset.Now.AddSeconds(25);
+            while (DateTimeOffset.Now < timeoutAt)
+            {
+                var browserPageActive = ContentFrame.CurrentSourcePageType == typeof(BrowserPage);
+                var webReady = AppState.WebViewInstance is not null;
+                var pendingConsumed = string.IsNullOrWhiteSpace(AppState.PendingBrowserUrl);
+
+                if (browserPageActive && webReady && pendingConsumed)
+                {
+                    AppLogger.Info("SMOKE_FIRST_USE:BROWSER_OK");
+                    return true;
+                }
+
+                await Task.Delay(220);
+            }
+
+            AppLogger.Warn("SMOKE_FIRST_USE:BROWSER_FAIL timeout");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("SMOKE_FIRST_USE:BROWSER_FAIL", ex);
+            return false;
+        }
     }
 
     private void BuildTourSteps()

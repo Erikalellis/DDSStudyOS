@@ -10,6 +10,7 @@ Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.
 ## Prioridades (30 dias)
 1. Qualidade e confiabilidade
 - Criar suíte de smoke automatizada para primeiro uso (onboarding + tour + navegador).
+  Status atual: versão inicial entregue com `scripts/validate-first-use-smoke.ps1` e modo `--smoke-first-use`.
 - Adicionar teste automatizado para visibilidade do desinstalador no Windows.
 - Expandir logs de instalação/desinstalação para diagnóstico em campo.
 

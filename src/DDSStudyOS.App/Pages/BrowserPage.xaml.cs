@@ -964,6 +964,10 @@ public sealed partial class BrowserPage : Page
             _lastRequestedAddress = HomeAddressAlias;
             AddressBox.Text = _internalPageAlias;
             Web.NavigateToString(BuildHomePageHtml());
+            if (AppState.IsSmokeFirstUseMode)
+            {
+                AppLogger.Info("SMOKE_FIRST_USE:BROWSER_HOME_OK");
+            }
             UpdateNavigationButtons();
         }
         catch (Exception ex)

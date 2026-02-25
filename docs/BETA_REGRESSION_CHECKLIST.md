@@ -15,6 +15,7 @@ Use esta lista antes de cada pre-release e release.
 - [x] Splash abre e encerra sem travar.
 - [x] Onboarding abre no primeiro uso com campos legíveis.
 - [x] Tour guiado mostra título e descrição em todos os passos.
+- [x] Smoke automatizado de primeiro uso (`--smoke-first-use`) passa com marcadores de onboarding/tour/navegador.
 - [x] Botão `Config. Pomodoro` abre `Configurações`.
 - [x] Dashboard, Cursos, Materiais, Agenda, Navegador e Desenvolvimento navegam corretamente.
 
@@ -55,3 +56,4 @@ Use esta lista antes de cada pre-release e release.
 - [x] Setup padrão do ciclo 1: `artifacts/installer-logs/regression-default-20260225-110835-inno.log`.
 - [x] Uninstall padrão do ciclo 1: `artifacts/installer-logs/regression-after-default-20260225-110835-uninstall.log`.
 - [x] Smoke machine-clean com uninstall visível: `artifacts/installer-logs/clean-machine-smoke-20260225-162512.txt`.
+- [x] Smoke automatizado de primeiro uso: `artifacts/installer-logs/first-use-smoke-20260225-205532.txt`.
