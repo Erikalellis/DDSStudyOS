@@ -139,10 +139,22 @@ function Update-UpdateInfo {
     $json.supportUrl = $SupportUrl
     $json.updatedAtUtc = $UpdatedAtUtc
     if (-not [string]::IsNullOrWhiteSpace($InstallerSha256)) {
-        $json.installerSha256 = $InstallerSha256.Trim().ToLowerInvariant()
+        $installerShaValue = $InstallerSha256.Trim().ToLowerInvariant()
+        if ($json.PSObject.Properties.Match("installerSha256").Count -eq 0) {
+            $json | Add-Member -NotePropertyName "installerSha256" -NotePropertyValue $installerShaValue
+        }
+        else {
+            $json.installerSha256 = $installerShaValue
+        }
     }
     if (-not [string]::IsNullOrWhiteSpace($SignerThumbprint)) {
-        $json.signerThumbprint = (($SignerThumbprint -replace "[^A-Fa-f0-9]", "").ToUpperInvariant())
+        $thumbprintValue = (($SignerThumbprint -replace "[^A-Fa-f0-9]", "").ToUpperInvariant())
+        if ($json.PSObject.Properties.Match("signerThumbprint").Count -eq 0) {
+            $json | Add-Member -NotePropertyName "signerThumbprint" -NotePropertyValue $thumbprintValue
+        }
+        else {
+            $json.signerThumbprint = $thumbprintValue
+        }
     }
 
     $serialized = ($json | ConvertTo-Json -Depth 10).Replace("`r`n", "`n")

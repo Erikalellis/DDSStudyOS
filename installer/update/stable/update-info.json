@@ -7,6 +7,7 @@
     "releasePageUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/latest",
     "releaseNotesUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
     "supportUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
-    "updatedAtUtc":  "2026-02-25T19:24:38.7238923Z",
-    "signerThumbprint":  "6780CE530A33615B591727F5334B3DD075B76422"
+    "updatedAtUtc":  "2026-02-25T23:37:20.2859860Z",
+    "signerThumbprint":  "6780CE530A33615B591727F5334B3DD075B76422",
+    "installerSha256":  "b3bb9e21401324266a8742753b90f0a3eece29b588a2ecac97db80369cd517fa"
 }
