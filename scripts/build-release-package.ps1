@@ -122,7 +122,9 @@ function Update-UpdateInfo {
         [string]$ReleasePageUrl,
         [string]$ReleaseNotesUrl,
         [string]$SupportUrl,
-        [string]$UpdatedAtUtc
+        [string]$UpdatedAtUtc,
+        [string]$InstallerSha256 = "",
+        [string]$SignerThumbprint = ""
     )
 
     if (-not (Test-Path $FilePath)) {
@@ -136,6 +138,12 @@ function Update-UpdateInfo {
     $json.releaseNotesUrl = $ReleaseNotesUrl
     $json.supportUrl = $SupportUrl
     $json.updatedAtUtc = $UpdatedAtUtc
+    if (-not [string]::IsNullOrWhiteSpace($InstallerSha256)) {
+        $json.installerSha256 = $InstallerSha256.Trim().ToLowerInvariant()
+    }
+    if (-not [string]::IsNullOrWhiteSpace($SignerThumbprint)) {
+        $json.signerThumbprint = (($SignerThumbprint -replace "[^A-Fa-f0-9]", "").ToUpperInvariant())
+    }
 
     $serialized = ($json | ConvertTo-Json -Depth 10).Replace("`r`n", "`n")
     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -333,6 +341,21 @@ $updatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
 $stableUpdateInfo = Join-Path $repoRoot "installer\update\stable\update-info.json"
 $betaUpdateInfo = Join-Path $repoRoot "installer\update\beta\update-info.json"
 
+$stableSetupSha256 = Invoke-WithRetry -Description "SHA256 setup estavel" -MaxAttempts 180 -DelayMilliseconds 1000 -Action {
+    Get-FileSha256 -Path $stableSetupPath
+}
+$betaSetupSha256 = $null
+if ($betaSetupPath) {
+    $betaSetupSha256 = Invoke-WithRetry -Description "SHA256 setup beta" -MaxAttempts 180 -DelayMilliseconds 1000 -Action {
+        Get-FileSha256 -Path $betaSetupPath
+    }
+}
+
+$expectedSignerThumbprint = ""
+if (-not [string]::IsNullOrWhiteSpace($CertThumbprint)) {
+    $expectedSignerThumbprint = ($CertThumbprint -replace "[^A-Fa-f0-9]", "").ToUpperInvariant()
+}
+
 Update-UpdateInfo `
     -FilePath $stableUpdateInfo `
     -Version $stableVersion `
@@ -340,7 +363,9 @@ Update-UpdateInfo `
     -ReleasePageUrl $repoLinks.LatestReleaseUrl `
     -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
     -SupportUrl $repoLinks.SupportUrl `
-    -UpdatedAtUtc $updatedAtUtc
+    -UpdatedAtUtc $updatedAtUtc `
+    -InstallerSha256 $stableSetupSha256 `
+    -SignerThumbprint $expectedSignerThumbprint
 if (-not $SkipBeta) {
     Update-UpdateInfo `
         -FilePath $betaUpdateInfo `
@@ -349,7 +374,9 @@ if (-not $SkipBeta) {
         -ReleasePageUrl $repoLinks.ReleasesUrl `
         -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
         -SupportUrl $repoLinks.SupportUrl `
-        -UpdatedAtUtc $updatedAtUtc
+        -UpdatedAtUtc $updatedAtUtc `
+        -InstallerSha256 $betaSetupSha256 `
+        -SignerThumbprint $expectedSignerThumbprint
 }
 
 $shaPath = Join-Path $resolvedOutputPath $ShaFileName

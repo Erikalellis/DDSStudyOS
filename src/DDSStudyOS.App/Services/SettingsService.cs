@@ -11,6 +11,8 @@ public static class SettingsService
     private const string KeyDownloadsOrganizerEnabled = "DownloadsOrganizerEnabled";
     private const string KeyBrowserSearchProvider = "BrowserSearchProvider";
     private const string KeyFeedbackFormUrl = "FeedbackFormUrl";
+    private const string KeyUpdateChannel = "UpdateChannel";
+    private const string KeyUpdateAutoCheckInDevelopment = "UpdateAutoCheckInDevelopment";
     private const string KeyPomodoroFocusMinutes = "PomodoroFocusMinutes";
     private const string KeyPomodoroBreakMinutes = "PomodoroBreakMinutes";
     private const string KeyPomodoroAutoStartBreak = "PomodoroAutoStartBreak";
@@ -85,6 +87,44 @@ public static class SettingsService
 
             TryWritePackagedString(KeyFeedbackFormUrl, normalized);
             WriteFallbackString(KeyFeedbackFormUrl, normalized);
+        }
+    }
+
+    public static string UpdateChannel
+    {
+        get
+        {
+            if (TryReadPackagedString(KeyUpdateChannel, out var packagedValue) &&
+                !string.IsNullOrWhiteSpace(packagedValue))
+            {
+                return NormalizeUpdateChannel(packagedValue);
+            }
+
+            return NormalizeUpdateChannel(ReadFallbackString(KeyUpdateChannel, defaultValue: "stable"));
+        }
+        set
+        {
+            var normalized = NormalizeUpdateChannel(value);
+            TryWritePackagedString(KeyUpdateChannel, normalized);
+            WriteFallbackString(KeyUpdateChannel, normalized);
+        }
+    }
+
+    public static bool UpdateAutoCheckInDevelopment
+    {
+        get
+        {
+            if (TryReadPackagedBool(KeyUpdateAutoCheckInDevelopment, out var packagedValue))
+            {
+                return packagedValue;
+            }
+
+            return ReadFallbackBool(KeyUpdateAutoCheckInDevelopment, defaultValue: true);
+        }
+        set
+        {
+            TryWritePackagedBool(KeyUpdateAutoCheckInDevelopment, value);
+            WriteFallbackBool(KeyUpdateAutoCheckInDevelopment, value);
         }
     }
 
@@ -525,4 +565,11 @@ public static class SettingsService
 
     private static int Clamp(int value, int min, int max)
         => Math.Min(max, Math.Max(min, value));
+
+    private static string NormalizeUpdateChannel(string? value)
+    {
+        return string.Equals(value?.Trim(), "beta", StringComparison.OrdinalIgnoreCase)
+            ? "beta"
+            : "stable";
+    }
 }

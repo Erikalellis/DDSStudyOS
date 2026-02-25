@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid Padding="16" RowDefinitions="Auto,*">
@@ -17,6 +18,56 @@
                      Severity="Informational" />
 
             <TextBlock x:Name="CurrentVersionText" Opacity="0.8" />
+
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Atualizacao do aplicativo" FontWeight="SemiBold"/>
+                    <TextBlock Text="Verifique novas versoes publicadas no GitHub e abra a pagina de update quando desejar."
+                               Opacity="0.8"
+                               TextWrapping="WrapWholeWords"/>
+
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <TextBlock Text="Canal de atualizacao" Opacity="0.8"/>
+                            <ComboBox x:Name="UpdateChannelCombo"
+                                      SelectionChanged="UpdateChannelCombo_SelectionChanged">
+                                <ComboBoxItem Content="Estavel (recomendado)" Tag="stable" />
+                                <ComboBoxItem Content="Beta (testers)" Tag="beta" />
+                            </ComboBox>
+                        </StackPanel>
+
+                        <ToggleSwitch x:Name="UpdateAutoCheckToggle"
+                                      Grid.Column="1"
+                                      Header="Checar automaticamente ao abrir esta tela"
+                                      Toggled="UpdateAutoCheckToggle_Toggled"
+                                      OffContent="Desativado"
+                                      OnContent="Ativado"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="CheckUpdateButton" Content="Verificar agora" Click="CheckUpdates_Click" Style="{StaticResource AccentButtonStyle}" />
+                        <Button x:Name="InstallUpdateButton" Content="Atualizar agora" Click="InstallUpdate_Click" IsEnabled="False" Style="{StaticResource AccentButtonStyle}" />
+                        <Button x:Name="OpenUpdateButton" Content="Abrir atualizacao" Click="OpenUpdate_Click" IsEnabled="False" />
+                        <ProgressRing x:Name="UpdateProgressRing" Width="20" Height="20" IsActive="False" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="UpdateStatusText"
+                               Text="Status: ainda nao verificado."
+                               Opacity="0.8"
+                               TextWrapping="WrapWholeWords"/>
+
+                    <InfoBar x:Name="UpdateInfoBar"
+                             IsOpen="False"
+                             Severity="Informational"
+                             Title="Atualizacao"
+                             Message="Status de atualizacao." />
+                </StackPanel>
+            </Border>
 
             <TextBlock Text="Desenvolvido por Erika Lellis &amp; Deep Darkness Studios" FontSize="16" />
 
@@ -58,7 +109,7 @@
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Roadmap pós-beta (Fase 2)" FontWeight="SemiBold"/>
-                    <TextBlock Text="• Atualizador automático de versão."/>
+                    <TextBlock Text="• Evoluir o atualizador automático (rollback e canary)."/>
                     <TextBlock Text="• Exportar/importar configurações do usuário."/>
                     <TextBlock Text="• Telemetria opcional de erros (com consentimento)."/>
                     <TextBlock Text="• Métricas semanais reais no dashboard."/>

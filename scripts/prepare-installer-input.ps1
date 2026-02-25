@@ -209,6 +209,74 @@ foreach ($item in $items) {
     } | Out-Null
 }
 
+# Validacao de integridade da copia:
+# em algumas maquinas/antivirus um arquivo pode ser truncado silenciosamente durante a copia.
+# Este bloco revalida tamanho de todos os arquivos relevantes e recopia automaticamente quando necessario.
+$publishRoot = [System.IO.Path]::GetFullPath($publishDir).TrimEnd('\', '/')
+$publishFiles = New-Object System.Collections.Generic.List[System.IO.FileInfo]
+foreach ($item in $items) {
+    if ($item.PSIsContainer) {
+        if (($excludedRootDirs -contains $item.Name) -or $item.Name.EndsWith(".WebView2", [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
+        # Pastas de runtime podem estar mudando em paralelo (ex.: cache WebView2).
+        # Ignoramos erros pontuais de leitura para nao falhar o processo sem necessidade.
+        $childFiles = Get-ChildItem -Path $item.FullName -Recurse -File -Force -ErrorAction SilentlyContinue
+        foreach ($childFile in $childFiles) {
+            $publishFiles.Add($childFile)
+        }
+        continue
+    }
+
+    $publishFiles.Add($item)
+}
+
+foreach ($sourceFile in $publishFiles) {
+    $sourceFullPath = [System.IO.Path]::GetFullPath($sourceFile.FullName)
+    if (-not $sourceFullPath.StartsWith($publishRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        continue
+    }
+
+    $relativePath = $sourceFullPath.Substring($publishRoot.Length).TrimStart('\', '/')
+    if ([string]::IsNullOrWhiteSpace($relativePath)) {
+        continue
+    }
+
+    $rootSegment = ($relativePath -split '[\\/]', 2)[0]
+    if ($excludedRootDirs -contains $rootSegment) {
+        continue
+    }
+
+    if ($rootSegment.EndsWith(".WebView2", [System.StringComparison]::OrdinalIgnoreCase)) {
+        continue
+    }
+
+    $destinationFile = Join-Path $appOut $relativePath
+    $destinationDir = Split-Path -Path $destinationFile -Parent
+    if (-not (Test-Path $destinationDir)) {
+        New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+    }
+
+    $sourceLength = $sourceFile.Length
+    $needsRecopy = -not (Test-Path $destinationFile)
+    if (-not $needsRecopy) {
+        $destinationLength = (Get-Item $destinationFile -ErrorAction Stop).Length
+        $needsRecopy = ($destinationLength -ne $sourceLength)
+    }
+
+    if ($needsRecopy) {
+        Invoke-WithRetry -Description "revalidar arquivo copiado: $relativePath" -MaxAttempts 20 -DelayMilliseconds 500 -Action {
+            Copy-Item -Path $sourceFullPath -Destination $destinationFile -Force -ErrorAction Stop
+        } | Out-Null
+
+        $finalLength = (Get-Item $destinationFile -ErrorAction Stop).Length
+        if ($finalLength -ne $sourceLength) {
+            throw "Falha de integridade ao preparar input do instalador. Arquivo '$relativePath' esperado com $sourceLength bytes, mas ficou com $finalLength bytes."
+        }
+    }
+}
+
 # Garante que os artefatos principais do app estejam no input do instalador.
 # Em alguns ambientes, a copia por enumeracao pode falhar silenciosamente para arquivos bloqueados.
 $requiredAppFiles = @(

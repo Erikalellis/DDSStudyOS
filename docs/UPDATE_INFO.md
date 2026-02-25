@@ -24,6 +24,10 @@ Este documento centraliza as URLs usadas no release do instalador oficial (Inno 
 - Formato: `MAJOR.MINOR.PATCH` (exemplo: `2.1.0`)
 - Build de arquivo: `MAJOR.MINOR.PATCH.REVISION` (exemplo: `2.1.0.0`)
 
+## Campos opcionais no `update-info.json`
+- `signerThumbprint`: thumbprint esperado do certificado Authenticode do setup.
+- `installerSha256`: hash SHA256 esperado do instalador (quando quiser validação forte de integridade no app).
+
 ## Assinatura
 - Certificado atual (homologacao interna): `CN=Deep Darkness Studios`
 - Thumbprint esperado: `6780CE530A33615B591727F5334B3DD075B76422`
