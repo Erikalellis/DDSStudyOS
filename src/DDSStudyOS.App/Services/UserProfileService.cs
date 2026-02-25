@@ -6,6 +6,7 @@ namespace DDSStudyOS.App.Services;
 
 public sealed class UserProfile
 {
+    public string ProfileId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? PreferredName { get; set; }
     public string? Email { get; set; }
@@ -36,6 +37,21 @@ public static class UserProfileService
     public static bool IsRegistered()
         => TryLoad(out var profile) && !string.IsNullOrWhiteSpace(profile.Name);
 
+    public static string GetCurrentProfileKey()
+    {
+        if (TryLoad(out var profile))
+        {
+            if (EnsureProfileIdentity(profile))
+            {
+                Save(profile);
+            }
+
+            return profile.ProfileId;
+        }
+
+        return "default";
+    }
+
     public static bool TryLoad(out UserProfile profile)
     {
         lock (Sync)
@@ -62,6 +78,12 @@ public static class UserProfileService
                     return false;
                 }
 
+                var identityChanged = EnsureProfileIdentity(loaded);
+                if (identityChanged)
+                {
+                    WriteProfileNoLock(loaded);
+                }
+
                 profile = loaded;
                 return true;
             }
@@ -80,23 +102,40 @@ public static class UserProfileService
         {
             try
             {
-                var dir = Path.GetDirectoryName(ProfilePath);
-                if (!string.IsNullOrWhiteSpace(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                var json = JsonSerializer.Serialize(profile, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-
-                File.WriteAllText(ProfilePath, json);
+                EnsureProfileIdentity(profile);
+                WriteProfileNoLock(profile);
             }
             catch (Exception ex)
             {
                 AppLogger.Error("UserProfileService: falha ao salvar perfil.", ex);
             }
         }
+    }
+
+    private static bool EnsureProfileIdentity(UserProfile profile)
+    {
+        if (!string.IsNullOrWhiteSpace(profile.ProfileId))
+        {
+            return false;
+        }
+
+        profile.ProfileId = Guid.NewGuid().ToString("N");
+        return true;
+    }
+
+    private static void WriteProfileNoLock(UserProfile profile)
+    {
+        var dir = Path.GetDirectoryName(ProfilePath);
+        if (!string.IsNullOrWhiteSpace(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+
+        var json = JsonSerializer.Serialize(profile, new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        File.WriteAllText(ProfilePath, json);
     }
 }

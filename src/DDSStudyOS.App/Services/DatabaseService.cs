@@ -55,6 +55,16 @@ public sealed class DatabaseService
             await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN is_completed INTEGER DEFAULT 0;");
             await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN last_notified_at TEXT;");
             await SafeExecuteAsync(conn, "ALTER TABLE materials ADD COLUMN storage_mode TEXT NOT NULL DEFAULT 'reference';");
+            await SafeExecuteAsync(conn, @"
+CREATE TABLE IF NOT EXISTS course_favorites (
+    profile_key TEXT NOT NULL,
+    course_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (profile_key, course_id),
+    FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE CASCADE
+);");
+            await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_favorites_profile ON course_favorites(profile_key);");
+            await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_favorites_course ON course_favorites(course_id);");
         }
     }
 

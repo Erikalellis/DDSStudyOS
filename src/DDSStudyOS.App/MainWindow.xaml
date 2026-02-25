@@ -60,6 +60,33 @@
                 <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
             </Grid.Background>
             <Rectangle Fill="#CC05060A" />
+            <Grid.Resources>
+                <SolidColorBrush x:Key="OnboardingInputBackgroundBrush" Color="#FF1A2542" />
+                <SolidColorBrush x:Key="OnboardingInputBorderBrush" Color="#66FFFFFF" />
+                <SolidColorBrush x:Key="OnboardingInputForegroundBrush" Color="#FFF7F9FF" />
+
+                <Style TargetType="TextBox">
+                    <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
+                    <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
+                </Style>
+
+                <Style TargetType="ComboBox">
+                    <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
+                    <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
+                </Style>
+
+                <Style TargetType="NumberBox">
+                    <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
+                    <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
+                </Style>
+
+                <Style TargetType="ToggleSwitch">
+                    <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
+                </Style>
+            </Grid.Resources>
 
             <ScrollViewer HorizontalAlignment="Center"
                           VerticalAlignment="Center"
@@ -70,7 +97,7 @@
                           MaxHeight="820"
                           Margin="24">
                 <Border Background="#D30A1228"
-                        BorderBrush="#44FFFFFF"
+                        BorderBrush="#66FFFFFF"
                         BorderThickness="1"
                         CornerRadius="18"
                         Padding="22">

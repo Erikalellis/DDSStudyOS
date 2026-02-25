@@ -29,6 +29,7 @@ public sealed partial class MainWindow : Window
     {
         this.InitializeComponent();
         Closed += MainWindow_Closed;
+        AppState.PomodoroSettingsChanged += OnPomodoroSettingsChanged;
 
         // Custom Window Title
         this.Title = AppTitle;
@@ -714,6 +715,35 @@ public sealed partial class MainWindow : Window
                 TaskbarService.SetState(hwnd, TaskbarService.TbpFlag.TBPF_NOPROGRESS);
             })
         );
+
+        _pomodoro.SetIdlePreview(workMode: true, minutes: SettingsService.PomodoroFocusMinutes);
+        PomoActionBtn.Content = "\uE768";
+        this.Title = AppTitle;
+    }
+
+    private void OnPomodoroSettingsChanged()
+    {
+        _ = DispatcherQueue.TryEnqueue(() =>
+        {
+            try
+            {
+                if (_pomodoro is null)
+                {
+                    return;
+                }
+
+                var focusMinutes = SettingsService.PomodoroFocusMinutes;
+                var breakMinutes = SettingsService.PomodoroBreakMinutes;
+                _pomodoro.ApplyDurationForCurrentMode(
+                    workMinutes: focusMinutes,
+                    breakMinutes: breakMinutes,
+                    restartRunningSession: _pomodoro.IsRunning);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"Falha ao aplicar configuracoes do Pomodoro em tempo real. Motivo: {ex.Message}");
+            }
+        });
     }
 
     private void UpdateUserGreeting()
@@ -911,6 +941,7 @@ public sealed partial class MainWindow : Window
     {
         try
         {
+            AppState.PomodoroSettingsChanged -= OnPomodoroSettingsChanged;
             _downloadOrganizer.FileOrganized -= OnFileOrganized;
             _downloadOrganizer.Stop();
             _reminderNotifier.Stop();

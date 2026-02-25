@@ -128,8 +128,8 @@ public sealed partial class SettingsPage : Page
         SettingsService.PomodoroAutoStartBreak = PomoAutoBreakToggle.IsOn;
         SettingsService.PomodoroAutoStartWork = PomoAutoWorkToggle.IsOn;
         SettingsService.PomodoroNotifyOnFinish = PomoNotifyToggle.IsOn;
-
-        MsgText.Text = "Configurações do Pomodoro salvas. Elas serão aplicadas no próximo ciclo.";
+        AppState.RaisePomodoroSettingsChanged();
+        MsgText.Text = "Configurações do Pomodoro salvas e aplicadas.";
     }
 
     private void DownloadsToggle_Toggled(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

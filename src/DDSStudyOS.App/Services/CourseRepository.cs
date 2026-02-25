@@ -18,8 +18,11 @@ public sealed class CourseRepository
 
     public async Task<long> CreateAsync(Course course)
     {
+        var profileKey = GetProfileKey();
+
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
@@ -34,28 +37,43 @@ SELECT last_insert_rowid();";
         cmd.Parameters.AddWithValue("$url", (object?)course.Url ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$username", (object?)course.Username ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$password_blob", (object?)course.PasswordBlob ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("$is_favorite", course.IsFavorite ? 1 : 0);
+        cmd.Parameters.AddWithValue("$is_favorite", 0);
         cmd.Parameters.AddWithValue("$start_date", ToDbDate(course.StartDate));
         cmd.Parameters.AddWithValue("$due_date", ToDbDate(course.DueDate));
         cmd.Parameters.AddWithValue("$status", (object?)course.Status ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$notes", (object?)course.Notes ?? DBNull.Value);
 
         var idObj = await cmd.ExecuteScalarAsync();
-        return Convert.ToInt64(idObj, CultureInfo.InvariantCulture);
+        var id = Convert.ToInt64(idObj, CultureInfo.InvariantCulture);
+
+        if (course.IsFavorite)
+        {
+            await SetFavoriteInternalAsync(conn, profileKey, id, isFavorite: true);
+        }
+
+        return id;
     }
 
     public async Task<List<Course>> ListAsync()
     {
         var list = new List<Course>();
+        var profileKey = GetProfileKey();
 
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
-FROM courses
-ORDER BY is_favorite DESC, last_accessed DESC, updated_at DESC, id DESC;";
+SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
+       CASE WHEN cf.course_id IS NULL THEN 0 ELSE 1 END AS is_favorite,
+       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+FROM courses c
+LEFT JOIN course_favorites cf
+  ON cf.course_id = c.id
+ AND cf.profile_key = $profile_key
+ORDER BY is_favorite DESC, c.last_accessed DESC, c.updated_at DESC, c.id DESC;";
+        cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
         await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -68,16 +86,25 @@ ORDER BY is_favorite DESC, last_accessed DESC, updated_at DESC, id DESC;";
 
     public async Task<Course?> GetAsync(long id)
     {
+        var profileKey = GetProfileKey();
+
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
-FROM courses
-WHERE id = $id
+SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
+       CASE WHEN cf.course_id IS NULL THEN 0 ELSE 1 END AS is_favorite,
+       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+FROM courses c
+LEFT JOIN course_favorites cf
+  ON cf.course_id = c.id
+ AND cf.profile_key = $profile_key
+WHERE c.id = $id
 LIMIT 1;";
         cmd.Parameters.AddWithValue("$id", id);
+        cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
         await using var reader = await cmd.ExecuteReaderAsync();
         if (await reader.ReadAsync())
@@ -101,7 +128,6 @@ SET name=$name,
     url=$url,
     username=$username,
     password_blob=$password_blob,
-    is_favorite=$is_favorite,
     start_date=$start_date,
     due_date=$due_date,
     status=$status,
@@ -116,7 +142,6 @@ WHERE id=$id;";
         cmd.Parameters.AddWithValue("$url", (object?)course.Url ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$username", (object?)course.Username ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$password_blob", (object?)course.PasswordBlob ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("$is_favorite", course.IsFavorite ? 1 : 0);
         cmd.Parameters.AddWithValue("$start_date", ToDbDate(course.StartDate));
         cmd.Parameters.AddWithValue("$due_date", ToDbDate(course.DueDate));
         cmd.Parameters.AddWithValue("$status", (object?)course.Status ?? DBNull.Value);
@@ -138,15 +163,24 @@ WHERE id=$id;";
 
     public async Task<Course?> GetMostRecentAsync()
     {
-         await using var conn = _db.CreateConnection();
+        var profileKey = GetProfileKey();
+
+        await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
-FROM courses
-ORDER BY last_accessed DESC, updated_at DESC
+SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
+       CASE WHEN cf.course_id IS NULL THEN 0 ELSE 1 END AS is_favorite,
+       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+FROM courses c
+LEFT JOIN course_favorites cf
+  ON cf.course_id = c.id
+ AND cf.profile_key = $profile_key
+ORDER BY c.last_accessed DESC, c.updated_at DESC
 LIMIT 1;";
+        cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
         await using var reader = await cmd.ExecuteReaderAsync();
         if (await reader.ReadAsync())
@@ -158,16 +192,23 @@ LIMIT 1;";
     public async Task<List<Course>> ListFavoritesAsync()
     {
         var list = new List<Course>();
+        var profileKey = GetProfileKey();
 
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, last_accessed
-FROM courses
-WHERE is_favorite = 1
-ORDER BY last_accessed DESC, updated_at DESC, id DESC;";
+SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
+       1 AS is_favorite,
+       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+FROM courses c
+INNER JOIN course_favorites cf
+  ON cf.course_id = c.id
+ AND cf.profile_key = $profile_key
+ORDER BY c.last_accessed DESC, c.updated_at DESC, c.id DESC;";
+        cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
         await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -180,18 +221,39 @@ ORDER BY last_accessed DESC, updated_at DESC, id DESC;";
 
     public async Task SetFavoriteAsync(long courseId, bool isFavorite)
     {
+        var profileKey = GetProfileKey();
+
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
+        await SetFavoriteInternalAsync(conn, profileKey, courseId, isFavorite);
+    }
 
-        var cmd = conn.CreateCommand();
-        cmd.CommandText = @"
-UPDATE courses
-SET is_favorite = $is_favorite,
-    updated_at = datetime('now')
-WHERE id = $id;";
-        cmd.Parameters.AddWithValue("$id", courseId);
-        cmd.Parameters.AddWithValue("$is_favorite", isFavorite ? 1 : 0);
-        await cmd.ExecuteNonQueryAsync();
+    private static async Task SetFavoriteInternalAsync(SqliteConnection conn, string profileKey, long courseId, bool isFavorite)
+    {
+        if (isFavorite)
+        {
+            var insert = conn.CreateCommand();
+            insert.CommandText = @"
+INSERT OR IGNORE INTO course_favorites (profile_key, course_id, created_at)
+VALUES ($profile_key, $course_id, datetime('now'));";
+            insert.Parameters.AddWithValue("$profile_key", profileKey);
+            insert.Parameters.AddWithValue("$course_id", courseId);
+            await insert.ExecuteNonQueryAsync();
+        }
+        else
+        {
+            var delete = conn.CreateCommand();
+            delete.CommandText = "DELETE FROM course_favorites WHERE profile_key = $profile_key AND course_id = $course_id;";
+            delete.Parameters.AddWithValue("$profile_key", profileKey);
+            delete.Parameters.AddWithValue("$course_id", courseId);
+            await delete.ExecuteNonQueryAsync();
+        }
+
+        var update = conn.CreateCommand();
+        update.CommandText = "UPDATE courses SET updated_at = datetime('now') WHERE id = $id;";
+        update.Parameters.AddWithValue("$id", courseId);
+        await update.ExecuteNonQueryAsync();
     }
 
     public async Task DeleteAsync(long id)
@@ -204,6 +266,47 @@ WHERE id = $id;";
         cmd.Parameters.AddWithValue("$id", id);
 
         await cmd.ExecuteNonQueryAsync();
+    }
+
+    private static string GetProfileKey()
+    {
+        var profileKey = UserProfileService.GetCurrentProfileKey();
+        return string.IsNullOrWhiteSpace(profileKey) ? "default" : profileKey;
+    }
+
+    private static async Task EnsureLegacyFavoritesMigratedAsync(SqliteConnection conn, string profileKey)
+    {
+        var hasProfileFavoritesCmd = conn.CreateCommand();
+        hasProfileFavoritesCmd.CommandText = "SELECT COUNT(1) FROM course_favorites WHERE profile_key = $profile_key;";
+        hasProfileFavoritesCmd.Parameters.AddWithValue("$profile_key", profileKey);
+        var existingProfileFavorites = Convert.ToInt64(
+            await hasProfileFavoritesCmd.ExecuteScalarAsync() ?? 0,
+            CultureInfo.InvariantCulture);
+
+        if (existingProfileFavorites > 0)
+        {
+            return;
+        }
+
+        var hasLegacyFavoritesCmd = conn.CreateCommand();
+        hasLegacyFavoritesCmd.CommandText = "SELECT COUNT(1) FROM courses WHERE is_favorite = 1;";
+        var legacyFavorites = Convert.ToInt64(
+            await hasLegacyFavoritesCmd.ExecuteScalarAsync() ?? 0,
+            CultureInfo.InvariantCulture);
+
+        if (legacyFavorites <= 0)
+        {
+            return;
+        }
+
+        var migrate = conn.CreateCommand();
+        migrate.CommandText = @"
+INSERT OR IGNORE INTO course_favorites (profile_key, course_id, created_at)
+SELECT $profile_key, id, datetime('now')
+FROM courses
+WHERE is_favorite = 1;";
+        migrate.Parameters.AddWithValue("$profile_key", profileKey);
+        await migrate.ExecuteNonQueryAsync();
     }
 
     private static object ToDbDate(DateTimeOffset? dt)

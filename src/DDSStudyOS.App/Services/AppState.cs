@@ -18,4 +18,19 @@ public static class AppState
 
     // Referência ao CoreWebView2 para limpeza de cache via Settings
     public static CoreWebView2? WebViewInstance { get; set; }
+
+    // Notifica o shell principal quando as preferencias do Pomodoro forem alteradas.
+    public static event Action? PomodoroSettingsChanged;
+
+    public static void RaisePomodoroSettingsChanged()
+    {
+        try
+        {
+            PomodoroSettingsChanged?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"Falha ao notificar alteracao do Pomodoro. Motivo: {ex.Message}");
+        }
+    }
 }

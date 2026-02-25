@@ -77,6 +77,34 @@ public class PomodoroService
         NotifyTick();
     }
 
+    public void SetIdlePreview(bool workMode, int minutes)
+    {
+        minutes = Math.Clamp(minutes, 1, 180);
+        _timer.Stop();
+        IsRunning = false;
+        _isWorkMode = workMode;
+        _totalSeconds = minutes * 60;
+        _secondsRemaining = _totalSeconds;
+        NotifyTick();
+    }
+
+    public void ApplyDurationForCurrentMode(int workMinutes, int breakMinutes, bool restartRunningSession)
+    {
+        var minutes = _isWorkMode ? workMinutes : breakMinutes;
+        minutes = Math.Clamp(minutes, 1, 180);
+
+        if (restartRunningSession && IsRunning)
+        {
+            Start(minutes);
+            return;
+        }
+
+        if (!IsRunning)
+        {
+            SetIdlePreview(_isWorkMode, minutes);
+        }
+    }
+
     private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         if (_secondsRemaining > 0)
