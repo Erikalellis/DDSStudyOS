@@ -1,6 +1,8 @@
 using DDSStudyOS.App.Models;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -112,60 +114,55 @@ public sealed class BackupService
         var pkg = DeserializePackage(json);
         var courseIdMap = new Dictionary<long, long>();
 
-        // Cria cursos e mapeia IDs antigos -> novos para preservar vínculos.
-        foreach (var c in pkg.Courses)
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+        await using var tx = (SqliteTransaction)await conn.BeginTransactionAsync();
+
+        try
         {
-            var blob = string.IsNullOrWhiteSpace(c.PasswordPlain) ? null : DpapiProtector.ProtectString(c.PasswordPlain);
-
-            var newId = await _courseRepo.CreateAsync(new Course
+            // Cria cursos e mapeia IDs antigos -> novos para preservar vínculos.
+            foreach (var c in pkg.Courses)
             {
-                Name = c.Name,
-                Platform = c.Platform,
-                Url = c.Url,
-                Username = c.Username,
-                PasswordBlob = blob,
-                Status = c.Status,
-                Notes = c.Notes,
-                StartDate = TryParseDto(c.StartDate),
-                DueDate = TryParseDto(c.DueDate)
-            });
+                var blob = string.IsNullOrWhiteSpace(c.PasswordPlain) ? null : DpapiProtector.ProtectString(c.PasswordPlain);
+                var newId = await InsertCourseAsync(conn, tx, c, blob);
 
-            if (c.Id > 0)
-            {
-                courseIdMap[c.Id] = newId;
-            }
-        }
-
-        foreach (var m in pkg.Materials)
-        {
-            await _materialRepo.CreateAsync(new MaterialItem
-            {
-                CourseId = MapCourseId(m.CourseId, courseIdMap),
-                FileName = m.FileName,
-                FilePath = m.FilePath,
-                FileType = m.FileType,
-                StorageMode = NormalizeStorageMode(m.StorageMode, m.FilePath)
-            });
-        }
-
-        foreach (var r in pkg.Reminders)
-        {
-            var parsedDueAt = TryParseDto(r.DueAt);
-            if (parsedDueAt is null && !string.IsNullOrWhiteSpace(r.DueAt))
-            {
-                AppLogger.Warn($"Data invalida em lembrete de backup. Usando horario atual. Valor: {r.DueAt}");
+                if (c.Id > 0)
+                {
+                    courseIdMap[c.Id] = newId;
+                }
             }
 
-            var dueAt = parsedDueAt ?? DateTimeOffset.Now;
-            await _reminderRepo.CreateAsync(new ReminderItem
+            foreach (var m in pkg.Materials)
             {
-                CourseId = MapCourseId(r.CourseId, courseIdMap),
-                Title = r.Title,
-                DueAt = dueAt,
-                Notes = r.Notes,
-                IsCompleted = r.IsCompleted,
-                LastNotifiedAt = TryParseDto(r.LastNotifiedAt)
-            });
+                await InsertMaterialAsync(conn, tx, m, courseIdMap);
+            }
+
+            foreach (var r in pkg.Reminders)
+            {
+                var parsedDueAt = TryParseDto(r.DueAt);
+                if (parsedDueAt is null && !string.IsNullOrWhiteSpace(r.DueAt))
+                {
+                    AppLogger.Warn($"Data invalida em lembrete de backup. Usando horario atual. Valor: {r.DueAt}");
+                }
+
+                var dueAt = parsedDueAt ?? DateTimeOffset.Now;
+                await InsertReminderAsync(conn, tx, r, courseIdMap, dueAt);
+            }
+
+            await tx.CommitAsync();
+        }
+        catch
+        {
+            try
+            {
+                await tx.RollbackAsync();
+            }
+            catch
+            {
+                // Nao sobrescrever erro original de importacao.
+            }
+
+            throw;
         }
     }
 
@@ -234,6 +231,79 @@ public sealed class BackupService
         if (string.IsNullOrWhiteSpace(s)) return null;
         if (DateTimeOffset.TryParse(s, out var dt)) return dt;
         return null;
+    }
+
+    private static object ToDbDate(DateTimeOffset? dt)
+        => dt is null ? DBNull.Value : dt.Value.ToString("o", CultureInfo.InvariantCulture);
+
+    private static async Task<long> InsertCourseAsync(SqliteConnection conn, SqliteTransaction tx, CourseExport course, byte[]? passwordBlob)
+    {
+        var cmd = conn.CreateCommand();
+        cmd.Transaction = tx;
+        cmd.CommandText = @"
+INSERT INTO courses
+(name, platform, url, username, password_blob, is_favorite, start_date, due_date, status, notes, updated_at)
+VALUES
+($name, $platform, $url, $username, $password_blob, $is_favorite, $start_date, $due_date, $status, $notes, datetime('now'));
+SELECT last_insert_rowid();";
+
+        cmd.Parameters.AddWithValue("$name", course.Name);
+        cmd.Parameters.AddWithValue("$platform", (object?)course.Platform ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$url", (object?)course.Url ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$username", (object?)course.Username ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$password_blob", (object?)passwordBlob ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$is_favorite", 0);
+        cmd.Parameters.AddWithValue("$start_date", ToDbDate(TryParseDto(course.StartDate)));
+        cmd.Parameters.AddWithValue("$due_date", ToDbDate(TryParseDto(course.DueDate)));
+        cmd.Parameters.AddWithValue("$status", (object?)course.Status ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$notes", (object?)course.Notes ?? DBNull.Value);
+
+        var idObj = await cmd.ExecuteScalarAsync();
+        return Convert.ToInt64(idObj, CultureInfo.InvariantCulture);
+    }
+
+    private static async Task InsertMaterialAsync(
+        SqliteConnection conn,
+        SqliteTransaction tx,
+        MaterialExport material,
+        IReadOnlyDictionary<long, long> courseIdMap)
+    {
+        var cmd = conn.CreateCommand();
+        cmd.Transaction = tx;
+        cmd.CommandText = @"
+INSERT INTO materials (course_id, file_name, file_path, file_type, storage_mode, created_at)
+VALUES ($course_id, $file_name, $file_path, $file_type, $storage_mode, datetime('now'));";
+
+        cmd.Parameters.AddWithValue("$course_id", (object?)MapCourseId(material.CourseId, courseIdMap) ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$file_name", material.FileName);
+        cmd.Parameters.AddWithValue("$file_path", material.FilePath);
+        cmd.Parameters.AddWithValue("$file_type", (object?)material.FileType ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$storage_mode", NormalizeStorageMode(material.StorageMode, material.FilePath));
+
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    private static async Task InsertReminderAsync(
+        SqliteConnection conn,
+        SqliteTransaction tx,
+        ReminderExport reminder,
+        IReadOnlyDictionary<long, long> courseIdMap,
+        DateTimeOffset dueAt)
+    {
+        var cmd = conn.CreateCommand();
+        cmd.Transaction = tx;
+        cmd.CommandText = @"
+INSERT INTO reminders (course_id, title, due_at, notes, is_completed, last_notified_at, created_at)
+VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, datetime('now'));";
+
+        cmd.Parameters.AddWithValue("$course_id", (object?)MapCourseId(reminder.CourseId, courseIdMap) ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$title", reminder.Title);
+        cmd.Parameters.AddWithValue("$due_at", dueAt.ToString("o", CultureInfo.InvariantCulture));
+        cmd.Parameters.AddWithValue("$notes", (object?)reminder.Notes ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$is_completed", reminder.IsCompleted ? 1 : 0);
+        cmd.Parameters.AddWithValue("$last_notified_at", ToDbDate(TryParseDto(reminder.LastNotifiedAt)));
+
+        await cmd.ExecuteNonQueryAsync();
     }
 
     private static long? MapCourseId(long? legacyCourseId, IReadOnlyDictionary<long, long> courseIdMap)

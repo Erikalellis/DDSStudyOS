@@ -9,6 +9,7 @@ namespace DDSStudyOS.App.Services;
 public sealed class DatabaseService
 {
     private readonly string _dbPath;
+    private readonly string _connectionString;
 
     public DatabaseService()
     {
@@ -18,6 +19,11 @@ public sealed class DatabaseService
 
         Directory.CreateDirectory(baseDir);
         _dbPath = Path.Combine(baseDir, "studyos.db"); // Renamed db file
+        _connectionString = new SqliteConnectionStringBuilder
+        {
+            DataSource = _dbPath,
+            ForeignKeys = true
+        }.ToString();
     }
 
     public string DbPath => _dbPath;
@@ -29,7 +35,7 @@ public sealed class DatabaseService
         if (File.Exists(schemaPath))
         {
             var schemaSql = await File.ReadAllTextAsync(schemaPath);
-            await using var conn = new SqliteConnection($"Data Source={_dbPath}");
+            await using var conn = CreateConnection();
             await conn.OpenAsync();
 
             // Performance tuning
@@ -60,11 +66,15 @@ public sealed class DatabaseService
             cmd.CommandText = sql;
             await cmd.ExecuteNonQueryAsync();
         }
-        catch (SqliteException)
+        catch (SqliteException ex) when (IsDuplicateColumnError(ex))
         {
             // Ignore error if column already exists
         }
     }
+
+    private static bool IsDuplicateColumnError(SqliteException ex)
+        => ex.SqliteErrorCode == 1 &&
+           ex.Message.Contains("duplicate column name", StringComparison.OrdinalIgnoreCase);
 
     public async Task<string> RunIntegrityCheckAsync()
     {
@@ -80,5 +90,5 @@ public sealed class DatabaseService
         return Convert.ToString(result, CultureInfo.InvariantCulture) ?? "unknown";
     }
 
-    public SqliteConnection CreateConnection() => new($"Data Source={_dbPath}");
+    public SqliteConnection CreateConnection() => new(_connectionString);
 }

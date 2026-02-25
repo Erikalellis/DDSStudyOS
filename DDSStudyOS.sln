@@ -1,8 +1,12 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDSStudyOS.App", "src\DDSStudyOS.App\DDSStudyOS.App.csproj", "{8F9CB4C8-2E83-4F8F-9D6B-34C9C1D6B7B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A90DB79A-2077-44B4-B78B-C97C0A912C4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDSStudyOS.App.Tests", "tests\DDSStudyOS.App.Tests\DDSStudyOS.App.Tests.csproj", "{291749E4-008F-4E4D-B91D-8538DD067363}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,5 +18,12 @@ Global
 		{8F9CB4C8-2E83-4F8F-9D6B-34C9C1D6B7B1}.Debug|x64.Build.0 = Debug|x64
 		{8F9CB4C8-2E83-4F8F-9D6B-34C9C1D6B7B1}.Release|x64.ActiveCfg = Release|x64
 		{8F9CB4C8-2E83-4F8F-9D6B-34C9C1D6B7B1}.Release|x64.Build.0 = Release|x64
+		{291749E4-008F-4E4D-B91D-8538DD067363}.Debug|x64.ActiveCfg = Debug|x64
+		{291749E4-008F-4E4D-B91D-8538DD067363}.Debug|x64.Build.0 = Debug|x64
+		{291749E4-008F-4E4D-B91D-8538DD067363}.Release|x64.ActiveCfg = Release|x64
+		{291749E4-008F-4E4D-B91D-8538DD067363}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{291749E4-008F-4E4D-B91D-8538DD067363} = {A90DB79A-2077-44B4-B78B-C97C0A912C4B}
 	EndGlobalSection
 EndGlobal
