@@ -8,11 +8,11 @@ Este documento define o critério de **Go / No-Go** para promover o produto de `
 - A regressão beta (`docs/BETA_REGRESSION_CHECKLIST.md`) deve passar em **2 ciclos consecutivos** sem bug crítico.
 
 ## P0 - Obrigatório (bloqueia release 3.0)
-- [ ] Estabilidade: app não fecha ao abrir/sair/voltar do navegador interno.
-- [ ] Navegação: clique em curso abre navegador interno sempre.
-- [ ] Navegação: botões de Acesso Rápido executam a ação correta.
-- [ ] Onboarding: tela inicial de cadastro abre e salva sem erro.
-- [ ] Tour guiado: textos e alvos corretos em todos os passos (incluindo botão Voltar).
+- [x] Estabilidade: app não fecha ao abrir/sair/voltar do navegador interno.
+- [x] Navegação: clique em curso abre navegador interno sempre.
+- [x] Navegação: botões de Acesso Rápido executam a ação correta.
+- [x] Onboarding: tela inicial de cadastro abre e salva sem erro.
+- [x] Tour guiado: textos e alvos corretos em todos os passos (incluindo botão Voltar).
 - [x] Segurança: export de backup exige senha mestra (mín. 8 chars) e gera `.ddsbackup`.
 - [ ] Release: instalador estável abre o app em máquina limpa sem crash.
 
@@ -27,18 +27,19 @@ Este documento define o critério de **Go / No-Go** para promover o produto de `
 - [x] Assinatura: artefatos principais assinados antes de release público.
 
 ## Status atual (25/02/2026)
-- Estado geral: **2.2.0-beta candidato** (ainda não 3.0).
-- P0 concluídos: **1/7**.
+- Estado geral: **2.1.0-beta.1 candidato** (ainda não 3.0).
+- P0 concluídos: **6/7**.
 - P1 concluídos: **8/8**.
 - Smoke técnico concluído nesta rodada: build Debug/Release, testes automatizados, publish e geração do pacote (`Setup`, `Beta Setup`, `Portable`, `SHA256`) com validação de instalação silenciosa por log.
-- Pendências para gate 3.0: validação funcional completa dos fluxos de navegação/onboarding/tour e validação de instalador em **máquina limpa**.
+- Regressão beta (2 ciclos consecutivos) formalizada em `docs/BETA_REGRESSION_CHECKLIST.md`.
+- Pendência final para gate 3.0: validação de instalador em **máquina limpa**.
 
 ## Fluxo de decisão
 1. Executar checklist de regressão beta.
 2. Validar P0 um por um em máquina de desenvolvimento.
 3. Validar instalador em máquina limpa (smoke test).
 4. Se P0=100% e P1>=80%: promover versão para `3.0.0`.
-5. Caso contrário: manter em `2.2.x-beta` e abrir itens pendentes.
+5. Caso contrário: manter em `2.1.x-beta` e abrir itens pendentes.
 
 ## Comandos recomendados (release candidate)
 ```powershell
