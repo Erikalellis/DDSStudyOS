@@ -37,6 +37,7 @@ Use esta lista antes de cada pre-release e release.
 - [x] App abre ao final do setup.
 - [x] Atalho do Menu Iniciar criado.
 - [x] Atalho desktop criado apenas quando selecionado.
+- [x] Entrada de desinstalação aparece em Apps/Painel de Controle do Windows.
 - [x] Desinstalação remove app e `%LOCALAPPDATA%\DDSStudyOS`.
 - [x] Desinstalação não remove runtimes globais do Windows.
 
@@ -53,3 +54,4 @@ Use esta lista antes de cada pre-release e release.
 - [x] Log consolidado do ciclo 2: `artifacts/installer-logs/regression-install-check-20260225-111448.txt`.
 - [x] Setup padrão do ciclo 1: `artifacts/installer-logs/regression-default-20260225-110835-inno.log`.
 - [x] Uninstall padrão do ciclo 1: `artifacts/installer-logs/regression-after-default-20260225-110835-uninstall.log`.
+- [x] Smoke machine-clean com uninstall visível: `artifacts/installer-logs/clean-machine-smoke-20260225-162512.txt`.

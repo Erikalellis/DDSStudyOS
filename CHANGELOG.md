@@ -6,6 +6,10 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Adicionado
+- Roadmap pós-3.0 documentado em `docs/ROADMAP_3_1.md`
+
+## [3.0.0] - 2026-02-25
+### Adicionado
 - Serviço de diagnóstico técnico com exportação de bundle `.zip`
 - Validação de backup sem importação no painel de Configurações
 - Metadata de release (produto, versão e companhia) no projeto
@@ -41,6 +45,8 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Instalador Inno protegido contra falha de pós-instalação com `skipifdoesntexist` ao abrir o app
 - Preparação do input do instalador reforçada com retries para limpeza/cópia, reduzindo falhas por arquivos bloqueados
 - Validacao de desinstalacao confirmada com remocao de `%LOCALAPPDATA%\\DDSStudyOS`
+- Menu lateral no primeiro uso/tour com abertura resiliente em telas iniciais
+- Registro de desinstalação do Windows reforçado para aparecer corretamente em Apps e Painel de Controle
 
 ## [2.1.0] - 2026-02-22
 ### Alterado

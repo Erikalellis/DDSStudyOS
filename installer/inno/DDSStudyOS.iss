@@ -1,12 +1,13 @@
 #define MyAppName "DDS StudyOS"
 #define MyAppPublisher "Deep Darkness Studios"
 #define MyAppId "{{A5F4F364-3F77-470A-BD5C-641AA103D8AA}"
+#define MyUninstallRegKey "Software\Microsoft\Windows\CurrentVersion\Uninstall\{A5F4F364-3F77-470A-BD5C-641AA103D8AA}_is1"
 
 #ifndef MyAppURL
   #define MyAppURL "https://github.com/<OWNER>/<REPO>"
 #endif
 #ifndef MyAppVersion
-  #define MyAppVersion "2.1.0"
+  #define MyAppVersion "3.0.0"
 #endif
 #ifndef MySourceDir
   #define MySourceDir "..\..\artifacts\installer-input\app"
@@ -72,6 +73,9 @@ LicenseFile={#MyLicenseFile}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+Uninstallable=yes
+CreateUninstallRegKey=yes
+UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\app\{#MyAppExeName}
 
 [Languages]
@@ -86,6 +90,7 @@ Source: "prereqs\install-prereqs.ps1"; DestDir: "{tmp}"; Flags: dontcopy
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MyAppIcon}"
+Name: "{autoprograms}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MyAppIcon}"; Tasks: desktopicon
 
 [Run]
@@ -102,6 +107,23 @@ begin
     Result := ExpandConstant('{sysnative}\WindowsPowerShell\v1.0\powershell.exe')
   else
     Result := ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe');
+end;
+
+procedure EnsureVisibleUninstallEntry();
+var
+  KeyPath: string;
+begin
+  KeyPath := '{#MyUninstallRegKey}';
+
+  RegDeleteValue(HKLM, KeyPath, 'SystemComponent');
+  RegDeleteValue(HKLM, KeyPath, 'NoRemove');
+  RegDeleteValue(HKLM, KeyPath, 'NoModify');
+  RegDeleteValue(HKLM, KeyPath, 'NoRepair');
+
+  RegWriteStringValue(HKLM, KeyPath, 'DisplayName', '{#MyAppName}');
+  RegWriteStringValue(HKLM, KeyPath, 'Publisher', '{#MyAppPublisher}');
+  RegWriteStringValue(HKLM, KeyPath, 'InstallLocation', ExpandConstant('{app}'));
+  RegWriteStringValue(HKLM, KeyPath, 'DisplayIcon', ExpandConstant('{app}\app\{#MyAppExeName}'));
 end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): string;
@@ -148,6 +170,12 @@ begin
       'Log: ' + LogPath;
     Exit;
   end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+    EnsureVisibleUninstallEntry();
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

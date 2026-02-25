@@ -36,6 +36,9 @@ public sealed partial class MainWindow : Window
         SplashVersionText.Text = AppReleaseInfo.BetaSplashLabel;
         UpdateUserGreeting();
 
+        // Mantém o menu lateral visível desde a primeira execução.
+        EnsureNavigationPaneVisible();
+
         NavigateToTag("dashboard");
 
         // Permite que outras telas peçam navegação (MVP)
@@ -69,6 +72,10 @@ public sealed partial class MainWindow : Window
 
     private void RootGrid_Loaded(object sender, RoutedEventArgs e)
     {
+        // Reaplica abertura do pane apos o primeiro layout para evitar compactacao na 1a execucao.
+        EnsureNavigationPaneVisible();
+        _ = DispatcherQueue.TryEnqueue(EnsureNavigationPaneVisible);
+
         if (_bootstrapped) return;
         _bootstrapped = true;
 
@@ -478,6 +485,7 @@ public sealed partial class MainWindow : Window
         {
             try
             {
+                EnsureNavigationPaneVisible();
                 BuildTourSteps();
                 _tourStepIndex = 0;
                 ShowTourStep();
@@ -519,6 +527,8 @@ public sealed partial class MainWindow : Window
             return;
         }
 
+        EnsureNavigationPaneVisible();
+
         _tourStepIndex = Math.Clamp(_tourStepIndex, 0, _tourSteps.Length - 1);
         var step = _tourSteps[_tourStepIndex];
         var target = ResolveTourTarget(step.Target);
@@ -556,6 +566,20 @@ public sealed partial class MainWindow : Window
         }
 
         return rawTarget;
+    }
+
+    private void EnsureNavigationPaneVisible()
+    {
+        try
+        {
+            NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
+            NavView.IsPaneToggleButtonVisible = true;
+            NavView.IsPaneOpen = true;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"NavView: falha ao garantir painel visivel. Motivo: {ex.Message}");
+        }
     }
 
     private void GuidedTourTip_ActionButtonClick(TeachingTip sender, object args)

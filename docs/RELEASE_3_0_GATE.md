@@ -14,7 +14,7 @@ Este documento define o critério de **Go / No-Go** para promover o produto de `
 - [x] Onboarding: tela inicial de cadastro abre e salva sem erro.
 - [x] Tour guiado: textos e alvos corretos em todos os passos (incluindo botão Voltar).
 - [x] Segurança: export de backup exige senha mestra (mín. 8 chars) e gera `.ddsbackup`.
-- [ ] Release: instalador estável abre o app em máquina limpa sem crash.
+- [x] Release: instalador estável abre o app em máquina limpa sem crash.
 
 ## P1 - Alta prioridade (fortalece qualidade de 3.0)
 - [x] UX: contraste e legibilidade da tela de cadastro revisados.
@@ -27,19 +27,23 @@ Este documento define o critério de **Go / No-Go** para promover o produto de `
 - [x] Assinatura: artefatos principais assinados antes de release público.
 
 ## Status atual (25/02/2026)
-- Estado geral: **2.1.0-beta.1 candidato** (ainda não 3.0).
-- P0 concluídos: **6/7**.
+- Estado geral: **3.0.0 pronto para release**.
+- P0 concluídos: **7/7**.
 - P1 concluídos: **8/8**.
 - Smoke técnico concluído nesta rodada: build Debug/Release, testes automatizados, publish e geração do pacote (`Setup`, `Beta Setup`, `Portable`, `SHA256`) com validação de instalação silenciosa por log.
 - Regressão beta (2 ciclos consecutivos) formalizada em `docs/BETA_REGRESSION_CHECKLIST.md`.
-- Pendência final para gate 3.0: validação de instalador em **máquina limpa**.
+- Evidência de máquina limpa registrada em `artifacts/installer-logs/clean-machine-smoke-20260225-162512.txt`.
+- Gate de release 3.0: **GO**.
 
 ## Fluxo de decisão
 1. Executar checklist de regressão beta.
 2. Validar P0 um por um em máquina de desenvolvimento.
 3. Validar instalador em máquina limpa (smoke test).
 4. Se P0=100% e P1>=80%: promover versão para `3.0.0`.
-5. Caso contrário: manter em `2.1.x-beta` e abrir itens pendentes.
+5. Caso contrário: manter canal beta e abrir itens pendentes.
+
+## Próximo ciclo
+- Planejamento de expansão pós-3.0 documentado em `docs/ROADMAP_3_1.md`.
 
 ## Comandos recomendados (release candidate)
 ```powershell

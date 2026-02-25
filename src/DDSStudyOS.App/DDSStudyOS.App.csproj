@@ -26,10 +26,10 @@
     <Product>DDS StudyOS</Product>
     <Company>Deep Darkness Studios</Company>
     <Description>Plataforma desktop de gestão de estudos, cursos, materiais e lembretes.</Description>
-    <Version>2.1.0</Version>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
-    <InformationalVersion>2.1.0</InformationalVersion>
+    <Version>3.0.0</Version>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
+    <InformationalVersion>3.0.0</InformationalVersion>
     <NeutralLanguage>pt-BR</NeutralLanguage>
   </PropertyGroup>
 

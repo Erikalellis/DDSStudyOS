@@ -4,11 +4,12 @@
 ; ============================================================
 
 #define MyAppName "DDS StudyOS"
-#define MyAppVersion "2.1.0"
+#define MyAppVersion "3.0.0"
 #define MyAppPublisher "Deep Darkness Studios"
 #define MyAppURL "https://github.com/<OWNER>/<REPO>"
 #define MyAppExeName "DDSStudyOS.App.exe"
 #define MyAppId "{{A5F4F364-3F77-470A-BD5C-641AA103D8AA}"
+#define MyUninstallRegKey "Software\Microsoft\Windows\CurrentVersion\Uninstall\{A5F4F364-3F77-470A-BD5C-641AA103D8AA}_is1"
 #define MyUninstallFeedbackURL "https://docs.google.com/forms/d/e/1FAIpQLScN1a0_ISFNIbfOx3XMY6L8Na5Utf9lZCoO3S8efGn4934GCQ/viewform"
 
 ; Pastas de entrada/saida (relativas a este .iss)
@@ -42,6 +43,9 @@ LicenseFile={#MyLicenseFile}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+Uninstallable=yes
+CreateUninstallRegKey=yes
+UninstallDisplayName={#MyAppName}
 UninstallDisplayIcon={app}\app\{#MyAppExeName}
 
 ; Se quiser imagem no assistente, descomente e ajuste os caminhos:
@@ -60,6 +64,7 @@ Source: "{#MySourceDir}\*"; DestDir: "{app}\app"; Flags: ignoreversion recursesu
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MySetupIcon}"; Tasks: startmenuicon
+Name: "{autoprograms}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"; Tasks: startmenuicon
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MySetupIcon}"; Tasks: desktopicon
 
 [Run]
@@ -73,6 +78,29 @@ Type: filesandordirs; Name: "{localappdata}\DDSStudyOS"
 function InitializeSetup(): Boolean;
 begin
   Result := True;
+end;
+
+procedure EnsureVisibleUninstallEntry();
+var
+  KeyPath: string;
+begin
+  KeyPath := '{#MyUninstallRegKey}';
+
+  RegDeleteValue(HKLM, KeyPath, 'SystemComponent');
+  RegDeleteValue(HKLM, KeyPath, 'NoRemove');
+  RegDeleteValue(HKLM, KeyPath, 'NoModify');
+  RegDeleteValue(HKLM, KeyPath, 'NoRepair');
+
+  RegWriteStringValue(HKLM, KeyPath, 'DisplayName', '{#MyAppName}');
+  RegWriteStringValue(HKLM, KeyPath, 'Publisher', '{#MyAppPublisher}');
+  RegWriteStringValue(HKLM, KeyPath, 'InstallLocation', ExpandConstant('{app}'));
+  RegWriteStringValue(HKLM, KeyPath, 'DisplayIcon', ExpandConstant('{app}\app\{#MyAppExeName}'));
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+    EnsureVisibleUninstallEntry();
 end;
 
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

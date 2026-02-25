@@ -34,6 +34,22 @@ function Find-Shortcut([string[]]$candidates) {
     return $null
 }
 
+function Get-DdsUninstallEntry {
+    $roots = @(
+        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    )
+
+    return Get-ItemProperty -Path $roots -ErrorAction SilentlyContinue |
+        Where-Object {
+            $_.DisplayName -eq "DDS StudyOS" -or
+            $_.PSChildName -eq "{A5F4F364-3F77-470A-BD5C-641AA103D8AA}_is1" -or
+            $_.InstallLocation -like "*Deep Darkness Studios\\DDS StudyOS*"
+        } |
+        Select-Object -First 1
+}
+
 Add-ReportLine "DDS StudyOS - clean machine smoke"
 Add-ReportLine "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 Add-ReportLine "RunSetup: $RunSetup"
@@ -53,6 +69,16 @@ if ($RunSetup) {
     }
     Add-ReportLine "[OK] Setup concluido com sucesso."
     Add-ReportLine "SetupLog: $setupLog"
+
+    $uninstallEntry = Get-DdsUninstallEntry
+    if ($null -eq $uninstallEntry) {
+        Add-ReportLine "[FAIL] Entrada de desinstalacao nao encontrada no registro (Painel de Controle/Aplicativos)."
+        Add-ReportLine "Report: $reportPath"
+        exit 4
+    }
+
+    Add-ReportLine "[OK] Entrada de desinstalacao registrada: $($uninstallEntry.DisplayName)"
+    Add-ReportLine "UninstallString: $($uninstallEntry.UninstallString)"
 }
 
 $appExe = Join-Path $InstallDir "app\DDSStudyOS.App.exe"

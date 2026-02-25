@@ -59,7 +59,6 @@
             <Grid.Background>
                 <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
             </Grid.Background>
-            <Rectangle Fill="#CC05060A" />
             <Grid.Resources>
                 <SolidColorBrush x:Key="OnboardingInputBackgroundBrush" Color="#FF1A2542" />
                 <SolidColorBrush x:Key="OnboardingInputBorderBrush" Color="#66FFFFFF" />
@@ -87,6 +86,7 @@
                     <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
                 </Style>
             </Grid.Resources>
+            <Rectangle Fill="#CC05060A" />
 
             <ScrollViewer HorizontalAlignment="Center"
                           VerticalAlignment="Center"

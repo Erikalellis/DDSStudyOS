@@ -166,8 +166,9 @@ if ($SignExecutable) {
         $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
     }
 
-    $signProc = Start-Process -FilePath "powershell.exe" -ArgumentList $signArgs -NoNewWindow -Wait -PassThru
-    if ($signProc.ExitCode -ne 0) {
+    & powershell.exe @signArgs
+    $signExitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+    if ($signExitCode -ne 0) {
         throw "Falha na assinatura do executavel."
     }
 }
@@ -227,12 +228,11 @@ foreach ($requiredFile in $requiredAppFiles) {
         throw "Arquivo obrigatorio nao encontrado no publish: $sourceFile"
     }
 
-    if (-not (Test-Path $destinationFile)) {
-        Write-Host "Copiando arquivo obrigatorio ausente para o instalador: $requiredFile"
-        Invoke-WithRetry -Description "copiar arquivo obrigatorio: $requiredFile" -MaxAttempts 20 -DelayMilliseconds 500 -Action {
-            Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Stop
-        } | Out-Null
-    }
+    # Reforco de consistencia: sempre sobrescreve os binarios obrigatorios com a versao
+    # mais recente do publish (evita stale files quando alguma copia anterior falha parcialmente).
+    Invoke-WithRetry -Description "sincronizar arquivo obrigatorio: $requiredFile" -MaxAttempts 20 -DelayMilliseconds 500 -Action {
+        Copy-Item -Path $sourceFile -Destination $destinationFile -Force -ErrorAction Stop
+    } | Out-Null
 
     if (-not (Test-Path $destinationFile)) {
         $missingRequired += $requiredFile
