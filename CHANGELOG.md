@@ -27,6 +27,9 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Exportacao de backup agora exige senha mestra obrigatoria (arquivo `.ddsbackup` criptografado)
 - Fluxo de release com sincronizacao automatica de `installer/update/stable/update-info.json` e `installer/update/beta/update-info.json`
 - Scripts de release atualizados para assinatura automatica do `Setup.exe` (timestamp opcional)
+- Favoritos de cursos migrados para escopo por perfil de usuario (`course_favorites`), preservando isolamento entre perfis
+- Configuracoes do Pomodoro agora sao aplicadas imediatamente apos salvar na tela de Configuracoes
+- Onboarding recebeu reforco de contraste nos campos para melhorar legibilidade no primeiro cadastro
 
 ### Corrigido
 - Tratamento de exceções não observadas no ciclo de vida da aplicação
@@ -37,6 +40,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Lista de "Materiais & Certificados" passou a ocultar/limpar registros temporários `.tmp` gerados por captura provisória
 - Instalador Inno protegido contra falha de pós-instalação com `skipifdoesntexist` ao abrir o app
 - Preparação do input do instalador reforçada com retries para limpeza/cópia, reduzindo falhas por arquivos bloqueados
+- Validacao de desinstalacao confirmada com remocao de `%LOCALAPPDATA%\\DDSStudyOS`
 
 ## [2.1.0] - 2026-02-22
 ### Alterado

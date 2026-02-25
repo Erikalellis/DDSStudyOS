@@ -13,23 +13,25 @@ Este documento define o critério de **Go / No-Go** para promover o produto de `
 - [ ] Navegação: botões de Acesso Rápido executam a ação correta.
 - [ ] Onboarding: tela inicial de cadastro abre e salva sem erro.
 - [ ] Tour guiado: textos e alvos corretos em todos os passos (incluindo botão Voltar).
-- [ ] Segurança: export de backup exige senha mestra (mín. 8 chars) e gera `.ddsbackup`.
+- [x] Segurança: export de backup exige senha mestra (mín. 8 chars) e gera `.ddsbackup`.
 - [ ] Release: instalador estável abre o app em máquina limpa sem crash.
 
 ## P1 - Alta prioridade (fortalece qualidade de 3.0)
-- [ ] UX: contraste e legibilidade da tela de cadastro revisados.
-- [ ] Pomodoro: botão de configurações abaixo do card funciona e aplica preferências.
-- [ ] Navegador: `dds://inicio` estável e páginas internas personalizadas consistentes.
-- [ ] Favoritos: botão/lista de favoritos com cursos salvos por perfil.
-- [ ] Desenvolvimento: página beta com histórico de melhorias + link de feedback.
-- [ ] Desinstalação: limpeza de `%LOCALAPPDATA%\DDSStudyOS` validada com segurança.
-- [ ] Release pack: `Setup`, `Beta Setup`, `Portable` e `SHA256` publicados juntos.
-- [ ] Assinatura: artefatos principais assinados antes de release público.
+- [x] UX: contraste e legibilidade da tela de cadastro revisados.
+- [x] Pomodoro: botão de configurações abaixo do card funciona e aplica preferências.
+- [x] Navegador: `dds://inicio` estável e páginas internas personalizadas consistentes.
+- [x] Favoritos: botão/lista de favoritos com cursos salvos por perfil.
+- [x] Desenvolvimento: página beta com histórico de melhorias + link de feedback.
+- [x] Desinstalação: limpeza de `%LOCALAPPDATA%\DDSStudyOS` validada com segurança.
+- [x] Release pack: `Setup`, `Beta Setup`, `Portable` e `SHA256` publicados juntos.
+- [x] Assinatura: artefatos principais assinados antes de release público.
 
-## Status atual (22/02/2026)
+## Status atual (25/02/2026)
 - Estado geral: **2.2.0-beta candidato** (ainda não 3.0).
-- P0 concluídos: backup seguro, pipeline de release unificado.
-- P0 pendentes: estabilidade completa dos fluxos de navegação/onboarding/tour em todos os cenários.
+- P0 concluídos: **1/7**.
+- P1 concluídos: **8/8**.
+- Smoke técnico concluído nesta rodada: build Debug/Release, testes automatizados, publish e geração do pacote (`Setup`, `Beta Setup`, `Portable`, `SHA256`) com validação de instalação silenciosa por log.
+- Pendências para gate 3.0: validação funcional completa dos fluxos de navegação/onboarding/tour e validação de instalador em **máquina limpa**.
 
 ## Fluxo de decisão
 1. Executar checklist de regressão beta.
