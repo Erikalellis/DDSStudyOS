@@ -15,6 +15,14 @@ public sealed partial class MaterialsPage : Page
     private readonly DatabaseService _db = new();
     private CourseRepository? _courses;
     private MaterialRepository? _materials;
+    private static readonly HashSet<string> TemporaryExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".tmp",
+        ".crdownload",
+        ".part",
+        ".partial",
+        ".download"
+    };
 
     private List<Course> _courseCache = new();
     private List<MaterialItem> _materialCache = new();
@@ -33,8 +41,14 @@ public sealed partial class MaterialsPage : Page
             _courses = new CourseRepository(_db);
             _materials = new MaterialRepository(_db);
 
+            var removedTemporary = await _materials.DeleteTemporaryEntriesAsync();
             await LoadCoursesAsync();
             await ReloadAsync();
+
+            if (removedTemporary > 0)
+            {
+                MsgText.Text = $"Removidos {removedTemporary} registro(s) temporário(s).";
+            }
         }
         catch (Exception ex)
         {
@@ -66,10 +80,14 @@ public sealed partial class MaterialsPage : Page
     private async System.Threading.Tasks.Task ReloadAsync(long? courseId = null)
     {
         if (_materials is null) return;
-        _materialCache = await _materials.ListAsync(courseId);
+        var rawItems = await _materials.ListAsync(courseId);
+        var temporaryItems = rawItems.Where(IsTemporaryMaterial).ToList();
+        _materialCache = rawItems.Where(m => !IsTemporaryMaterial(m)).ToList();
 
-        MaterialsList.ItemsSource = _materialCache.Select(m => $"#{m.Id} — {m.FileName} ({m.FileType}) [{m.StorageMode}]").ToList();
-        MsgText.Text = $"Carregado: {_materialCache.Count} material(is).";
+        MaterialsList.ItemsSource = _materialCache.Select(BuildMaterialListLabel).ToList();
+        MsgText.Text = temporaryItems.Count > 0
+            ? $"Carregado: {_materialCache.Count} material(is). Ignorados {temporaryItems.Count} temporário(s)."
+            : $"Carregado: {_materialCache.Count} material(is).";
     }
 
     private MaterialItem? GetSelectedMaterial()
@@ -176,6 +194,7 @@ public sealed partial class MaterialsPage : Page
         };
 
         var id = await _materials.CreateAsync(item);
+        FilePathBox.Text = storedPath;
         MsgText.Text = $"Criado material #{id}.";
         ClearForm();
         await ReloadAsync();
@@ -217,6 +236,7 @@ public sealed partial class MaterialsPage : Page
         selected.StorageMode = storageMode;
 
         await _materials.UpdateAsync(selected);
+        FilePathBox.Text = storedPath;
         MsgText.Text = $"Atualizado material #{selected.Id}.";
         await ReloadAsync();
     }
@@ -310,6 +330,7 @@ public sealed partial class MaterialsPage : Page
         out string storageMode,
         out string error)
     {
+        sourcePath = MaterialStorageService.NormalizePathOrUrl(sourcePath);
         storedPath = sourcePath;
         storageMode = MaterialStorageService.ModeReference;
         error = string.Empty;
@@ -364,5 +385,40 @@ public sealed partial class MaterialsPage : Page
         storedPath = sourcePath;
         storageMode = MaterialStorageService.ModeReference;
         return true;
+    }
+
+    private static string BuildMaterialListLabel(MaterialItem item)
+    {
+        var type = string.IsNullOrWhiteSpace(item.FileType) ? "Outros" : item.FileType;
+        var mode = string.IsNullOrWhiteSpace(item.StorageMode) ? MaterialStorageService.ModeReference : item.StorageMode;
+        var name = string.IsNullOrWhiteSpace(item.FileName) ? "(sem nome)" : item.FileName;
+
+        string availability;
+        if (MaterialStorageService.IsWebUrl(item.FilePath))
+        {
+            availability = " [url]";
+        }
+        else
+        {
+            availability = File.Exists(item.FilePath) ? string.Empty : " [arquivo ausente]";
+        }
+
+        return $"#{item.Id} — {name} ({type}) [{mode}]{availability}";
+    }
+
+    private static bool IsTemporaryMaterial(MaterialItem item)
+    {
+        static bool HasTemporaryExtension(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            var ext = Path.GetExtension(value.Trim());
+            return !string.IsNullOrWhiteSpace(ext) && TemporaryExtensions.Contains(ext);
+        }
+
+        return HasTemporaryExtension(item.FileName) || HasTemporaryExtension(item.FilePath);
     }
 }

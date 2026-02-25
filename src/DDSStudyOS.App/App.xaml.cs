@@ -15,6 +15,7 @@ public partial class App : Application
 
     public App()
     {
+        Services.WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
         this.InitializeComponent();
         this.UnhandledException += OnUnhandledException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -23,6 +24,8 @@ public partial class App : Application
 
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+        Services.WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
+
         var window = new MainWindow();
         Services.AppState.MainWindow = window;
         window.Activate();

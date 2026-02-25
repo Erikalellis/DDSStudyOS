@@ -201,7 +201,7 @@
                             <TextBlock Text="DDS StudyOS" FontWeight="Bold" FontSize="16"/>
                             <TextBlock x:Name="VersionText" Text="Versão -" Opacity="0.8"/>
                             <TextBlock x:Name="CompanyText" Text="Desenvolvido por Deep Darkness Studios" Opacity="0.6"/>
-                            <HyperlinkButton Content="Visitar Site Oficial" NavigateUri="https://177.71.165.60/"/>
+                            <HyperlinkButton Content="Visitar Site Oficial" NavigateUri="http://177.71.165.60/"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

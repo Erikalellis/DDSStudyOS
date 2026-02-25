@@ -10,10 +10,45 @@ public static class MaterialStorageService
     public const string ModeManagedCopy = "managed_copy";
     public const string ModeWebLink = "web_link";
 
+    public static string NormalizePathOrUrl(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        var normalized = value.Trim().Trim('"');
+
+        if (normalized.StartsWith("https//", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"https://{normalized["https//".Length..].TrimStart('/')}";
+        }
+
+        if (normalized.StartsWith("http//", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"http://{normalized["http//".Length..].TrimStart('/')}";
+        }
+
+        if (normalized.StartsWith("https:/", StringComparison.OrdinalIgnoreCase) &&
+            !normalized.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"https://{normalized["https:/".Length..].TrimStart('/')}";
+        }
+
+        if (normalized.StartsWith("http:/", StringComparison.OrdinalIgnoreCase) &&
+            !normalized.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"http://{normalized["http:/".Length..].TrimStart('/')}";
+        }
+
+        return normalized;
+    }
+
     public static bool IsWebUrl(string? value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return false;
-        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri)) return false;
+        var normalized = NormalizePathOrUrl(value);
+        if (string.IsNullOrWhiteSpace(normalized)) return false;
+        if (!Uri.TryCreate(normalized, UriKind.Absolute, out var uri)) return false;
         return uri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
             || uri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase);
     }

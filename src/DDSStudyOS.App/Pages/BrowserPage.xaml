@@ -55,7 +55,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Browser -->
-            <controls:WebView2 x:Name="Web" Grid.Column="0" Source="about:blank" />
+            <controls:WebView2 x:Name="Web" Grid.Column="0" />
 
             <!-- Smart Notes Panel -->
             <Grid x:Name="NotesPanel" Grid.Column="1" Width="350" Visibility="Collapsed" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="1,0,0,0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

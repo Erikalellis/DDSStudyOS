@@ -22,10 +22,7 @@ public sealed partial class BrowserPage : Page
     private const string HomeAddressAlias = "dds://inicio";
     private const string ErrorAddressAlias = "dds://erro";
     private const string AliasNotFoundAddressAlias = "dds://404";
-    private static readonly string WebView2UserDataFolder = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "DDSStudyOS",
-        "WebView2");
+    private static readonly string WebView2UserDataFolder = WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
 
     private readonly DatabaseService _db;
     private readonly CourseRepository _courseRepo;
@@ -43,6 +40,7 @@ public sealed partial class BrowserPage : Page
 
     public BrowserPage()
     {
+        WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
         this.InitializeComponent();
         _db = new DatabaseService();
         _courseRepo = new CourseRepository(_db);
@@ -397,7 +395,7 @@ public sealed partial class BrowserPage : Page
                          raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
                          raw.StartsWith("about:", StringComparison.OrdinalIgnoreCase)
             ? raw
-            : $"https://{raw}";
+            : $"{(ShouldDefaultToHttp(raw) ? "http" : "https")}://{raw}";
 
         if (!Uri.TryCreate(withScheme, UriKind.Absolute, out var normalizedUri))
         {
@@ -414,10 +412,69 @@ public sealed partial class BrowserPage : Page
         return true;
     }
 
+    private static bool ShouldDefaultToHttp(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return false;
+        }
+
+        if (raw.StartsWith("localhost", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (!Uri.TryCreate($"http://{raw}", UriKind.Absolute, out var candidate))
+        {
+            return false;
+        }
+
+        if (candidate.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return IPAddress.TryParse(candidate.Host, out _);
+    }
+
+    private static string NormalizeAddressInput(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return string.Empty;
+        }
+
+        var normalized = raw.Trim().Trim('"');
+
+        if (normalized.StartsWith("https//", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"https://{normalized["https//".Length..].TrimStart('/')}";
+        }
+
+        if (normalized.StartsWith("http//", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"http://{normalized["http//".Length..].TrimStart('/')}";
+        }
+
+        if (normalized.StartsWith("https:/", StringComparison.OrdinalIgnoreCase) &&
+            !normalized.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"https://{normalized["https:/".Length..].TrimStart('/')}";
+        }
+
+        if (normalized.StartsWith("http:/", StringComparison.OrdinalIgnoreCase) &&
+            !normalized.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"http://{normalized["http:/".Length..].TrimStart('/')}";
+        }
+
+        return normalized;
+    }
+
     private void Go(string raw)
     {
+        raw = NormalizeAddressInput(raw);
         if (string.IsNullOrWhiteSpace(raw)) return;
-        raw = raw.Trim().Trim('"');
 
         if (Web.CoreWebView2 is null)
         {
@@ -1269,7 +1326,7 @@ public sealed partial class BrowserPage : Page
       <a href="dds://agenda">Abrir agenda de estudos</a>
       <a href="dds://config">Abrir configurações</a>
       <a href="dds://feedback">Enviar feedback beta</a>
-      <a href="https://177.71.165.60/">Site oficial DDS StudyOS</a>
+      <a href="http://177.71.165.60/">Site oficial DDS StudyOS</a>
       <a href="https://github.com/Erikalellis/DDSStudyOS">Repositorio no GitHub</a>
       <a href="{{feedbackUrl}}">Google Forms (feedback direto)</a>
       <a href="https://www.google.com/">Busca web</a>

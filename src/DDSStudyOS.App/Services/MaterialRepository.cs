@@ -9,6 +9,7 @@ namespace DDSStudyOS.App.Services;
 public sealed class MaterialRepository
 {
     private readonly DatabaseService _db;
+    private static readonly string[] TemporaryExtensions = { ".tmp", ".crdownload", ".part", ".partial", ".download" };
 
     public MaterialRepository(DatabaseService db)
     {
@@ -116,5 +117,28 @@ WHERE id=$id;";
         cmd.Parameters.AddWithValue("$id", id);
 
         await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> DeleteTemporaryEntriesAsync()
+    {
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+
+        var predicates = new List<string>();
+        var cmd = conn.CreateCommand();
+
+        for (int i = 0; i < TemporaryExtensions.Length; i++)
+        {
+            var ext = TemporaryExtensions[i];
+            var keyPath = $"$extPath{i}";
+            var keyName = $"$extName{i}";
+            predicates.Add($"trim(lower(file_path)) LIKE {keyPath}");
+            predicates.Add($"trim(lower(file_name)) LIKE {keyName}");
+            cmd.Parameters.AddWithValue(keyPath, $"%{ext}");
+            cmd.Parameters.AddWithValue(keyName, $"%{ext}");
+        }
+
+        cmd.CommandText = $"DELETE FROM materials WHERE {string.Join(" OR ", predicates)};";
+        return await cmd.ExecuteNonQueryAsync();
     }
 }

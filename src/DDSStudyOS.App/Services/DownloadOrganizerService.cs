@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DDSStudyOS.App.Services;
@@ -8,6 +9,14 @@ namespace DDSStudyOS.App.Services;
 public sealed class DownloadOrganizerService
 {
     private FileSystemWatcher? _watcher;
+    private static readonly HashSet<string> TemporaryExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".tmp",
+        ".crdownload",
+        ".part",
+        ".partial",
+        ".download"
+    };
 
     public bool IsRunning => _watcher != null;
 
@@ -42,6 +51,11 @@ public sealed class DownloadOrganizerService
     {
         try
         {
+            if (IsTemporaryDownload(fullPath))
+            {
+                return;
+            }
+
             // Arquivos podem estar "travados" no momento do download.
             // Tentamos algumas vezes.
             for (int i = 0; i < 8; i++)
@@ -51,6 +65,11 @@ public sealed class DownloadOrganizerService
             }
 
             if (!File.Exists(fullPath)) return;
+
+            if (!await WaitUntilFileReadyAsync(fullPath))
+            {
+                return;
+            }
 
             var ext = Path.GetExtension(fullPath).ToLowerInvariant();
             var category = Categorize(ext);
@@ -76,6 +95,63 @@ public sealed class DownloadOrganizerService
         {
             AppLogger.Error($"Falha ao organizar download: {fullPath}", ex);
         }
+    }
+
+    private static bool IsTemporaryDownload(string fullPath)
+    {
+        if (string.IsNullOrWhiteSpace(fullPath))
+        {
+            return true;
+        }
+
+        var fileName = Path.GetFileName(fullPath);
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return true;
+        }
+
+        if (fileName.StartsWith("~$", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        var ext = Path.GetExtension(fileName);
+        return TemporaryExtensions.Contains(ext);
+    }
+
+    private static async Task<bool> WaitUntilFileReadyAsync(string fullPath)
+    {
+        for (int i = 0; i < 24; i++)
+        {
+            if (!File.Exists(fullPath))
+            {
+                return false;
+            }
+
+            if (IsTemporaryDownload(fullPath))
+            {
+                return false;
+            }
+
+            try
+            {
+                using var stream = new FileStream(fullPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                _ = stream.Length;
+                return true;
+            }
+            catch (IOException)
+            {
+                // ainda em uso por outro processo
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // ainda em uso por outro processo
+            }
+
+            await Task.Delay(500);
+        }
+
+        return false;
     }
 
     private static string Categorize(string ext)
