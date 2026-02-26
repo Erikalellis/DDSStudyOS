@@ -4,7 +4,7 @@
 ; ============================================================
 
 #define MyAppName "DDS StudyOS"
-#define MyAppVersion "3.1.0"
+#define MyAppVersion "3.1.1"
 #define MyAppPublisher "Deep Darkness Studios"
 #define MyAppURL "https://github.com/<OWNER>/<REPO>"
 #define MyAppExeName "DDSStudyOS.App.exe"

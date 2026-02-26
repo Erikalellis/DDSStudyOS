@@ -1,10 +1,23 @@
 {
-  "channel": "stable",
-  "product": "DDS StudyOS",
-  "appVersion": "3.1.0",
-  "minimumAppVersion": "3.1.0",
-  "manifestVersion": 1,
-  "generatedAtUtc": "2026-02-26T00:00:00Z",
-  "releaseTag": "v3.1.0",
-  "modules": []
+    "channel":  "stable",
+    "product":  "DDS StudyOS",
+    "appVersion":  "3.1.1",
+    "minimumAppVersion":  "3.1.1",
+    "manifestVersion":  1,
+    "generatedAtUtc":  "2026-02-26T14:43:06.6653386Z",
+    "releaseTag":  "v3.1.1",
+    "modules":  [
+                    {
+                        "id":  "web-content",
+                        "version":  "3.1.1-beta.1",
+                        "assetName":  "DDSStudyOS-DLC-web-content.zip",
+                        "downloadUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.1.1/DDSStudyOS-DLC-web-content.zip",
+                        "sha256":  "4dc7bd29b223876e6b63006bc3c3ed25f681c65de7f69067ef28cc10e3f18227",
+                        "sizeBytes":  529,
+                        "extractSubdirectory":  "web-content",
+                        "required":  false,
+                        "description":  "Conteudo web interno e atalhos do navegador integrado.",
+                        "enabled":  true
+                    }
+                ]
 }
