@@ -2,9 +2,9 @@
 
 ## Setup validado
 - Arquivo (stable): `artifacts/installer-output/DDSStudyOS-Setup.exe`
-- SHA256 (stable): `74c88343d6b9a443408c28552909bad07f33684dca2b74425f63e3ed6fd58e09`
+- SHA256 (stable): `415d63f24c99fae489d963ed5dc60817f001022df26d39a3c4a96f5e7dc326aa`
 - Arquivo (beta): `artifacts/installer-output/DDSStudyOS-Beta-Setup.exe`
-- SHA256 (beta): `74c88343d6b9a443408c28552909bad07f33684dca2b74425f63e3ed6fd58e09`
+- SHA256 (beta): `415d63f24c99fae489d963ed5dc60817f001022df26d39a3c4a96f5e7dc326aa`
 - Arquivo (portable): `artifacts/installer-output/DDSStudyOS-Portable.zip`
 - SHA256 (portable): `0ebba8ada77e40bbaeedff0a6e8d730e148054edadb9e7020fa91803c6a31455`
 - Versao alvo: `3.1.1`
