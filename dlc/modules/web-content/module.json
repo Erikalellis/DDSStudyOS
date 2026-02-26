@@ -1,6 +1,6 @@
 {
   "id": "web-content",
-  "version": "3.1.1-beta.1",
+  "version": "3.1.1",
   "assetName": "DDSStudyOS-DLC-web-content.zip",
   "extractSubdirectory": "web-content",
   "required": false,

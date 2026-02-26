@@ -13,7 +13,7 @@
 - Manifesto stable: `installer/update/stable/dlc-manifest.json`
 - Manifesto beta: `installer/update/beta/dlc-manifest.json`
 - Pacote DLC: `artifacts/dlc-output/DDSStudyOS-DLC-web-content.zip`
-- SHA256 DLC: `4dc7bd29b223876e6b63006bc3c3ed25f681c65de7f69067ef28cc10e3f18227`
+- SHA256 DLC: `a693d56f1b4cb84f40916eeef89e2a1e5bc113e48198c59c33ac7a1cec7f1d94`
 
 ## Smoke de primeiro uso
 - Relatorio: `artifacts/installer-logs/first-use-smoke-20260226-114910.txt`
