@@ -93,8 +93,8 @@
                           HorizontalScrollMode="Disabled"
                           VerticalScrollMode="Enabled"
                           VerticalScrollBarVisibility="Auto"
-                          MaxWidth="720"
-                          MaxHeight="820"
+                          MaxWidth="760"
+                          MaxHeight="860"
                           Margin="24">
                 <Border Background="#D30A1228"
                         BorderBrush="#66FFFFFF"
@@ -141,25 +141,22 @@
 
                             <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="1.3*" />
+                                    <ColumnDefinition Width="1.6*" />
+                                    <ColumnDefinition Width="0.8*" />
+                                    <ColumnDefinition Width="1.2*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox x:Name="OnboardingCityBox"
                                          Grid.Column="0"
                                           Header="Cidade"
-                                          PlaceholderText="Ex.: Osasco (opcional)"
-                                          MinWidth="180" />
+                                          PlaceholderText="Ex.: Osasco (opcional)" />
                                 <TextBox x:Name="OnboardingStateBox"
                                          Grid.Column="1"
                                           Header="Estado"
-                                          PlaceholderText="Ex.: SP (opcional)"
-                                          MinWidth="100" />
+                                          PlaceholderText="Ex.: SP (opcional)" />
                                 <TextBox x:Name="OnboardingCountryBox"
                                          Grid.Column="2"
                                           Header="País"
-                                          PlaceholderText="Ex.: Brasil (opcional)"
-                                          MinWidth="130" />
+                                          PlaceholderText="Ex.: Brasil (opcional)" />
                             </Grid>
 
                             <TextBox x:Name="OnboardingStudyAreaBox"
@@ -285,8 +282,8 @@
                      Background="#FF111827"
                      BorderBrush="#FF365080"
                      BorderThickness="1"
-                     MinWidth="360"
-                     MaxWidth="460"
+                     MinWidth="320"
+                     MaxWidth="440"
                      PreferredPlacement="Auto"
                      ActionButtonClick="GuidedTourTip_ActionButtonClick"
                      CloseButtonClick="GuidedTourTip_CloseButtonClick">

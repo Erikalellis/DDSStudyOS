@@ -25,12 +25,17 @@ public sealed partial class MainWindow : Window
     private bool _ignoreNextNavSelectionChanged;
     private readonly bool _isSmokeFirstUseMode = AppState.IsSmokeFirstUseMode;
 
-    private sealed record TourStep(FrameworkElement Target, string Title, string Subtitle);
+    private sealed record TourStep(
+        FrameworkElement Target,
+        string Title,
+        string Subtitle,
+        TeachingTipPlacementMode PreferredPlacement = TeachingTipPlacementMode.Auto);
 
     public MainWindow()
     {
         this.InitializeComponent();
         Closed += MainWindow_Closed;
+        SizeChanged += MainWindow_SizeChanged;
         AppState.PomodoroSettingsChanged += OnPomodoroSettingsChanged;
 
         // Custom Window Title
@@ -697,15 +702,15 @@ public sealed partial class MainWindow : Window
     {
         _tourSteps = new[]
         {
-            new TourStep(NavView, "Navegação", "Use este menu para acessar as áreas do DDS StudyOS."),
-            new TourStep(NavItemDashboard, "Dashboard", "Sua visão geral do dia, atalhos e status do estudo."),
-            new TourStep(NavItemCourses, "Cursos", "Cadastre cursos e acompanhe progresso."),
-            new TourStep(NavItemMaterials, "Materiais & Certificados", "Organize materiais e certificados em um só lugar."),
-            new TourStep(NavItemAgenda, "Agenda", "Planeje tarefas e lembretes importantes."),
-            new TourStep(NavItemBrowser, "Navegador interno", "Estude aqui dentro com menos distrações (WebView2)."),
-            new TourStep(ProfileCardBorder, "Perfil e Pomodoro", "Seu perfil + Pomodoro Focus para manter consistência."),
-            new TourStep(NavItemSettings, "Configurações", "Ajuste preferências, pomodoro, lembretes e suporte."),
-            new TourStep(NavItemDev, "Desenvolvimento", "Veja o que está sendo melhorado no beta e envie feedback.")
+            new TourStep(NavView, "Navegação", "Use este menu lateral para acessar todas as áreas do DDS StudyOS.", TeachingTipPlacementMode.Right),
+            new TourStep(NavItemDashboard, "Dashboard", "Acompanhe visão geral do dia, atalhos e status do estudo.", TeachingTipPlacementMode.Right),
+            new TourStep(NavItemCourses, "Cursos", "Cadastre cursos, organize links e acompanhe o progresso.", TeachingTipPlacementMode.Right),
+            new TourStep(NavItemMaterials, "Materiais & Certificados", "Guarde PDFs, links e certificados em um só lugar.", TeachingTipPlacementMode.Right),
+            new TourStep(NavItemAgenda, "Agenda", "Planeje tarefas e lembretes importantes para a semana.", TeachingTipPlacementMode.Right),
+            new TourStep(NavItemBrowser, "Navegador interno", "Abra aulas e sites sem sair do app, com menos distrações.", TeachingTipPlacementMode.Right),
+            new TourStep(ProfileCardBorder, "Perfil e Pomodoro", "Seu perfil ativo e foco Pomodoro ficam aqui.", TeachingTipPlacementMode.Top),
+            new TourStep(NavItemSettings, "Configurações", "Ajuste preferências, notificações e opções do navegador.", TeachingTipPlacementMode.Right),
+            new TourStep(NavItemDev, "Desenvolvimento", "Veja melhorias do canal beta e envie feedback.", TeachingTipPlacementMode.Right)
         };
     }
 
@@ -722,12 +727,18 @@ public sealed partial class MainWindow : Window
         _tourStepIndex = Math.Clamp(_tourStepIndex, 0, _tourSteps.Length - 1);
         var step = _tourSteps[_tourStepIndex];
         var target = ResolveTourTarget(step.Target);
+        var stepTitle = string.IsNullOrWhiteSpace(step.Title) ? "Guia rápido" : step.Title.Trim();
+        var stepSubtitle = string.IsNullOrWhiteSpace(step.Subtitle)
+            ? "Use Próximo para continuar ou Voltar para revisar o passo anterior."
+            : step.Subtitle.Trim();
 
+        GuidedTourTip.IsOpen = false;
+        GuidedTourTip.PreferredPlacement = step.PreferredPlacement;
         GuidedTourTip.Target = target;
         GuidedTourTip.Title = $"Passo {_tourStepIndex + 1} de {_tourSteps.Length}";
         GuidedTourTip.Subtitle = string.Empty;
-        GuidedTourTitleText.Text = step.Title;
-        GuidedTourSubtitleText.Text = step.Subtitle;
+        GuidedTourTitleText.Text = stepTitle;
+        GuidedTourSubtitleText.Text = stepSubtitle;
         GuidedTourTip.CloseButtonContent = _tourStepIndex > 0 ? "Voltar" : "Pular";
         GuidedTourTip.ActionButtonContent = _tourStepIndex >= _tourSteps.Length - 1 ? "Concluir" : "Próximo";
         GuidedTourTip.IsOpen = true;
@@ -772,6 +783,16 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs args)
+    {
+        if (_tourSteps.Length == 0 || !GuidedTourTip.IsOpen)
+        {
+            return;
+        }
+
+        _ = DispatcherQueue.TryEnqueue(ShowTourStep);
+    }
+
     private void GuidedTourTip_ActionButtonClick(TeachingTip sender, object args)
     {
         if (_tourSteps.Length == 0)
@@ -794,10 +815,21 @@ public sealed partial class MainWindow : Window
     {
         if (_tourStepIndex > 0)
         {
+            try
+            {
+                var cancelProp = args?.GetType().GetProperty("Cancel");
+                if (cancelProp is not null && cancelProp.CanWrite && cancelProp.PropertyType == typeof(bool))
+                {
+                    cancelProp.SetValue(args, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"Tour: falha ao cancelar fechamento no voltar. Motivo: {ex.Message}");
+            }
+
             _tourStepIndex--;
-            // O botao de fechar do TeachingTip executa fechamento padrao apos o evento.
-            // Reabrimos no passo anterior no proximo ciclo da UI para garantir o "Voltar".
-            _ = DispatcherQueue.TryEnqueue(ShowTourStep);
+            ShowTourStep();
             return;
         }
 
