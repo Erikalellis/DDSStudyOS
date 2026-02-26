@@ -3,6 +3,7 @@ using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ public sealed partial class MainWindow : Window
 
         // Custom Window Title
         this.Title = AppTitle;
-        SplashVersionText.Text = AppReleaseInfo.BetaSplashLabel;
+        ApplySplashTheme();
         UpdateUserGreeting();
 
         // Mantém o menu lateral visível desde a primeira execução.
@@ -54,6 +55,37 @@ public sealed partial class MainWindow : Window
         {
             AppLogger.Info("SMOKE_FIRST_USE:MODE_ENABLED");
         }
+    }
+
+    private void ApplySplashTheme()
+    {
+        var isBeta = AppReleaseInfo.IsBetaChannel;
+
+        var overlayColor = isBeta
+            ? Windows.UI.Color.FromArgb(0xD8, 0x2A, 0x05, 0x45)
+            : Windows.UI.Color.FromArgb(0xC2, 0x05, 0x06, 0x12);
+        var accentColor = isBeta
+            ? Windows.UI.Color.FromArgb(0xFF, 0xE0, 0x3E, 0x97)
+            : Windows.UI.Color.FromArgb(0xFF, 0x7B, 0x61, 0xFF);
+        var badgeBackground = isBeta
+            ? Windows.UI.Color.FromArgb(0x3A, 0xFF, 0x4E, 0xB3)
+            : Windows.UI.Color.FromArgb(0x33, 0x4A, 0xC2, 0x77);
+        var badgeBorder = isBeta
+            ? Windows.UI.Color.FromArgb(0xAA, 0xFF, 0x9D, 0xD4)
+            : Windows.UI.Color.FromArgb(0x99, 0x8C, 0xE8, 0xB3);
+        var badgeForeground = isBeta
+            ? Windows.UI.Color.FromArgb(0xFF, 0xFF, 0xDC, 0xF0)
+            : Windows.UI.Color.FromArgb(0xFF, 0xE3, 0xFF, 0xEF);
+
+        SplashTintOverlay.Fill = new SolidColorBrush(overlayColor);
+        SplashProgressBar.Foreground = new SolidColorBrush(accentColor);
+        SplashChannelBadge.Background = new SolidColorBrush(badgeBackground);
+        SplashChannelBadge.BorderBrush = new SolidColorBrush(badgeBorder);
+        SplashChannelBadgeText.Foreground = new SolidColorBrush(badgeForeground);
+
+        SplashChannelBadgeText.Text = $"{AppReleaseInfo.ChannelBadge} v{AppReleaseInfo.MarketingVersion}";
+        SplashTitleText.Text = isBeta ? "Carregando DDS StudyOS Beta" : "Carregando DDS StudyOS";
+        SplashVersionText.Text = AppReleaseInfo.SplashVersionLabel;
     }
 
     private void InitializeSplashVisualState()

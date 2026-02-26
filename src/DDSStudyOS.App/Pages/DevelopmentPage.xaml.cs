@@ -1,6 +1,7 @@
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -28,8 +29,9 @@ public sealed partial class DevelopmentPage : Page
 
     private void InitializeRoadmapHeader()
     {
-        CurrentVersionText.Text = $"Versao atual: {AppReleaseInfo.BetaVersionDisplay}";
+        CurrentVersionText.Text = $"Versao atual: {AppReleaseInfo.VersionDisplay}";
         NextUpdateTitleText.Text = $"O que esperar da próxima atualização (meta: v{GetNextTargetVersion()})";
+        ApplyReleaseChannelVisuals(SettingsService.UpdateChannel);
     }
 
     private void InitializeUpdateSection()
@@ -45,6 +47,7 @@ public sealed partial class DevelopmentPage : Page
         UpdateStatusText.Text = $"Status: aguardando verificacao no canal {channel}.";
         ApplyDlcButton.IsEnabled = false;
         DlcStatusText.Text = $"Status DLC: aguardando verificacao no canal {channel}.";
+        ApplyReleaseChannelVisuals(channel);
     }
 
     private static string GetNextTargetVersion()
@@ -52,6 +55,37 @@ public sealed partial class DevelopmentPage : Page
         var current = AppReleaseInfo.Version;
         var nextMinor = current.Minor + 1;
         return $"{current.Major}.{nextMinor}.0-beta";
+    }
+
+    private void ApplyReleaseChannelVisuals(string channel)
+    {
+        var isBeta = string.Equals(channel, AppReleaseInfo.BetaChannelKey, StringComparison.OrdinalIgnoreCase);
+
+        var badgeBackground = isBeta
+            ? Windows.UI.Color.FromArgb(0x3A, 0xFF, 0x4E, 0xB3)
+            : Windows.UI.Color.FromArgb(0x33, 0x4A, 0xC2, 0x77);
+        var badgeBorder = isBeta
+            ? Windows.UI.Color.FromArgb(0xAA, 0xFF, 0x9D, 0xD4)
+            : Windows.UI.Color.FromArgb(0x99, 0x8C, 0xE8, 0xB3);
+        var badgeForeground = isBeta
+            ? Windows.UI.Color.FromArgb(0xFF, 0x7A, 0x0C, 0x4F)
+            : Windows.UI.Color.FromArgb(0xFF, 0x1F, 0x6A, 0x3B);
+
+        var channelLabel = isBeta ? AppReleaseInfo.BetaChannelLabel : AppReleaseInfo.StableChannelLabel;
+        var channelBadge = isBeta ? "BETA" : "STABLE";
+
+        ReleaseBadgeText.Text = $"{channelBadge} v{AppReleaseInfo.MarketingVersion}";
+        ReleaseBadgeBorder.Background = new SolidColorBrush(badgeBackground);
+        ReleaseBadgeBorder.BorderBrush = new SolidColorBrush(badgeBorder);
+        ReleaseBadgeText.Foreground = new SolidColorBrush(badgeForeground);
+
+        CurrentVersionText.Text = $"Versao atual: v{AppReleaseInfo.MarketingVersion} ({channelLabel})";
+
+        ReleaseChannelInfoBar.Title = isBeta ? "Canal beta ativo" : "Canal estavel ativo";
+        ReleaseChannelInfoBar.Message = isBeta
+            ? "Voce esta no canal beta: pode receber novidades primeiro e com mais risco de instabilidade."
+            : "Voce esta no canal estavel: foco em estabilidade e atualizacoes validadas.";
+        ReleaseChannelInfoBar.Severity = isBeta ? InfoBarSeverity.Warning : InfoBarSeverity.Success;
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -109,6 +143,7 @@ public sealed partial class DevelopmentPage : Page
         DlcInfoBar.IsOpen = false;
         ApplyDlcButton.IsEnabled = false;
         _lastDlcCheck = null;
+        ApplyReleaseChannelVisuals(channel);
     }
 
     private void UpdateAutoCheckToggle_Toggled(object sender, RoutedEventArgs e)

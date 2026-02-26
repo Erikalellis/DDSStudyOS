@@ -6,6 +6,7 @@
     [string]$GitHubRepo = "",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
+    [string]$InformationalVersion = "",
     [string]$PrepareInput = "true",
     [string]$InstallerInputPath = "artifacts\installer-input\app",
     [string]$OutputPath = "artifacts\installer-output",
@@ -165,9 +166,45 @@ function Resolve-GeneratedSetupPath {
     return $null
 }
 
+function Get-IsccProcessesForSetupBaseName {
+    param([string]$SetupBaseName)
+
+    if ([string]::IsNullOrWhiteSpace($SetupBaseName)) {
+        return @()
+    }
+
+    $argToken = "/DMySetupBaseName=$SetupBaseName"
+    $processes = Get-CimInstance Win32_Process -Filter "Name='ISCC.exe'" -ErrorAction SilentlyContinue |
+        Where-Object {
+            $_.CommandLine -and $_.CommandLine.IndexOf($argToken, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+        }
+
+    return @($processes)
+}
+
+function Stop-IsccProcessesForSetupBaseName {
+    param([string]$SetupBaseName)
+
+    $processes = Get-IsccProcessesForSetupBaseName -SetupBaseName $SetupBaseName
+    if (-not $processes -or $processes.Count -eq 0) {
+        return
+    }
+
+    foreach ($process in $processes) {
+        try {
+            Stop-Process -Id $process.ProcessId -Force -ErrorAction Stop
+            Write-Warning "ISCC anterior finalizado (PID $($process.ProcessId)) para setup '$SetupBaseName'."
+        }
+        catch {
+            Write-Warning "Nao foi possivel finalizar ISCC anterior (PID $($process.ProcessId)). Detalhe: $($_.Exception.Message)"
+        }
+    }
+}
+
 function Wait-InnoCompilerCompletion {
     param(
         [string]$SetupBaseName,
+        [int[]]$IgnoreProcessIds = @(),
         [int]$TimeoutSeconds = 300,
         [int]$PollMilliseconds = 1000
     )
@@ -180,13 +217,11 @@ function Wait-InnoCompilerCompletion {
     if ($PollMilliseconds -lt 100) { $PollMilliseconds = 100 }
 
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
-    $argToken = "/DMySetupBaseName=$SetupBaseName"
+    $ignored = @($IgnoreProcessIds)
 
     while ((Get-Date) -lt $deadline) {
-        $processes = Get-CimInstance Win32_Process -Filter "Name='ISCC.exe'" -ErrorAction SilentlyContinue |
-            Where-Object {
-                $_.CommandLine -and $_.CommandLine.IndexOf($argToken, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
-            }
+        $processes = Get-IsccProcessesForSetupBaseName -SetupBaseName $SetupBaseName |
+            Where-Object { $ignored -notcontains [int]$_.ProcessId }
 
         if (-not $processes) {
             return
@@ -196,6 +231,55 @@ function Wait-InnoCompilerCompletion {
     }
 
     throw "Timeout aguardando compiladores ISCC finalizarem para '$SetupBaseName'."
+}
+
+function Invoke-IsccCompileWithRetry {
+    param(
+        [string]$IsccPath,
+        [string[]]$IsccArguments,
+        [string]$SetupOutputPath,
+        [string]$SetupBaseName,
+        [string]$WorkingDirectory,
+        [int]$MaxAttempts = 3,
+        [int]$DelayMilliseconds = 2000
+    )
+
+    if ($MaxAttempts -lt 1) { $MaxAttempts = 1 }
+    if ($DelayMilliseconds -lt 0) { $DelayMilliseconds = 0 }
+
+    Stop-IsccProcessesForSetupBaseName -SetupBaseName $SetupBaseName
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        if (Test-Path $SetupOutputPath) {
+            try {
+                Remove-Item $SetupOutputPath -Force -ErrorAction Stop
+            }
+            catch {
+                # Melhor esforço: se o arquivo estiver bloqueado, o ISCC pode sobrescrever.
+            }
+        }
+
+        $existingProcessIds = @(Get-IsccProcessesForSetupBaseName -SetupBaseName $SetupBaseName | ForEach-Object { [int]$_.ProcessId })
+        $startArgs = @($IsccArguments | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+        $isccProcess = Start-Process -FilePath $IsccPath -ArgumentList $startArgs -WorkingDirectory $WorkingDirectory -NoNewWindow -Wait -PassThru
+        $exitCode = if ($null -eq $isccProcess) { 1 } else { [int]$isccProcess.ExitCode }
+
+        if ($exitCode -eq 0) {
+            Wait-InnoCompilerCompletion -SetupBaseName $SetupBaseName -IgnoreProcessIds $existingProcessIds -TimeoutSeconds 300 -PollMilliseconds 1000
+            $generatedSetup = Resolve-GeneratedSetupPath -OutputDirectory (Split-Path -Path $SetupOutputPath -Parent) -ExpectedSetupPath $SetupOutputPath -MaxAttempts 20 -DelayMilliseconds 500
+            if ($generatedSetup -and (Test-Path $generatedSetup)) {
+                return
+            }
+        }
+
+        if ($attempt -lt $MaxAttempts) {
+            Write-Warning "ISCC falhou na tentativa $attempt/$MaxAttempts (ExitCode=$exitCode). Nova tentativa em $DelayMilliseconds ms..."
+            Start-Sleep -Milliseconds $DelayMilliseconds
+            continue
+        }
+
+        throw "Falha ao compilar instalador oficial."
+    }
 }
 
 function Assert-InstallerInputContainsApp {
@@ -230,9 +314,9 @@ $resolvedScriptPath = if ([System.IO.Path]::IsPathRooted($ScriptPath)) { $Script
 $resolvedInputPath = if ([System.IO.Path]::IsPathRooted($InstallerInputPath)) { $InstallerInputPath } else { Join-Path $repoRoot $InstallerInputPath }
 $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
 $scriptDirectory = Split-Path -Path $resolvedScriptPath -Parent
-$isccScriptPath = ConvertTo-RelativePath -BasePath $repoRoot -TargetPath $resolvedScriptPath
-$isccSourceDir = ConvertTo-RelativePath -BasePath $scriptDirectory -TargetPath $resolvedInputPath
-$isccOutputDir = ConvertTo-RelativePath -BasePath $scriptDirectory -TargetPath $resolvedOutputPath
+$isccScriptPath = (ConvertTo-RelativePath -BasePath $repoRoot -TargetPath $resolvedScriptPath).Replace('\', '/')
+$isccSourceDir = (ConvertTo-RelativePath -BasePath $scriptDirectory -TargetPath $resolvedInputPath).Replace('\', '/')
+$isccOutputDir = (ConvertTo-RelativePath -BasePath $scriptDirectory -TargetPath $resolvedOutputPath).Replace('\', '/')
 
 if (-not (Test-Path $resolvedScriptPath)) {
     throw "Script do Inno Setup nao encontrado: $resolvedScriptPath"
@@ -284,6 +368,10 @@ if ($prepareInputValue) {
         "-SelfContained", $selfContainedArg,
         "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
     )
+
+    if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+        $prepareArgs += @("-InformationalVersion", $InformationalVersion)
+    }
 
     if ($SignExecutable) {
         $prepareArgs += "-SignExecutable"
@@ -339,22 +427,8 @@ $isccArgs = @(
 )
 
 $setupPath = Join-Path $resolvedOutputPath "$SetupBaseName.exe"
-if (Test-Path $setupPath) {
-    try {
-        Remove-Item $setupPath -Force -ErrorAction Stop
-    }
-    catch {
-        # Mantem melhor esforco: se o arquivo estiver bloqueado, o ISCC pode sobrescrever.
-    }
-}
-
-$isccProcess = Start-Process -FilePath $iscc -ArgumentList $isccArgs -WorkingDirectory $repoRoot -NoNewWindow -Wait -PassThru
-if ($isccProcess.ExitCode -ne 0) {
-    throw "Falha ao compilar instalador oficial."
-}
-
-Wait-InnoCompilerCompletion -SetupBaseName $SetupBaseName -TimeoutSeconds 300 -PollMilliseconds 1000
-$setupPath = Resolve-GeneratedSetupPath -OutputDirectory $resolvedOutputPath -ExpectedSetupPath $setupPath
+Invoke-IsccCompileWithRetry -IsccPath $iscc -IsccArguments $isccArgs -SetupOutputPath $setupPath -SetupBaseName $SetupBaseName -WorkingDirectory $repoRoot -MaxAttempts 3 -DelayMilliseconds 2000
+$setupPath = Resolve-GeneratedSetupPath -OutputDirectory $resolvedOutputPath -ExpectedSetupPath $setupPath -MaxAttempts 20 -DelayMilliseconds 500
 
 if ([string]::IsNullOrWhiteSpace($setupPath) -or -not (Test-Path $setupPath)) {
     throw "Compilacao concluida, mas setup nao encontrado em: $resolvedOutputPath"

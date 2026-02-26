@@ -81,6 +81,40 @@ function Get-FileSha256 {
     return ([System.BitConverter]::ToString($hashBytes)).Replace("-", "").ToLowerInvariant()
 }
 
+function Get-ExecutableProductVersion {
+    param([string]$ExePath)
+
+    if (-not (Test-Path $ExePath)) {
+        throw "Executavel nao encontrado para validar versao: $ExePath"
+    }
+
+    $versionInfo = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($ExePath)
+    if ($null -eq $versionInfo -or $null -eq $versionInfo.ProductVersion) {
+        return ""
+    }
+
+    return $versionInfo.ProductVersion.Trim()
+}
+
+function Assert-ExecutableProductVersionPrefix {
+    param(
+        [string]$ExePath,
+        [string]$ExpectedPrefix,
+        [string]$Context
+    )
+
+    $productVersion = Get-ExecutableProductVersion -ExePath $ExePath
+    if ([string]::IsNullOrWhiteSpace($productVersion)) {
+        throw "${Context}: ProductVersion vazio em '$ExePath'."
+    }
+
+    if (-not $productVersion.StartsWith($ExpectedPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "${Context}: ProductVersion invalido em '$ExePath'. Esperado prefixo '$ExpectedPrefix', obtido '$productVersion'."
+    }
+
+    Write-Host "${Context}: ProductVersion validado em input do instalador -> $productVersion"
+}
+
 function Resolve-ProductVersion {
     param([string]$RepoRoot)
 
@@ -170,6 +204,7 @@ function Invoke-InnoBuild {
         [string]$RuntimeIdentifier,
         [string]$SelfContained,
         [string]$WindowsAppSDKSelfContained,
+        [string]$InformationalVersion,
         [string]$OutputPath,
         [string]$SetupBaseName,
         [string]$InstallWebView2,
@@ -201,6 +236,10 @@ function Invoke-InnoBuild {
         GitHubOwner = $GitHubOwner
         GitHubRepo = $GitHubRepo
         PrepareInput = $PrepareInput
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+        $invokeArgs.InformationalVersion = $InformationalVersion
     }
 
     if ($SignInstaller) {
@@ -244,6 +283,7 @@ function Invoke-InnoBuild {
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $GitHubOwner -Repo $GitHubRepo
 $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
+$installerInputExePath = Join-Path $repoRoot "artifacts\installer-input\app\DDSStudyOS.App.exe"
 $buildInnoScript = Join-Path $PSScriptRoot "build-inno-installer.ps1"
 
 if (-not (Test-Path $buildInnoScript)) {
@@ -276,6 +316,7 @@ Invoke-InnoBuild `
     -RuntimeIdentifier $RuntimeIdentifier `
     -SelfContained $SelfContained `
     -WindowsAppSDKSelfContained $WindowsAppSDKSelfContained `
+    -InformationalVersion $stableVersion `
     -OutputPath $OutputPath `
     -SetupBaseName $StableSetupBaseName `
     -InstallWebView2 $InstallWebView2 `
@@ -296,39 +337,7 @@ $stableSetupPath = Join-Path $resolvedOutputPath "$StableSetupBaseName.exe"
 if (-not (Test-Path $stableSetupPath)) {
     throw "Setup estavel nao encontrado: $stableSetupPath"
 }
-
-$betaSetupPath = $null
-if (-not $SkipBeta) {
-    Write-Host ""
-    Write-Host "==> Gerando setup beta"
-    Invoke-InnoBuild `
-        -BuildScript $buildInnoScript `
-        -Configuration $Configuration `
-        -Platform $Platform `
-        -RuntimeIdentifier $RuntimeIdentifier `
-        -SelfContained $SelfContained `
-        -WindowsAppSDKSelfContained $WindowsAppSDKSelfContained `
-        -OutputPath $OutputPath `
-        -SetupBaseName $BetaSetupBaseName `
-        -InstallWebView2 $InstallWebView2 `
-        -InstallDotNetDesktopRuntime $InstallDotNetDesktopRuntime `
-        -DotNetDesktopRuntimeMajor $DotNetDesktopRuntimeMajor `
-        -GitHubOwner $repoLinks.Owner `
-        -GitHubRepo $repoLinks.Repo `
-        -PrepareInput "0" `
-        -SignInstaller:$SignArtifacts `
-        -SignExecutable:$false `
-        -CertThumbprint $CertThumbprint `
-        -PfxPath $PfxPath `
-        -PfxPassword $PfxPassword `
-        -CertStoreScope $CertStoreScope `
-        -TimestampUrl $TimestampUrl
-
-    $betaSetupPath = Join-Path $resolvedOutputPath "$BetaSetupBaseName.exe"
-    if (-not (Test-Path $betaSetupPath)) {
-        throw "Setup beta nao encontrado: $betaSetupPath"
-    }
-}
+Assert-ExecutableProductVersionPrefix -ExePath $installerInputExePath -ExpectedPrefix $stableVersion -Context "Setup estavel"
 
 $portableZipPath = $null
 if (-not $SkipPortable) {
@@ -343,10 +352,46 @@ if (-not $SkipPortable) {
     }
 
     Write-Host ""
-    Write-Host "==> Gerando pacote portatil"
+    Write-Host "==> Gerando pacote portatil (base estavel)"
     Invoke-WithRetry -Description "Compress-Archive portable" -MaxAttempts 180 -DelayMilliseconds 1000 -Action {
         Compress-Archive -Path (Join-Path $installerInputAppPath "*") -DestinationPath $portableZipPath -CompressionLevel Optimal -Force
     } | Out-Null
+}
+
+$betaSetupPath = $null
+if (-not $SkipBeta) {
+    Write-Host ""
+    Write-Host "==> Gerando setup beta"
+    Invoke-InnoBuild `
+        -BuildScript $buildInnoScript `
+        -Configuration $Configuration `
+        -Platform $Platform `
+        -RuntimeIdentifier $RuntimeIdentifier `
+        -SelfContained $SelfContained `
+        -WindowsAppSDKSelfContained $WindowsAppSDKSelfContained `
+        -InformationalVersion $effectiveBetaVersion `
+        -OutputPath $OutputPath `
+        -SetupBaseName $BetaSetupBaseName `
+        -InstallWebView2 $InstallWebView2 `
+        -InstallDotNetDesktopRuntime $InstallDotNetDesktopRuntime `
+        -DotNetDesktopRuntimeMajor $DotNetDesktopRuntimeMajor `
+        -GitHubOwner $repoLinks.Owner `
+        -GitHubRepo $repoLinks.Repo `
+        -PrepareInput "1" `
+        -SignInstaller:$SignArtifacts `
+        -SignExecutable:$SignAppExecutable `
+        -CertThumbprint $CertThumbprint `
+        -PfxPath $PfxPath `
+        -PfxPassword $PfxPassword `
+        -CertStoreScope $CertStoreScope `
+        -TimestampUrl $TimestampUrl
+
+    $betaSetupPath = Join-Path $resolvedOutputPath "$BetaSetupBaseName.exe"
+    if (-not (Test-Path $betaSetupPath)) {
+        throw "Setup beta nao encontrado: $betaSetupPath"
+    }
+
+    Assert-ExecutableProductVersionPrefix -ExePath $installerInputExePath -ExpectedPrefix $effectiveBetaVersion -Context "Setup beta"
 }
 
 $updatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")

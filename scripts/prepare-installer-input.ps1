@@ -7,6 +7,7 @@ param(
     [string]$GitHubRepo = "",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
+    [string]$InformationalVersion = "",
     [switch]$SignExecutable,
     [string]$CertThumbprint = "6780CE530A33615B591727F5334B3DD075B76422",
     [string]$PfxPath = "",
@@ -124,16 +125,19 @@ $selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfConta
 $windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
 $selfContainedArg = if ($selfContainedValue) { "1" } else { "0" }
 $windowsAppSdkSelfContainedArg = if ($windowsAppSdkSelfContainedValue) { "1" } else { "0" }
-$publishArgs = @(
-    "-NoProfile",
-    "-ExecutionPolicy", "Bypass",
-    "-File", ('"{0}"' -f $publishScript),
-    "-Configuration", $Configuration,
-    "-Platform", $Platform,
-    "-RuntimeIdentifier", $RuntimeIdentifier,
-    "-SelfContained", $selfContainedArg,
-    "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
-)
+    $publishArgs = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", ('"{0}"' -f $publishScript),
+        "-Configuration", $Configuration,
+        "-Platform", $Platform,
+        "-RuntimeIdentifier", $RuntimeIdentifier,
+        "-SelfContained", $selfContainedArg,
+        "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
+    )
+    if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+        $publishArgs += @("-InformationalVersion", $InformationalVersion)
+    }
 $publishProc = Start-Process -FilePath "powershell.exe" -ArgumentList $publishArgs -NoNewWindow -Wait -PassThru
 if ($publishProc.ExitCode -ne 0) {
     throw "Falha no build/publish."

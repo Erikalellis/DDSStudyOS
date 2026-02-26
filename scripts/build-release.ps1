@@ -4,6 +4,8 @@ param(
     [string]$RuntimeIdentifier = "win-x64",
     [string]$SelfContained = "true",
     [string]$WindowsAppSDKSelfContained = "true",
+    [string]$InformationalVersion = "",
+    [switch]$ForceCleanPublish,
     [switch]$SkipSolutionBuild,
     [string]$MsBuildPath = ""
 )
@@ -75,6 +77,49 @@ function Resolve-DotnetPath {
     }
 
     throw "dotnet nao encontrado. Instale o SDK .NET 8."
+}
+
+function Reset-DirectoryWithRetry {
+    param(
+        [string]$Path,
+        [int]$MaxAttempts = 10,
+        [int]$DelayMilliseconds = 500
+    )
+
+    if (-not (Test-Path $Path)) {
+        return
+    }
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        try {
+            $cmdPath = $Path.Replace('"', '""')
+            $null = & cmd.exe /c "if exist `"$cmdPath`" rmdir /s /q `"$cmdPath`""
+
+            if (-not (Test-Path $Path)) {
+                return
+            }
+
+            Remove-Item -Path $Path -Recurse -Force -ErrorAction Stop
+            return
+        }
+        catch {
+            if (-not (Test-Path $Path)) {
+                return
+            }
+
+            $baseEx = $_.Exception.GetBaseException()
+            if ($baseEx -is [System.IO.DirectoryNotFoundException] -or
+                $baseEx -is [System.IO.FileNotFoundException]) {
+                return
+            }
+
+            if ($attempt -ge $MaxAttempts) {
+                throw
+            }
+
+            Start-Sleep -Milliseconds $DelayMilliseconds
+        }
+    }
 }
 
 function Assert-PublishOutput {
@@ -191,6 +236,9 @@ function Repair-WinUIUnpackagedPublishArtifacts {
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $solutionPath = Join-Path $repoRoot "DDSStudyOS.sln"
 $projectPath = Join-Path $repoRoot "src\DDSStudyOS.App\DDSStudyOS.App.csproj"
+$buildOutputPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier"
+$objRidPath = Join-Path $repoRoot "src\DDSStudyOS.App\obj\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier"
+$objBasePath = Join-Path $repoRoot "src\DDSStudyOS.App\obj\$Platform\$Configuration\net8.0-windows10.0.19041.0"
 
 if (-not (Test-Path $solutionPath)) {
     throw "Solution nao encontrada: $solutionPath"
@@ -215,6 +263,24 @@ Write-Host "Platform: $Platform"
 Write-Host "RuntimeIdentifier: $RuntimeIdentifier"
 Write-Host "SelfContained: $selfContainedValue"
 Write-Host "WindowsAppSDKSelfContained: $windowsAppSdkSelfContainedValue"
+if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+    Write-Host "InformationalVersion override: $InformationalVersion"
+}
+
+$cleanPublishOutput = $ForceCleanPublish -or (-not [string]::IsNullOrWhiteSpace($InformationalVersion))
+if ($cleanPublishOutput) {
+    Write-Host ""
+    Write-Host "==> Limpando output anterior do publish"
+    Reset-DirectoryWithRetry -Path $buildOutputPath
+    Reset-DirectoryWithRetry -Path $objRidPath
+    Reset-DirectoryWithRetry -Path $objBasePath
+
+    $cleanArgs = "clean `"$projectPath`" -c $Configuration -r $RuntimeIdentifier -p:Platform=$Platform --tl:off -v minimal"
+    $cleanProc = Start-Process -FilePath $resolvedDotnet -ArgumentList $cleanArgs -NoNewWindow -Wait -PassThru
+    if ($cleanProc.ExitCode -ne 0) {
+        throw "Falha no dotnet clean do projeto antes do publish."
+    }
+}
 
 $effectiveSkipSolutionBuild = [bool]$SkipSolutionBuild
 if (-not $effectiveSkipSolutionBuild -and $windowsAppSdkSelfContainedValue) {
@@ -247,20 +313,35 @@ if (-not $effectiveSkipSolutionBuild) {
 Write-Host ""
 Write-Host "==> Publish do app"
 if ($resolvedMsBuild) {
-    & $resolvedMsBuild $projectPath /t:Publish /p:Configuration=$Configuration /p:Platform=$Platform /p:RuntimeIdentifier=$RuntimeIdentifier /p:SelfContained=$selfContainedValue /p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue /m /nologo
+    $publishProperties = @(
+        "/p:Configuration=$Configuration",
+        "/p:Platform=$Platform",
+        "/p:RuntimeIdentifier=$RuntimeIdentifier",
+        "/p:SelfContained=$selfContainedValue",
+        "/p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue"
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+        $publishProperties += "/p:InformationalVersion=$InformationalVersion"
+    }
+
+    & $resolvedMsBuild $projectPath /t:Publish @publishProperties /m /nologo
     if ($LASTEXITCODE -ne 0) {
         throw "Falha no publish do app."
     }
 }
 else {
-    $publishArgs = "publish `"$projectPath`" -c $Configuration -r $RuntimeIdentifier -p:Platform=$Platform -p:SelfContained=$selfContainedValue -p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue --tl:off -v minimal"
+    $publishArgs = "publish `"$projectPath`" -c $Configuration -r $RuntimeIdentifier -p:Platform=$Platform -p:SelfContained=$selfContainedValue -p:WindowsAppSDKSelfContained=$windowsAppSdkSelfContainedValue"
+    if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+        $publishArgs += " -p:InformationalVersion=$InformationalVersion"
+    }
+    $publishArgs += " --tl:off -v minimal"
     $publishProc = Start-Process -FilePath $resolvedDotnet -ArgumentList $publishArgs -NoNewWindow -Wait -PassThru
     if ($publishProc.ExitCode -ne 0) {
         throw "Falha no publish do app (dotnet)."
     }
 }
 
-$buildOutputPath = Join-Path $repoRoot "src\DDSStudyOS.App\bin\$Platform\$Configuration\net8.0-windows10.0.19041.0\$RuntimeIdentifier"
 $publishPath = Join-Path $buildOutputPath "publish"
 
 Repair-WinUIUnpackagedPublishArtifacts -BuildOutputPath $buildOutputPath -PublishPath $publishPath
@@ -268,4 +349,3 @@ Assert-PublishOutput -PublishPath $publishPath -SelfContainedRequested $selfCont
 Write-Host ""
 Write-Host "Publish concluido em: $publishPath"
 Write-Host "Observacao: o publish recria o EXE. Assine novamente com scripts/sign-release.ps1."
-

@@ -5,10 +5,10 @@
     "currentVersion":  "3.1.1-beta.1",
     "installerAssetName":  "DDSStudyOS-Beta-Setup.exe",
     "downloadUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.1.1/DDSStudyOS-Beta-Setup.exe",
-    "releasePageUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/tag/v3.1.1",
+    "releasePageUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases",
     "releaseNotesUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
     "supportUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
-    "updatedAtUtc":  "2026-02-26T16:01:00.0000000Z",
+    "updatedAtUtc":  "2026-02-26T20:58:59.7584514Z",
     "signerThumbprint":  "6780CE530A33615B591727F5334B3DD075B76422",
-    "installerSha256":  "415d63f24c99fae489d963ed5dc60817f001022df26d39a3c4a96f5e7dc326aa"
+    "installerSha256":  "bbfead74e28fda22efdef324e783bef49213327e38f8227fed21bc595b208727"
 }

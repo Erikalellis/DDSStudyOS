@@ -225,7 +225,7 @@
             <Grid.Background>
                 <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
             </Grid.Background>
-            <Rectangle Fill="#C2050612" />
+            <Rectangle x:Name="SplashTintOverlay" Fill="#C2050612" />
 
             <StackPanel x:Name="SplashContent"
                         HorizontalAlignment="Center"
@@ -233,7 +233,22 @@
                         Margin="0,0,0,72"
                         Spacing="10">
                 <StackPanel HorizontalAlignment="Center" Spacing="4">
-                    <TextBlock Text="Carregando DDS StudyOS"
+                    <Border x:Name="SplashChannelBadge"
+                            HorizontalAlignment="Center"
+                            CornerRadius="999"
+                            Padding="12,4"
+                            Background="#334AC277"
+                            BorderBrush="#998CE8B3"
+                            BorderThickness="1">
+                        <TextBlock x:Name="SplashChannelBadgeText"
+                                   Text="STABLE v0.0.0"
+                                   Foreground="#FFE3FFEF"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" />
+                    </Border>
+                    <TextBlock x:Name="SplashTitleText"
+                               Text="Carregando DDS StudyOS"
                                Foreground="White"
                                FontSize="30"
                                FontWeight="SemiBold"

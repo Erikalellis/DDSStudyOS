@@ -32,7 +32,7 @@ public sealed partial class SettingsPage : Page
         PathBox.Text = defaultPath;
         DiagPathBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
-        VersionText.Text = $"Versao {AppReleaseInfo.VersionString} ({AppReleaseInfo.BetaChannelLabel})";
+        VersionText.Text = $"Versao {AppReleaseInfo.MarketingVersion} ({AppReleaseInfo.ChannelLabel})";
         CompanyText.Text = $"Desenvolvido por {AppReleaseInfo.CompanyName}";
         DownloadsToggle.IsOn = SettingsService.DownloadsOrganizerEnabled;
 

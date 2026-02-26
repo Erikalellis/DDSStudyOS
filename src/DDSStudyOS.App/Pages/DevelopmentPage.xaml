@@ -8,12 +8,27 @@
     mc:Ignorable="d">
 
     <Grid Padding="16" RowDefinitions="Auto,*">
-        <TextBlock Text="Desenvolvimento" FontSize="24" FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <TextBlock Text="Desenvolvimento" FontSize="24" FontWeight="SemiBold" />
+            <Border x:Name="ReleaseBadgeBorder"
+                    CornerRadius="999"
+                    BorderThickness="1"
+                    Background="#334AC277"
+                    BorderBrush="#998CE8B3"
+                    Padding="10,2">
+                <TextBlock x:Name="ReleaseBadgeText"
+                           Text="STABLE"
+                           FontWeight="SemiBold"
+                           Foreground="#FF1F6A3B"
+                           FontSize="14" />
+            </Border>
+        </StackPanel>
 
         <ScrollViewer Grid.Row="1" Margin="0,12,0,0">
         <StackPanel Spacing="12">
-            <InfoBar Title="Versão beta"
-                     Message="O DDS StudyOS está em desenvolvimento ativo. Algumas funções podem estar incompletas ou mudar a qualquer momento."
+            <InfoBar x:Name="ReleaseChannelInfoBar"
+                     Title="Canal de release"
+                     Message="Canal de atualização em uso nesta instalação."
                      IsOpen="True"
                      Severity="Informational" />
 
