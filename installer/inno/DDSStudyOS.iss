@@ -7,7 +7,7 @@
   #define MyAppURL "https://github.com/<OWNER>/<REPO>"
 #endif
 #ifndef MyAppVersion
-  #define MyAppVersion "3.0.0"
+  #define MyAppVersion "3.1.0"
 #endif
 #ifndef MySourceDir
   #define MySourceDir "..\..\artifacts\installer-input\app"

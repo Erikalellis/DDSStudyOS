@@ -6,6 +6,10 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Adicionado
+- _Sem alterações ainda._
+
+## [3.1.0] - 2026-02-26
+### Adicionado
 - Roadmap pós-3.0 documentado em `docs/ROADMAP_3_1.md`
 - Painel de atualização na aba Desenvolvimento com verificação por canal (`stable`/`beta`) e atalho para baixar update.
 - Fluxo de atualização automática no app: download do instalador, validação de assinatura/hash (quando disponível), elevação UAC e início silencioso da instalação.

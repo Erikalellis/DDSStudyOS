@@ -2,6 +2,8 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
+Status atual: `3.1.0` empacotado em 2026-02-26 (stable/beta/portable + SHA256).
+
 ## Objetivo do ciclo
 - Consolidar estabilidade do 3.0 em produção.
 - Evoluir recursos de estudo (agenda, navegador e materiais).

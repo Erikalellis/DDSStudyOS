@@ -7,7 +7,7 @@ Validar automaticamente o fluxo de primeiro uso do app (`onboarding + tour + nav
 - Comando:
   `.\scripts\validate-first-use-smoke.ps1 -AppExePath src\DDSStudyOS.App\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\publish\DDSStudyOS.App.exe`
 - Relatorio:
-  `artifacts/installer-logs/first-use-smoke-20260225-205532.txt`
+  `artifacts/installer-logs/first-use-smoke-20260225-212706.txt`
 
 ## Marcadores validados no log
 - `SMOKE_FIRST_USE:MODE_ENABLED`
@@ -19,5 +19,6 @@ Validar automaticamente o fluxo de primeiro uso do app (`onboarding + tour + nav
 
 ## Resultado
 - Status final: `OK`
+- Build validado: `3.1.0`
 - Perfil criado automaticamente: `Smoke Tester`
 - Flag de tour no perfil: `HasSeenTour=True`
