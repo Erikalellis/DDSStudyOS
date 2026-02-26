@@ -1,6 +1,7 @@
 # Evidencia de Atualizacao - 2026-02-25
 
 ## Setup validado
+
 - Arquivo (stable): `artifacts/installer-output/DDSStudyOS-Setup.exe`
 - SHA256 (stable): `994edee7e9c5fea6ed452bc049dae60431552ac794d463b77aa25ee9fd5059a6`
 - Arquivo (beta): `artifacts/installer-output/DDSStudyOS-Beta-Setup.exe`
@@ -11,6 +12,7 @@
 - Thumbprint configurado no update-info: `6780CE530A33615B591727F5334B3DD075B76422`
 
 ## Smoke test (maquina limpa)
+
 - Relatorio: `artifacts/installer-logs/clean-machine-smoke-20260225-195734.txt`
 - Setup: `OK`
 - Registro de desinstalacao no Windows: `OK`
@@ -19,6 +21,7 @@
 - Uninstall silencioso: `OK`
 
 ## Logs detalhados
+
 - Setup log: `artifacts/installer-logs/clean-machine-setup-20260225-195734-inno.log`
 - Uninstall log: `artifacts/installer-logs/clean-machine-uninstall-20260225-195734.log`
 
