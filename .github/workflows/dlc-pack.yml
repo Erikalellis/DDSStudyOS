@@ -1,0 +1,56 @@
+name: DDSStudyOS DLC Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Canal para gerar manifesto DLC"
+        required: true
+        default: "stable"
+        type: choice
+        options:
+          - stable
+          - beta
+      release_tag:
+        description: "Tag de release para URL dos assets (opcional)"
+        required: false
+        default: ""
+  push:
+    branches: [main]
+    paths:
+      - "dlc/modules/**"
+      - "scripts/build-dlc-package.ps1"
+      - ".github/workflows/dlc-pack.yml"
+
+jobs:
+  package-dlc:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve channel
+        id: channel
+        shell: pwsh
+        run: |
+          $channel = "${{ github.event.inputs.channel }}"
+          if ([string]::IsNullOrWhiteSpace($channel)) {
+            $channel = "stable"
+          }
+
+          "channel=$channel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Build DLC package + manifest
+        shell: pwsh
+        run: |
+          $releaseTag = "${{ github.event.inputs.release_tag }}"
+          ./scripts/build-dlc-package.ps1 -Channel "${{ steps.channel.outputs.channel }}" -ReleaseTag $releaseTag
+
+      - name: Upload DLC artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ddsstudyos-dlc-${{ steps.channel.outputs.channel }}
+          path: |
+            artifacts/dlc-output/*
+            installer/update/${{ steps.channel.outputs.channel }}/dlc-manifest.json

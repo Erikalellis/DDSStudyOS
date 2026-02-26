@@ -69,6 +69,33 @@
                 </StackPanel>
             </Border>
 
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Atualizacao incremental (DLC)" FontWeight="SemiBold"/>
+                    <TextBlock Text="Baixa apenas modulos alterados em segundo plano e aplica sem reinstalar o app base."
+                               Opacity="0.8"
+                               TextWrapping="WrapWholeWords"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button x:Name="CheckDlcButton" Content="Checar DLC" Click="CheckDlc_Click" />
+                        <Button x:Name="ApplyDlcButton" Content="Aplicar DLC" Click="ApplyDlc_Click" IsEnabled="False" Style="{StaticResource AccentButtonStyle}" />
+                        <Button x:Name="OpenModulesFolderButton" Content="Abrir pasta de modulos" Click="OpenModulesFolder_Click" />
+                        <ProgressRing x:Name="DlcProgressRing" Width="20" Height="20" IsActive="False" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="DlcStatusText"
+                               Text="Status DLC: ainda nao verificado."
+                               Opacity="0.8"
+                               TextWrapping="WrapWholeWords"/>
+
+                    <InfoBar x:Name="DlcInfoBar"
+                             IsOpen="False"
+                             Severity="Informational"
+                             Title="DLC"
+                             Message="Status do update incremental." />
+                </StackPanel>
+            </Border>
+
             <TextBlock Text="Desenvolvido por Erika Lellis &amp; Deep Darkness Studios" FontSize="16" />
 
             <StackPanel Orientation="Horizontal" Spacing="8">

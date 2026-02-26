@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,9 +12,12 @@ namespace DDSStudyOS.App.Pages;
 public sealed partial class DevelopmentPage : Page
 {
     private readonly AppUpdateService _updateService = new();
+    private readonly DlcUpdateService _dlcUpdateService = new();
     private AppUpdateCheckResult? _lastUpdateCheck;
+    private DlcUpdateCheckResult? _lastDlcCheck;
     private bool _hasAutoChecked;
     private bool _isInstallingUpdate;
+    private bool _isApplyingDlc;
 
     public DevelopmentPage()
     {
@@ -39,6 +43,8 @@ public sealed partial class DevelopmentPage : Page
         UpdateAutoCheckToggle.IsOn = SettingsService.UpdateAutoCheckInDevelopment;
         InstallUpdateButton.IsEnabled = false;
         UpdateStatusText.Text = $"Status: aguardando verificacao no canal {channel}.";
+        ApplyDlcButton.IsEnabled = false;
+        DlcStatusText.Text = $"Status DLC: aguardando verificacao no canal {channel}.";
     }
 
     private static string GetNextTargetVersion()
@@ -57,6 +63,7 @@ public sealed partial class DevelopmentPage : Page
 
         _hasAutoChecked = true;
         await CheckForUpdatesAsync(manual: false);
+        await CheckForDlcAsync(manual: false);
     }
 
     private void Email_Click(object sender, RoutedEventArgs e)
@@ -97,6 +104,11 @@ public sealed partial class DevelopmentPage : Page
         OpenUpdateButton.IsEnabled = false;
         InstallUpdateButton.IsEnabled = false;
         _lastUpdateCheck = null;
+
+        DlcStatusText.Text = $"Status DLC: canal alterado para {channel}. Clique em Checar DLC.";
+        DlcInfoBar.IsOpen = false;
+        ApplyDlcButton.IsEnabled = false;
+        _lastDlcCheck = null;
     }
 
     private void UpdateAutoCheckToggle_Toggled(object sender, RoutedEventArgs e)
@@ -107,6 +119,11 @@ public sealed partial class DevelopmentPage : Page
     private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
     {
         await CheckForUpdatesAsync(manual: true);
+    }
+
+    private async void CheckDlc_Click(object sender, RoutedEventArgs e)
+    {
+        await CheckForDlcAsync(manual: true);
     }
 
     private async void InstallUpdate_Click(object sender, RoutedEventArgs e)
@@ -123,6 +140,27 @@ public sealed partial class DevelopmentPage : Page
         }
 
         await InstallUpdateAsync(_lastUpdateCheck);
+    }
+
+    private async void ApplyDlc_Click(object sender, RoutedEventArgs e)
+    {
+        if (_isApplyingDlc || _isInstallingUpdate || _lastDlcCheck is null || !_lastDlcCheck.UpdateAvailable)
+        {
+            return;
+        }
+
+        await ApplyDlcAsync(_lastDlcCheck);
+    }
+
+    private void OpenModulesFolder_Click(object sender, RoutedEventArgs e)
+    {
+        var modulesPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "DDSStudyOS",
+            "modules");
+
+        Directory.CreateDirectory(modulesPath);
+        Process.Start(new ProcessStartInfo(modulesPath) { UseShellExecute = true });
     }
 
     private void OpenUpdate_Click(object sender, RoutedEventArgs e)
@@ -220,6 +258,123 @@ public sealed partial class DevelopmentPage : Page
         }
     }
 
+    private async Task CheckForDlcAsync(bool manual)
+    {
+        var channel = GetSelectedChannel();
+
+        DlcProgressRing.IsActive = true;
+        CheckDlcButton.IsEnabled = false;
+        ApplyDlcButton.IsEnabled = false;
+        DlcInfoBar.IsOpen = false;
+        DlcStatusText.Text = "Status DLC: verificando modulos incrementais...";
+
+        try
+        {
+            var result = await _dlcUpdateService.CheckForUpdatesAsync(channel);
+            _lastDlcCheck = result;
+
+            DlcStatusText.Text = BuildDlcStatusText(result);
+            DlcInfoBar.Title = result.UpdateAvailable ? "DLC disponivel" : "DLC";
+            DlcInfoBar.Message = result.Message;
+            DlcInfoBar.Severity = result.IsSuccess
+                ? (result.UpdateAvailable ? InfoBarSeverity.Success : InfoBarSeverity.Informational)
+                : InfoBarSeverity.Warning;
+            DlcInfoBar.IsOpen = true;
+
+            ApplyDlcButton.IsEnabled =
+                !_isInstallingUpdate &&
+                result.IsSuccess &&
+                result.UpdateAvailable &&
+                result.PendingModules.Count > 0;
+
+            if (manual && result.IsSuccess && !result.UpdateAvailable)
+            {
+                AppLogger.Info($"DLC: nenhum modulo pendente no canal {channel}.");
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"DLC: erro ao verificar atualizacoes incrementais. Motivo: {ex.Message}");
+
+            DlcStatusText.Text = "Status DLC: erro ao verificar modulos incrementais.";
+            DlcInfoBar.Title = "DLC";
+            DlcInfoBar.Message = "Nao foi possivel verificar updates incrementais agora.";
+            DlcInfoBar.Severity = InfoBarSeverity.Warning;
+            DlcInfoBar.IsOpen = true;
+            ApplyDlcButton.IsEnabled = false;
+        }
+        finally
+        {
+            DlcProgressRing.IsActive = false;
+            CheckDlcButton.IsEnabled = !_isInstallingUpdate && !_isApplyingDlc;
+        }
+    }
+
+    private async Task ApplyDlcAsync(DlcUpdateCheckResult checkResult)
+    {
+        _isApplyingDlc = true;
+
+        DlcProgressRing.IsActive = true;
+        CheckDlcButton.IsEnabled = false;
+        ApplyDlcButton.IsEnabled = false;
+        DlcInfoBar.IsOpen = false;
+
+        CheckUpdateButton.IsEnabled = false;
+        InstallUpdateButton.IsEnabled = false;
+
+        var progress = new Progress<DlcApplyProgress>(ApplyDlcProgress);
+
+        try
+        {
+            var applyResult = await _dlcUpdateService.DownloadAndApplyAsync(checkResult, progress);
+
+            DlcInfoBar.Title = "DLC";
+            DlcInfoBar.Message = applyResult.Message;
+            DlcInfoBar.Severity = applyResult.IsSuccess ? InfoBarSeverity.Success : InfoBarSeverity.Warning;
+            DlcInfoBar.IsOpen = true;
+            DlcStatusText.Text = $"Status DLC: {applyResult.Message}";
+
+            if (!applyResult.IsSuccess)
+            {
+                return;
+            }
+
+            if (applyResult.AppliedModules.Count > 0)
+            {
+                var modules = string.Join(", ", applyResult.AppliedModules);
+                AppLogger.Info($"DLC: modulos aplicados com sucesso: {modules}.");
+            }
+
+            await CheckForDlcAsync(manual: false);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"DLC: falha ao aplicar atualizacao incremental. Motivo: {ex.Message}");
+            DlcInfoBar.Title = "DLC";
+            DlcInfoBar.Message = "Nao foi possivel aplicar update incremental agora.";
+            DlcInfoBar.Severity = InfoBarSeverity.Warning;
+            DlcInfoBar.IsOpen = true;
+            DlcStatusText.Text = "Status DLC: falha durante aplicacao de modulo.";
+        }
+        finally
+        {
+            _isApplyingDlc = false;
+
+            DlcProgressRing.IsActive = false;
+            CheckDlcButton.IsEnabled = !_isInstallingUpdate;
+            ApplyDlcButton.IsEnabled = !_isInstallingUpdate &&
+                                       _lastDlcCheck is not null &&
+                                       _lastDlcCheck.IsSuccess &&
+                                       _lastDlcCheck.UpdateAvailable;
+
+            CheckUpdateButton.IsEnabled = true;
+            InstallUpdateButton.IsEnabled = _lastUpdateCheck is not null &&
+                                            _lastUpdateCheck.IsSuccess &&
+                                            _lastUpdateCheck.UpdateAvailable &&
+                                            Uri.TryCreate(_lastUpdateCheck.DownloadUrl, UriKind.Absolute, out _);
+        }
+    }
+
     private async Task InstallUpdateAsync(AppUpdateCheckResult checkResult)
     {
         _isInstallingUpdate = true;
@@ -227,6 +382,8 @@ public sealed partial class DevelopmentPage : Page
         CheckUpdateButton.IsEnabled = false;
         OpenUpdateButton.IsEnabled = false;
         InstallUpdateButton.IsEnabled = false;
+        CheckDlcButton.IsEnabled = false;
+        ApplyDlcButton.IsEnabled = false;
         UpdateInfoBar.IsOpen = false;
 
         var progress = new Progress<AppUpdateInstallProgress>(ApplyInstallProgress);
@@ -276,6 +433,12 @@ public sealed partial class DevelopmentPage : Page
                                                 _lastUpdateCheck.IsSuccess &&
                                                 _lastUpdateCheck.UpdateAvailable &&
                                                 Uri.TryCreate(_lastUpdateCheck.DownloadUrl, UriKind.Absolute, out _);
+
+                CheckDlcButton.IsEnabled = !_isApplyingDlc;
+                ApplyDlcButton.IsEnabled = !_isApplyingDlc &&
+                                           _lastDlcCheck is not null &&
+                                           _lastDlcCheck.IsSuccess &&
+                                           _lastDlcCheck.UpdateAvailable;
             }
         }
 
@@ -307,6 +470,31 @@ public sealed partial class DevelopmentPage : Page
         if (!string.IsNullOrWhiteSpace(progress.Message))
         {
             UpdateStatusText.Text = $"Status: {progress.Message}";
+        }
+    }
+
+    private void ApplyDlcProgress(DlcApplyProgress progress)
+    {
+        if (progress is null)
+        {
+            return;
+        }
+
+        var moduleText = string.IsNullOrWhiteSpace(progress.ModuleId) ? string.Empty : $" [{progress.ModuleId}]";
+        if (string.Equals(progress.Stage, "download", StringComparison.OrdinalIgnoreCase))
+        {
+            var bytesText = progress.TotalBytes.HasValue
+                ? $"{FormatBytes(progress.BytesDownloaded)} / {FormatBytes(progress.TotalBytes.Value)}"
+                : $"{FormatBytes(progress.BytesDownloaded)}";
+
+            var percentText = progress.Percent.HasValue ? $" ({progress.Percent.Value}%)" : string.Empty;
+            DlcStatusText.Text = $"Status DLC{moduleText}: baixando... {bytesText}{percentText}";
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(progress.Message))
+        {
+            DlcStatusText.Text = $"Status DLC{moduleText}: {progress.Message}";
         }
     }
 
@@ -345,6 +533,30 @@ public sealed partial class DevelopmentPage : Page
         }
 
         return $"Status: app atualizado no canal {result.Channel} (versao local: {result.LocalVersion}).";
+    }
+
+    private static string BuildDlcStatusText(DlcUpdateCheckResult result)
+    {
+        if (!result.IsSuccess)
+        {
+            return $"Status DLC: falha no canal {result.Channel} ({result.CheckedAt:dd/MM/yyyy HH:mm}).";
+        }
+
+        if (result.UpdateAvailable)
+        {
+            var modules = result.PendingModules
+                .Take(3)
+                .Select(module => $"{module.Id} ({module.Version})")
+                .ToArray();
+
+            var modulesText = modules.Length == 0
+                ? "modulos pendentes"
+                : string.Join(", ", modules);
+
+            return $"Status DLC: {result.PendingModules.Count} modulo(s) pendente(s) no canal {result.Channel}: {modulesText}.";
+        }
+
+        return $"Status DLC: sem pendencias no canal {result.Channel} (manifesto v{result.ManifestVersion}).";
     }
 
     private static string FormatBytes(long bytes)

@@ -3,6 +3,7 @@
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
 Status atual: `3.1.0` empacotado em 2026-02-26 (stable/beta/portable + SHA256).
+Status tecnico 3.1.1 (inicio): infraestrutura base de DLC incremental adicionada (manifesto por canal + empacotamento + servico de aplicacao local).
 
 ## Objetivo do ciclo
 - Consolidar estabilidade do 3.0 em produção.

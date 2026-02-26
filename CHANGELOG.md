@@ -6,7 +6,10 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Adicionado
-- _Sem alterações ainda._
+- Base do updater incremental por modulos (`DlcUpdateService`) com download, validacao de hash, aplicacao e rollback local.
+- Manifestos DLC por canal em `installer/update/stable/dlc-manifest.json` e `installer/update/beta/dlc-manifest.json`.
+- Script `scripts/build-dlc-package.ps1` para empacotar modulos em `.zip` e gerar manifesto com SHA256.
+- Workflow `.github/workflows/dlc-pack.yml` para gerar artefatos DLC no GitHub Actions.
 
 ## [3.1.0] - 2026-02-26
 ### Adicionado
