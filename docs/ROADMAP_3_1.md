@@ -2,8 +2,14 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
-Status atual: `3.1.0` empacotado em 2026-02-26 (stable/beta/portable + SHA256).
-Status tecnico 3.1.1 (inicio): infraestrutura base de DLC incremental adicionada (manifesto por canal + empacotamento + servico de aplicacao local).
+Status atual: `3.1.1` fechado em 2026-02-26 (stable/beta/portable + SHA256 + release assets sincronizados).
+Status tecnico 3.1.1 (fechado): updater online estabilizado por canal, validacao de assinatura/hash e evidencias de smoke em primeiro uso + clean-machine.
+
+## Proximo patch (3.1.2)
+- Ajustar UX de onboarding/tour (texto/posicionamento/voltar) em escala 100% e 125%.
+- Refinar navegacao de curso -> navegador interno e retorno sem perda de estado.
+- Melhorar contraste e legibilidade dos formularios principais.
+- Validar mais 1 ciclo de regressao automatizado e anexar evidencias no gate.
 
 ## Objetivo do ciclo
 - Consolidar estabilidade do 3.0 em produção.

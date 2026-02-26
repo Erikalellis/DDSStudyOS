@@ -57,3 +57,11 @@ Use esta lista antes de cada pre-release e release.
 - [x] Uninstall padrão do ciclo 1: `artifacts/installer-logs/regression-after-default-20260225-110835-uninstall.log`.
 - [x] Smoke machine-clean com uninstall visível: `artifacts/installer-logs/clean-machine-smoke-20260225-162512.txt`.
 - [x] Smoke automatizado de primeiro uso: `artifacts/installer-logs/first-use-smoke-20260225-205532.txt`.
+
+## 8) Fechamento 3.1.1 (26/02/2026)
+- [x] Smoke automatizado de primeiro uso executado: `artifacts/installer-logs/first-use-smoke-20260226-200043.txt`.
+- [x] Smoke clean-machine (setup + abrir + uninstall) executado: `artifacts/installer-logs/clean-machine-smoke-20260226-200127.txt`.
+- [x] Setup log do ciclo: `artifacts/installer-logs/clean-machine-setup-20260226-200127-inno.log`.
+- [x] Uninstall log do ciclo: `artifacts/installer-logs/clean-machine-uninstall-20260226-200127.log`.
+- [x] `update-info` stable/beta sincronizado com SHA256 real dos artefatos finais.
+- [x] Assets do release `v3.1.1` atualizados com `--clobber` (stable/beta/portable/SHA256).
