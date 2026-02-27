@@ -123,6 +123,7 @@ public sealed partial class DashboardPage : Page
         if (tag == "browser_favorites")
         {
             AppState.PendingBrowserUrl = "dds://favoritos";
+            AppState.CurrentCourseId = null;
             NavigateToTag("browser");
             return;
         }
@@ -131,6 +132,7 @@ public sealed partial class DashboardPage : Page
         {
             // Garante abertura consistente na página inicial do navegador DDS.
             AppState.PendingBrowserUrl = "dds://inicio";
+            AppState.CurrentCourseId = null;
             NavigateToTag("browser");
             return;
         }

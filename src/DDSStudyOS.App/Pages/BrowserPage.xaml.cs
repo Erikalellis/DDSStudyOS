@@ -740,8 +740,19 @@ public sealed partial class BrowserPage : Page
 
     private void Back_Click(object sender, RoutedEventArgs e)
     {
-        if (Web.CoreWebView2 is null) return;
-        if (Web.CanGoBack) Web.GoBack();
+        if (Web.CoreWebView2 is not null && Web.CanGoBack)
+        {
+            Web.GoBack();
+            UpdateNavigationButtons();
+            return;
+        }
+
+        if (TryNavigateBackToAppArea())
+        {
+            return;
+        }
+
+        ShowHomePage();
         UpdateNavigationButtons();
     }
     private void Forward_Click(object sender, RoutedEventArgs e)
@@ -749,6 +760,31 @@ public sealed partial class BrowserPage : Page
         if (Web.CoreWebView2 is null) return;
         if (Web.CanGoForward) Web.GoForward();
         UpdateNavigationButtons();
+    }
+
+    private bool TryNavigateBackToAppArea()
+    {
+        var returnTag = AppState.BrowserReturnTag;
+        if (string.IsNullOrWhiteSpace(returnTag))
+        {
+            return false;
+        }
+
+        returnTag = returnTag.Trim().ToLowerInvariant();
+        AppState.BrowserReturnTag = null;
+
+        if (returnTag == "browser")
+        {
+            return false;
+        }
+
+        if (returnTag == "courses" && AppState.CurrentCourseId.HasValue)
+        {
+            AppState.PendingCourseSelectionId = AppState.CurrentCourseId.Value;
+        }
+
+        NavigateToTag(returnTag);
+        return true;
     }
     private async void Reload_Click(object sender, RoutedEventArgs e)
     {

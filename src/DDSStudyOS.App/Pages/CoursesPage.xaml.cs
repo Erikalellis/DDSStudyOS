@@ -3,6 +3,7 @@ using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,8 @@ public sealed partial class CoursesPage : Page
             _repo = new CourseRepository(_db);
             await ReloadAsync();
 
+            await ApplyPendingSelectionAsync();
+
             var pendingAction = AppState.PendingCoursesAction;
             AppState.PendingCoursesAction = null;
 
@@ -54,6 +57,12 @@ public sealed partial class CoursesPage : Page
         {
             MsgText.Text = "Erro ao carregar: " + ex.Message;
         }
+    }
+
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        await ApplyPendingSelectionAsync();
     }
 
     private async System.Threading.Tasks.Task ReloadAsync(long? reselectId = null)
@@ -420,7 +429,48 @@ public sealed partial class CoursesPage : Page
 
         AppState.PendingBrowserUrl = c.Url;
         AppState.CurrentCourseId = c.Id;
+        AppState.PendingCourseSelectionId = c.Id;
+        AppState.BrowserReturnTag = "courses";
         NavigateToTag("browser");
+    }
+
+    private async System.Threading.Tasks.Task ApplyPendingSelectionAsync()
+    {
+        if (!AppState.PendingCourseSelectionId.HasValue)
+        {
+            return;
+        }
+
+        var pendingId = AppState.PendingCourseSelectionId.Value;
+        AppState.PendingCourseSelectionId = null;
+
+        if (!_hasLoaded || _repo is null)
+        {
+            AppState.PendingCourseSelectionId = pendingId;
+            return;
+        }
+
+        if (_cache.Count == 0)
+        {
+            await ReloadAsync();
+        }
+
+        var selected = _cache.FirstOrDefault(c => c.Id == pendingId);
+        if (selected is null)
+        {
+            await ReloadAsync(reselectId: pendingId);
+            selected = _cache.FirstOrDefault(c => c.Id == pendingId);
+        }
+
+        if (selected is null)
+        {
+            return;
+        }
+
+        _selectedCourse = selected;
+        CoursesList.SelectedItem = selected;
+        CoursesList.ScrollIntoView(selected);
+        ShowDetails(selected);
     }
 
     private void NavigateToTag(string tag)

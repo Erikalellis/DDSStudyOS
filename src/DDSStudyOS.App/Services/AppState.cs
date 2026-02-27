@@ -13,6 +13,8 @@ public static class AppState
     public static string? PendingBrowserUrl { get; set; }
     public static string? PendingVaultCredentialId { get; set; }
     public static long? CurrentCourseId { get; set; } // Linkar navegador ao curso para notas
+    public static long? PendingCourseSelectionId { get; set; } // Reselecionar curso ao voltar do navegador
+    public static string? BrowserReturnTag { get; set; } // Pagina que deve receber "voltar" do navegador
     public static string? PendingCoursesAction { get; set; } // ex.: "new"
     public static Action<string>? RequestNavigateTag { get; set; }
     public static string LaunchArguments { get; set; } = string.Empty;

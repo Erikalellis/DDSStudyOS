@@ -444,6 +444,7 @@ public sealed partial class SettingsPage : Page
 
         AppState.PendingBrowserUrl = selected.Url;
         AppState.PendingVaultCredentialId = selected.Id;
+        AppState.CurrentCourseId = null;
         NavigateToTag("browser");
         MsgText.Text = "Abrindo navegador com preenchimento automático do cofre.";
     }

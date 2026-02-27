@@ -112,6 +112,7 @@ public sealed partial class HomePage : Page
         if (tag == "browser_favorites")
         {
             AppState.PendingBrowserUrl = "dds://favoritos";
+            AppState.CurrentCourseId = null;
             NavigateToTag("browser");
             return;
         }
@@ -119,6 +120,7 @@ public sealed partial class HomePage : Page
         if (tag == "browser")
         {
             AppState.PendingBrowserUrl = "dds://inicio";
+            AppState.CurrentCourseId = null;
             NavigateToTag("browser");
             return;
         }

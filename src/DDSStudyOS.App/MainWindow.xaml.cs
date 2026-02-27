@@ -1231,6 +1231,14 @@ public sealed partial class MainWindow : Window
 
     private void NavigateToTag(string tag)
     {
+        var currentTag = ResolveTagFromPageType(ContentFrame.CurrentSourcePageType);
+        if (string.Equals(tag, "browser", StringComparison.OrdinalIgnoreCase) &&
+            !string.IsNullOrWhiteSpace(currentTag) &&
+            !string.Equals(currentTag, "browser", StringComparison.OrdinalIgnoreCase))
+        {
+            AppState.BrowserReturnTag = currentTag;
+        }
+
         var pageType = tag switch
         {
             "dashboard" => typeof(DashboardPage),
@@ -1254,6 +1262,46 @@ public sealed partial class MainWindow : Window
         {
             ContentFrame.Navigate(pageType);
         }
+    }
+
+    private static string? ResolveTagFromPageType(Type? pageType)
+    {
+        if (pageType == typeof(DashboardPage))
+        {
+            return "dashboard";
+        }
+
+        if (pageType == typeof(CoursesPage))
+        {
+            return "courses";
+        }
+
+        if (pageType == typeof(MaterialsPage))
+        {
+            return "materials";
+        }
+
+        if (pageType == typeof(AgendaPage))
+        {
+            return "agenda";
+        }
+
+        if (pageType == typeof(BrowserPage))
+        {
+            return "browser";
+        }
+
+        if (pageType == typeof(SettingsPage))
+        {
+            return "settings";
+        }
+
+        if (pageType == typeof(DevelopmentPage))
+        {
+            return "dev";
+        }
+
+        return null;
     }
 
     private NavigationViewItem? FindNavItemByTag(string tag)
