@@ -2,9 +2,9 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
-Status atual: `3.1.2` fechado em 2026-02-27 (stable/beta/portable + SHA256 + evidencias de regressao anexadas).
-Status tecnico 3.1.2 (fechado): onboarding/tour refinado em 100%/125%, navegacao curso->navegador com retorno resiliente e formularios principais com legibilidade reforcada.
-Evidencias atuais do fechamento: `artifacts/installer-logs/first-use-smoke-20260227-032127.txt` e `artifacts/installer-logs/clean-machine-smoke-20260227-031935.txt`.
+Status atual: `3.1.3` fechado em 2026-02-27 (stable/beta/portable + DLC + gate one-click).
+Status tecnico 3.1.3 (fechado): favoritos por perfil com export/import e limpeza de historico, materiais com filtros por curso/tipo/data e acao de abrir pasta com fallback, release one-click com gate automatico.
+Evidencias atuais do fechamento: `artifacts/installer-logs/first-use-smoke-20260227-085924.txt`, `artifacts/installer-logs/clean-machine-smoke-20260227-090002.txt` e `artifacts/release-gate/release-gate-20260227-084607.md`.
 
 ## Patch fechado (3.1.2)
 
@@ -13,11 +13,17 @@ Evidencias atuais do fechamento: `artifacts/installer-logs/first-use-smoke-20260
 - [x] Melhorar contraste e legibilidade dos formularios principais.
 - [x] Validar mais 1 ciclo de regressao automatizado e anexar evidencias no gate.
 
-## Proximo patch (3.1.3)
+## Patch fechado (3.1.3)
 
-- Sincronizar favoritos por perfil com export/import e limpar historico por perfil.
-- Adicionar filtros avancados em Materiais (tipo/curso/data) e acao de abrir pasta com fallback.
-- Consolidar playbook de release one-click (setup + dlc + evidencias) com gate automatico.
+- [x] Sincronizar favoritos por perfil com export/import e limpar historico por perfil.
+- [x] Adicionar filtros avancados em Materiais (tipo/curso/data) e acao de abrir pasta com fallback.
+- [x] Consolidar playbook de release one-click (setup + dlc + evidencias) com gate automatico.
+
+## Proximo patch (3.1.4)
+
+- [ ] Metas semanais (nao so diarias) com relatorio de consistencia.
+- [ ] Pomodoro por perfil com presets (foco profundo, revisao e pratica).
+- [ ] Agenda com lembretes recorrentes e snooze configuravel.
 
 ## Objetivo do ciclo
 

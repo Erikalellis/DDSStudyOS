@@ -12,6 +12,11 @@ namespace DDSStudyOS.App.Pages;
 
 public sealed partial class MaterialsPage : Page
 {
+    private const string FilterAllCoursesToken = "__all_courses__";
+    private const string FilterNoCourseToken = "__no_course__";
+    private const string FilterAllTypesToken = "__all_types__";
+    private const string FilterOtherTypesToken = "__other_types__";
+
     private readonly DatabaseService _db = new();
     private CourseRepository? _courses;
     private MaterialRepository? _materials;
@@ -25,7 +30,9 @@ public sealed partial class MaterialsPage : Page
     };
 
     private List<Course> _courseCache = new();
-    private List<MaterialItem> _materialCache = new();
+    private List<MaterialItem> _allMaterialCache = new();
+    private List<MaterialItem> _visibleMaterialCache = new();
+    private int _ignoredTemporaryCount;
 
     public MaterialsPage()
     {
@@ -69,6 +76,7 @@ public sealed partial class MaterialsPage : Page
             CourseCombo.Items.Add(new ComboBoxItem { Content = $"#{c.Id} — {c.Name}", Tag = c.Id });
 
         CourseCombo.SelectedIndex = 0;
+        RefreshCourseFilterCombo();
     }
 
     private long? SelectedCourseId()
@@ -77,24 +85,197 @@ public sealed partial class MaterialsPage : Page
         return item?.Tag as long?;
     }
 
-    private async System.Threading.Tasks.Task ReloadAsync(long? courseId = null)
+    private void RefreshCourseFilterCombo()
+    {
+        var previousToken = SelectedFilterCourseToken();
+
+        FilterCourseCombo.Items.Clear();
+        FilterCourseCombo.Items.Add(new ComboBoxItem { Content = "Todos os cursos", Tag = FilterAllCoursesToken });
+        FilterCourseCombo.Items.Add(new ComboBoxItem { Content = "Sem vínculo", Tag = FilterNoCourseToken });
+
+        foreach (var c in _courseCache.OrderBy(c => c.Name))
+        {
+            FilterCourseCombo.Items.Add(new ComboBoxItem
+            {
+                Content = $"#{c.Id} — {c.Name}",
+                Tag = $"course:{c.Id}"
+            });
+        }
+
+        SelectFilterComboItem(FilterCourseCombo, previousToken, FilterAllCoursesToken);
+    }
+
+    private void RefreshTypeFilterCombo()
+    {
+        var previousToken = SelectedFilterTypeToken();
+
+        FilterTypeCombo.Items.Clear();
+        FilterTypeCombo.Items.Add(new ComboBoxItem { Content = "Todos os tipos", Tag = FilterAllTypesToken });
+        FilterTypeCombo.Items.Add(new ComboBoxItem { Content = "Outros (sem tipo)", Tag = FilterOtherTypesToken });
+
+        var uniqueTypes = _allMaterialCache
+            .Select(m => NormalizeMaterialType(m.FileType))
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(t => t, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var type in uniqueTypes)
+        {
+            FilterTypeCombo.Items.Add(new ComboBoxItem
+            {
+                Content = type,
+                Tag = $"type:{type}"
+            });
+        }
+
+        SelectFilterComboItem(FilterTypeCombo, previousToken, FilterAllTypesToken);
+    }
+
+    private void ResetFilterControls()
+    {
+        SelectFilterComboItem(FilterCourseCombo, FilterAllCoursesToken, FilterAllCoursesToken);
+        SelectFilterComboItem(FilterTypeCombo, FilterAllTypesToken, FilterAllTypesToken);
+        FilterDateFromPicker.Date = null;
+        FilterDateToPicker.Date = null;
+    }
+
+    private void ApplyActiveFilters()
+    {
+        IEnumerable<MaterialItem> filtered = _allMaterialCache;
+        var selectedCourseToken = SelectedFilterCourseToken();
+
+        if (string.Equals(selectedCourseToken, FilterNoCourseToken, StringComparison.Ordinal))
+        {
+            filtered = filtered.Where(m => m.CourseId is null);
+        }
+        else if (TryParseCourseToken(selectedCourseToken, out var selectedCourseId))
+        {
+            filtered = filtered.Where(m => m.CourseId == selectedCourseId);
+        }
+
+        var selectedTypeToken = SelectedFilterTypeToken();
+        if (string.Equals(selectedTypeToken, FilterOtherTypesToken, StringComparison.Ordinal))
+        {
+            filtered = filtered.Where(m => string.IsNullOrWhiteSpace(m.FileType));
+        }
+        else if (TryParseTypeToken(selectedTypeToken, out var selectedType))
+        {
+            filtered = filtered.Where(m => string.Equals(NormalizeMaterialType(m.FileType), selectedType, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var fromDate = FilterDateFromPicker.Date?.Date;
+        var toDate = FilterDateToPicker.Date?.Date;
+        if (fromDate.HasValue && toDate.HasValue && toDate.Value < fromDate.Value)
+        {
+            (fromDate, toDate) = (toDate, fromDate);
+        }
+
+        if (fromDate.HasValue)
+        {
+            filtered = filtered.Where(m => m.CreatedAt.LocalDateTime.Date >= fromDate.Value);
+        }
+
+        if (toDate.HasValue)
+        {
+            filtered = filtered.Where(m => m.CreatedAt.LocalDateTime.Date <= toDate.Value);
+        }
+
+        _visibleMaterialCache = filtered.ToList();
+        MaterialsList.ItemsSource = _visibleMaterialCache.Select(BuildMaterialListLabel).ToList();
+        MaterialsList.SelectedIndex = -1;
+
+        MsgText.Text = BuildLoadedStatusText(_visibleMaterialCache.Count, _allMaterialCache.Count, _ignoredTemporaryCount);
+    }
+
+    private string SelectedFilterCourseToken()
+        => (FilterCourseCombo.SelectedItem as ComboBoxItem)?.Tag as string ?? FilterAllCoursesToken;
+
+    private string SelectedFilterTypeToken()
+        => (FilterTypeCombo.SelectedItem as ComboBoxItem)?.Tag as string ?? FilterAllTypesToken;
+
+    private static void SelectFilterComboItem(ComboBox comboBox, string token, string defaultToken)
+    {
+        var targetToken = string.IsNullOrWhiteSpace(token) ? defaultToken : token;
+        for (int i = 0; i < comboBox.Items.Count; i++)
+        {
+            if (comboBox.Items[i] is ComboBoxItem item &&
+                string.Equals(item.Tag as string, targetToken, StringComparison.Ordinal))
+            {
+                comboBox.SelectedIndex = i;
+                return;
+            }
+        }
+
+        for (int i = 0; i < comboBox.Items.Count; i++)
+        {
+            if (comboBox.Items[i] is ComboBoxItem item &&
+                string.Equals(item.Tag as string, defaultToken, StringComparison.Ordinal))
+            {
+                comboBox.SelectedIndex = i;
+                return;
+            }
+        }
+
+        comboBox.SelectedIndex = comboBox.Items.Count > 0 ? 0 : -1;
+    }
+
+    private static bool TryParseCourseToken(string token, out long courseId)
+    {
+        courseId = 0;
+        if (string.IsNullOrWhiteSpace(token) || !token.StartsWith("course:", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return long.TryParse(token["course:".Length..], out courseId);
+    }
+
+    private static bool TryParseTypeToken(string token, out string materialType)
+    {
+        materialType = string.Empty;
+        if (string.IsNullOrWhiteSpace(token) || !token.StartsWith("type:", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        materialType = token["type:".Length..];
+        return !string.IsNullOrWhiteSpace(materialType);
+    }
+
+    private static string NormalizeMaterialType(string? value)
+        => string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+
+    private static string BuildLoadedStatusText(int visibleCount, int totalCount, int temporaryIgnoredCount)
+    {
+        var filterInfo = visibleCount == totalCount
+            ? $"Carregado: {visibleCount} material(is)."
+            : $"Carregado: {visibleCount} de {totalCount} material(is) após filtros.";
+
+        if (temporaryIgnoredCount <= 0)
+        {
+            return filterInfo;
+        }
+
+        return $"{filterInfo} Ignorados {temporaryIgnoredCount} temporário(s).";
+    }
+
+    private async System.Threading.Tasks.Task ReloadAsync()
     {
         if (_materials is null) return;
-        var rawItems = await _materials.ListAsync(courseId);
+        var rawItems = await _materials.ListAsync();
         var temporaryItems = rawItems.Where(IsTemporaryMaterial).ToList();
-        _materialCache = rawItems.Where(m => !IsTemporaryMaterial(m)).ToList();
+        _ignoredTemporaryCount = temporaryItems.Count;
+        _allMaterialCache = rawItems.Where(m => !IsTemporaryMaterial(m)).ToList();
 
-        MaterialsList.ItemsSource = _materialCache.Select(BuildMaterialListLabel).ToList();
-        MsgText.Text = temporaryItems.Count > 0
-            ? $"Carregado: {_materialCache.Count} material(is). Ignorados {temporaryItems.Count} temporário(s)."
-            : $"Carregado: {_materialCache.Count} material(is).";
+        RefreshTypeFilterCombo();
+        ApplyActiveFilters();
     }
 
     private MaterialItem? GetSelectedMaterial()
     {
         var idx = MaterialsList.SelectedIndex;
-        if (idx < 0 || idx >= _materialCache.Count) return null;
-        return _materialCache[idx];
+        if (idx < 0 || idx >= _visibleMaterialCache.Count) return null;
+        return _visibleMaterialCache[idx];
     }
 
     private void FillForm(MaterialItem m)
@@ -301,14 +482,68 @@ public sealed partial class MaterialsPage : Page
     private async void Reload_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         => await ReloadAsync();
 
-    private async void FilterByCourse_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-        => await ReloadAsync(SelectedCourseId());
+    private void ApplyFilters_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        => ApplyActiveFilters();
 
-    private async void ShowAll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-        => await ReloadAsync(null);
+    private void ClearFilters_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        ResetFilterControls();
+        ApplyActiveFilters();
+    }
+
+    private void FilterByCourse_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var courseId = SelectedCourseId();
+        var token = courseId is null ? FilterNoCourseToken : $"course:{courseId.Value}";
+        SelectFilterComboItem(FilterCourseCombo, token, FilterAllCoursesToken);
+        ApplyActiveFilters();
+    }
+
+    private void ShowAll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        ResetFilterControls();
+        ApplyActiveFilters();
+    }
 
     private void Clear_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         => ClearForm();
+
+    private void OpenFolder_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var selected = GetSelectedMaterial();
+        if (selected is null)
+        {
+            MsgText.Text = "Selecione um material para abrir a pasta.";
+            return;
+        }
+
+        try
+        {
+            var normalizedPath = MaterialStorageService.NormalizePathOrUrl(selected.FilePath);
+            if (!MaterialStorageService.IsWebUrl(normalizedPath) && File.Exists(normalizedPath))
+            {
+                OpenInExplorerSelectFile(normalizedPath);
+                MsgText.Text = "Abrindo pasta do material...";
+                return;
+            }
+
+            var folder = ResolveFolderToOpen(selected, normalizedPath);
+            if (string.IsNullOrWhiteSpace(folder))
+            {
+                MsgText.Text = "Não foi possível resolver uma pasta para este material.";
+                return;
+            }
+
+            OpenInExplorerFolder(folder);
+            MsgText.Text = MaterialStorageService.IsWebUrl(normalizedPath)
+                ? "Material é URL. Abrindo pasta de fallback."
+                : "Arquivo ausente. Abrindo pasta de fallback.";
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = "Erro ao abrir pasta do material: " + ex.Message;
+        }
+    }
 
     private void MaterialsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -316,6 +551,63 @@ public sealed partial class MaterialsPage : Page
         if (selected is null) return;
         FillForm(selected);
         MsgText.Text = $"Selecionado material #{selected.Id}.";
+    }
+
+    private static string ResolveFolderToOpen(MaterialItem item, string normalizedPath)
+    {
+        var parentFolder = Path.GetDirectoryName(normalizedPath);
+        if (!string.IsNullOrWhiteSpace(parentFolder) && Directory.Exists(parentFolder))
+        {
+            return parentFolder;
+        }
+
+        if (string.Equals(item.StorageMode, MaterialStorageService.ModeManagedCopy, StringComparison.OrdinalIgnoreCase)
+            || MaterialStorageService.IsInsideManagedStorage(normalizedPath))
+        {
+            var managedFolder = MaterialStorageService.GetManagedMaterialsFolder();
+            Directory.CreateDirectory(managedFolder);
+            return managedFolder;
+        }
+
+        var downloadsFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            "Downloads");
+        if (Directory.Exists(downloadsFolder))
+        {
+            return downloadsFolder;
+        }
+
+        var documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        if (!string.IsNullOrWhiteSpace(documentsFolder))
+        {
+            return documentsFolder;
+        }
+
+        var fallbackRoot = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "DDSStudyOS");
+        Directory.CreateDirectory(fallbackRoot);
+        return fallbackRoot;
+    }
+
+    private static void OpenInExplorerSelectFile(string filePath)
+    {
+        var args = $"/select,\"{filePath}\"";
+        var startInfo = new ProcessStartInfo("explorer.exe", args)
+        {
+            UseShellExecute = true
+        };
+        Process.Start(startInfo);
+    }
+
+    private static void OpenInExplorerFolder(string folderPath)
+    {
+        var args = $"\"{folderPath}\"";
+        var startInfo = new ProcessStartInfo("explorer.exe", args)
+        {
+            UseShellExecute = true
+        };
+        Process.Start(startInfo);
     }
 
     private static string? NullIfEmpty(string? s)
@@ -392,6 +684,7 @@ public sealed partial class MaterialsPage : Page
         var type = string.IsNullOrWhiteSpace(item.FileType) ? "Outros" : item.FileType;
         var mode = string.IsNullOrWhiteSpace(item.StorageMode) ? MaterialStorageService.ModeReference : item.StorageMode;
         var name = string.IsNullOrWhiteSpace(item.FileName) ? "(sem nome)" : item.FileName;
+        var createdAt = item.CreatedAt.LocalDateTime.ToString("dd/MM/yyyy");
 
         string availability;
         if (MaterialStorageService.IsWebUrl(item.FilePath))
@@ -403,7 +696,7 @@ public sealed partial class MaterialsPage : Page
             availability = File.Exists(item.FilePath) ? string.Empty : " [arquivo ausente]";
         }
 
-        return $"#{item.Id} — {name} ({type}) [{mode}]{availability}";
+        return $"#{item.Id} — {name} ({type}) [{mode}] {createdAt}{availability}";
     }
 
     private static bool IsTemporaryMaterial(MaterialItem item)

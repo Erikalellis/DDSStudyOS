@@ -8,6 +8,17 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Adicionado
 - _Sem alteracoes ainda._
 
+## [3.1.3] - 2026-02-27
+### Adicionado
+- Sincronização de favoritos por perfil na tela de Cursos com exportação/importação em `.json`.
+- Ação de limpeza de histórico de estudo por perfil (baseada em `last_accessed`) sem afetar cursos/favoritos.
+- Filtros avançados em Materiais por curso, tipo e intervalo de data de cadastro.
+- Ação "Abrir pasta" em Materiais com fallback para pasta válida quando o arquivo não existe ou for URL.
+- Playbook one-click de release com gate automático (`scripts/release-one-click.ps1`) e documentação em `docs/RELEASE_ONE_CLICK_PLAYBOOK.md`.
+
+### Alterado
+- Repositório de cursos atualizado para persistir histórico por perfil em `course_history` e usar esse escopo na ordenação/listagem.
+
 ## [3.1.2] - 2026-02-27
 ### Alterado
 - Fluxo de onboarding/tour refinado para escalas 100% e 125%, com foco em texto, posicionamento e navegacao de retorno.

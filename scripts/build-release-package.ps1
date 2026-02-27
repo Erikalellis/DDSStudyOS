@@ -153,6 +153,7 @@ function Update-UpdateInfo {
         [string]$FilePath,
         [string]$Version,
         [string]$InstallerAssetName,
+        [string]$DownloadUrl,
         [string]$ReleasePageUrl,
         [string]$ReleaseNotesUrl,
         [string]$SupportUrl,
@@ -168,6 +169,9 @@ function Update-UpdateInfo {
     $json = Get-Content $FilePath -Raw -Encoding UTF8 | ConvertFrom-Json
     $json.currentVersion = $Version
     $json.installerAssetName = $InstallerAssetName
+    if (-not [string]::IsNullOrWhiteSpace($DownloadUrl)) {
+        $json.downloadUrl = $DownloadUrl
+    }
     $json.releasePageUrl = $ReleasePageUrl
     $json.releaseNotesUrl = $ReleaseNotesUrl
     $json.supportUrl = $SupportUrl
@@ -417,6 +421,7 @@ Update-UpdateInfo `
     -FilePath $stableUpdateInfo `
     -Version $stableVersion `
     -InstallerAssetName "$StableSetupBaseName.exe" `
+    -DownloadUrl "$($repoLinks.LatestReleaseUrl.TrimEnd('/'))/download/$([System.Uri]::EscapeDataString("$StableSetupBaseName.exe"))" `
     -ReleasePageUrl $repoLinks.LatestReleaseUrl `
     -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
     -SupportUrl $repoLinks.SupportUrl `
@@ -428,6 +433,7 @@ if (-not $SkipBeta) {
         -FilePath $betaUpdateInfo `
         -Version $effectiveBetaVersion `
         -InstallerAssetName "$BetaSetupBaseName.exe" `
+        -DownloadUrl "$($repoLinks.BaseUrl)/releases/download/v$stableVersion/$([System.Uri]::EscapeDataString("$BetaSetupBaseName.exe"))" `
         -ReleasePageUrl $repoLinks.ReleasesUrl `
         -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
         -SupportUrl $repoLinks.SupportUrl `

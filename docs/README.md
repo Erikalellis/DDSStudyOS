@@ -5,6 +5,7 @@
 - Setup legado (Advanced): `docs/ADVANCED_INSTALLER_SETUP.md`
 - Projeto legado do instalador: `installer/advanced-installer/README.md`
 - Release/empacotamento: `docs/MSIX_CICD.md`
+- Playbook one-click (setup + dlc + gate): `docs/RELEASE_ONE_CLICK_PLAYBOOK.md`
 - Gate 3.0 (Go/No-Go): `docs/RELEASE_3_0_GATE.md`
 - Roadmap pós-3.0: `docs/ROADMAP_3_1.md`
 - Arquivos legais do instalador: `installer/legal/`

@@ -62,17 +62,25 @@ SELECT last_insert_rowid();";
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
         await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
+        await EnsureLegacyHistoryMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
 SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
        CASE WHEN cf.course_id IS NULL THEN 0 ELSE 1 END AS is_favorite,
-       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+       c.start_date, c.due_date, c.status, c.notes,
+       CASE
+         WHEN ch.last_accessed IS NULL OR trim(ch.last_accessed) = '' THEN c.last_accessed
+         ELSE ch.last_accessed
+       END AS last_accessed
 FROM courses c
 LEFT JOIN course_favorites cf
   ON cf.course_id = c.id
  AND cf.profile_key = $profile_key
-ORDER BY is_favorite DESC, c.last_accessed DESC, c.updated_at DESC, c.id DESC;";
+LEFT JOIN course_history ch
+  ON ch.course_id = c.id
+ AND ch.profile_key = $profile_key
+ORDER BY is_favorite DESC, ch.last_accessed DESC, c.updated_at DESC, c.id DESC;";
         cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
         await using var reader = await cmd.ExecuteReaderAsync();
@@ -91,16 +99,24 @@ ORDER BY is_favorite DESC, c.last_accessed DESC, c.updated_at DESC, c.id DESC;";
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
         await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
+        await EnsureLegacyHistoryMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
 SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
        CASE WHEN cf.course_id IS NULL THEN 0 ELSE 1 END AS is_favorite,
-       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+       c.start_date, c.due_date, c.status, c.notes,
+       CASE
+         WHEN ch.last_accessed IS NULL OR trim(ch.last_accessed) = '' THEN c.last_accessed
+         ELSE ch.last_accessed
+       END AS last_accessed
 FROM courses c
 LEFT JOIN course_favorites cf
   ON cf.course_id = c.id
  AND cf.profile_key = $profile_key
+LEFT JOIN course_history ch
+  ON ch.course_id = c.id
+ AND ch.profile_key = $profile_key
 WHERE c.id = $id
 LIMIT 1;";
         cmd.Parameters.AddWithValue("$id", id);
@@ -153,12 +169,25 @@ WHERE id=$id;";
 
     public async Task UpdateLastAccessedAsync(long courseId)
     {
+        var profileKey = GetProfileKey();
+
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
-        var cmd = conn.CreateCommand();
-        cmd.CommandText = "UPDATE courses SET last_accessed = datetime('now') WHERE id = $id";
-        cmd.Parameters.AddWithValue("$id", courseId);
-        await cmd.ExecuteNonQueryAsync();
+
+        var updateLegacy = conn.CreateCommand();
+        updateLegacy.CommandText = "UPDATE courses SET last_accessed = datetime('now') WHERE id = $id";
+        updateLegacy.Parameters.AddWithValue("$id", courseId);
+        await updateLegacy.ExecuteNonQueryAsync();
+
+        var upsertHistory = conn.CreateCommand();
+        upsertHistory.CommandText = @"
+INSERT INTO course_history (profile_key, course_id, last_accessed)
+VALUES ($profile_key, $course_id, datetime('now'))
+ON CONFLICT(profile_key, course_id)
+DO UPDATE SET last_accessed = excluded.last_accessed;";
+        upsertHistory.Parameters.AddWithValue("$profile_key", profileKey);
+        upsertHistory.Parameters.AddWithValue("$course_id", courseId);
+        await upsertHistory.ExecuteNonQueryAsync();
     }
 
     public async Task<Course?> GetMostRecentAsync()
@@ -168,17 +197,25 @@ WHERE id=$id;";
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
         await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
+        await EnsureLegacyHistoryMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
 SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
        CASE WHEN cf.course_id IS NULL THEN 0 ELSE 1 END AS is_favorite,
-       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+       c.start_date, c.due_date, c.status, c.notes,
+       CASE
+         WHEN ch.last_accessed IS NULL OR trim(ch.last_accessed) = '' THEN c.last_accessed
+         ELSE ch.last_accessed
+       END AS last_accessed
 FROM courses c
 LEFT JOIN course_favorites cf
   ON cf.course_id = c.id
  AND cf.profile_key = $profile_key
-ORDER BY c.last_accessed DESC, c.updated_at DESC
+LEFT JOIN course_history ch
+  ON ch.course_id = c.id
+ AND ch.profile_key = $profile_key
+ORDER BY ch.last_accessed DESC, c.updated_at DESC
 LIMIT 1;";
         cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
@@ -197,17 +234,25 @@ LIMIT 1;";
         await using var conn = _db.CreateConnection();
         await conn.OpenAsync();
         await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
+        await EnsureLegacyHistoryMigratedAsync(conn, profileKey);
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
 SELECT c.id, c.name, c.platform, c.url, c.username, c.password_blob,
        1 AS is_favorite,
-       c.start_date, c.due_date, c.status, c.notes, c.last_accessed
+       c.start_date, c.due_date, c.status, c.notes,
+       CASE
+         WHEN ch.last_accessed IS NULL OR trim(ch.last_accessed) = '' THEN c.last_accessed
+         ELSE ch.last_accessed
+       END AS last_accessed
 FROM courses c
 INNER JOIN course_favorites cf
   ON cf.course_id = c.id
  AND cf.profile_key = $profile_key
-ORDER BY c.last_accessed DESC, c.updated_at DESC, c.id DESC;";
+LEFT JOIN course_history ch
+  ON ch.course_id = c.id
+ AND ch.profile_key = $profile_key
+ORDER BY ch.last_accessed DESC, c.updated_at DESC, c.id DESC;";
         cmd.Parameters.AddWithValue("$profile_key", profileKey);
 
         await using var reader = await cmd.ExecuteReaderAsync();
@@ -227,6 +272,59 @@ ORDER BY c.last_accessed DESC, c.updated_at DESC, c.id DESC;";
         await conn.OpenAsync();
         await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
         await SetFavoriteInternalAsync(conn, profileKey, courseId, isFavorite);
+    }
+
+    public async Task SyncFavoritesAsync(IEnumerable<long> courseIds, bool replaceExisting)
+    {
+        var profileKey = GetProfileKey();
+        var ids = courseIds
+            .Where(id => id > 0)
+            .Distinct()
+            .ToList();
+
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+        await EnsureLegacyFavoritesMigratedAsync(conn, profileKey);
+
+        await using var tx = conn.BeginTransaction();
+
+        if (replaceExisting)
+        {
+            var clear = conn.CreateCommand();
+            clear.Transaction = tx;
+            clear.CommandText = "DELETE FROM course_favorites WHERE profile_key = $profile_key;";
+            clear.Parameters.AddWithValue("$profile_key", profileKey);
+            await clear.ExecuteNonQueryAsync();
+        }
+
+        foreach (var id in ids)
+        {
+            var insert = conn.CreateCommand();
+            insert.Transaction = tx;
+            insert.CommandText = @"
+INSERT OR IGNORE INTO course_favorites (profile_key, course_id, created_at)
+SELECT $profile_key, id, datetime('now')
+FROM courses
+WHERE id = $course_id;";
+            insert.Parameters.AddWithValue("$profile_key", profileKey);
+            insert.Parameters.AddWithValue("$course_id", id);
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        await tx.CommitAsync();
+    }
+
+    public async Task<int> ClearHistoryAsync()
+    {
+        var profileKey = GetProfileKey();
+
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+
+        var cmd = conn.CreateCommand();
+        cmd.CommandText = "DELETE FROM course_history WHERE profile_key = $profile_key;";
+        cmd.Parameters.AddWithValue("$profile_key", profileKey);
+        return await cmd.ExecuteNonQueryAsync();
     }
 
     private static async Task SetFavoriteInternalAsync(SqliteConnection conn, string profileKey, long courseId, bool isFavorite)
@@ -305,6 +403,42 @@ INSERT OR IGNORE INTO course_favorites (profile_key, course_id, created_at)
 SELECT $profile_key, id, datetime('now')
 FROM courses
 WHERE is_favorite = 1;";
+        migrate.Parameters.AddWithValue("$profile_key", profileKey);
+        await migrate.ExecuteNonQueryAsync();
+    }
+
+    private static async Task EnsureLegacyHistoryMigratedAsync(SqliteConnection conn, string profileKey)
+    {
+        var hasProfileHistoryCmd = conn.CreateCommand();
+        hasProfileHistoryCmd.CommandText = "SELECT COUNT(1) FROM course_history WHERE profile_key = $profile_key;";
+        hasProfileHistoryCmd.Parameters.AddWithValue("$profile_key", profileKey);
+        var existingProfileHistory = Convert.ToInt64(
+            await hasProfileHistoryCmd.ExecuteScalarAsync() ?? 0,
+            CultureInfo.InvariantCulture);
+
+        if (existingProfileHistory > 0)
+        {
+            return;
+        }
+
+        var hasLegacyHistoryCmd = conn.CreateCommand();
+        hasLegacyHistoryCmd.CommandText = "SELECT COUNT(1) FROM courses WHERE last_accessed IS NOT NULL AND trim(last_accessed) <> '';";
+        var legacyHistoryCount = Convert.ToInt64(
+            await hasLegacyHistoryCmd.ExecuteScalarAsync() ?? 0,
+            CultureInfo.InvariantCulture);
+
+        if (legacyHistoryCount <= 0)
+        {
+            return;
+        }
+
+        var migrate = conn.CreateCommand();
+        migrate.CommandText = @"
+INSERT OR IGNORE INTO course_history (profile_key, course_id, last_accessed)
+SELECT $profile_key, id, last_accessed
+FROM courses
+WHERE last_accessed IS NOT NULL
+  AND trim(last_accessed) <> '';";
         migrate.Parameters.AddWithValue("$profile_key", profileKey);
         await migrate.ExecuteNonQueryAsync();
     }

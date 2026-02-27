@@ -59,3 +59,25 @@ CREATE TABLE IF NOT EXISTS user_stats (
 -- Inicializar estatísticas se não existirem
 INSERT OR IGNORE INTO user_stats (key, value) VALUES ('study_streak', '0');
 INSERT OR IGNORE INTO user_stats (key, value) VALUES ('last_open_date', '');
+
+CREATE TABLE IF NOT EXISTS course_favorites (
+    profile_key TEXT NOT NULL,
+    course_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (profile_key, course_id),
+    FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_course_favorites_profile ON course_favorites(profile_key);
+CREATE INDEX IF NOT EXISTS idx_course_favorites_course ON course_favorites(course_id);
+
+CREATE TABLE IF NOT EXISTS course_history (
+    profile_key TEXT NOT NULL,
+    course_id INTEGER NOT NULL,
+    last_accessed TEXT NOT NULL,
+    PRIMARY KEY (profile_key, course_id),
+    FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_course_history_profile ON course_history(profile_key, last_accessed DESC);
+CREATE INDEX IF NOT EXISTS idx_course_history_course ON course_history(course_id);

@@ -65,6 +65,16 @@ CREATE TABLE IF NOT EXISTS course_favorites (
 );");
             await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_favorites_profile ON course_favorites(profile_key);");
             await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_favorites_course ON course_favorites(course_id);");
+            await SafeExecuteAsync(conn, @"
+CREATE TABLE IF NOT EXISTS course_history (
+    profile_key TEXT NOT NULL,
+    course_id INTEGER NOT NULL,
+    last_accessed TEXT NOT NULL,
+    PRIMARY KEY (profile_key, course_id),
+    FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE CASCADE
+);");
+            await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_history_profile ON course_history(profile_key, last_accessed DESC);");
+            await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_history_course ON course_history(course_id);");
         }
     }
 

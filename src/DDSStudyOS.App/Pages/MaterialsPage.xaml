@@ -63,15 +63,33 @@
                     Padding="14">
                 <StackPanel Spacing="10">
                     <TextBlock Text="Cadastrados" FontWeight="SemiBold" Opacity="0.9" />
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                        <ComboBox x:Name="FilterCourseCombo" Header="Curso" />
+                        <ComboBox x:Name="FilterTypeCombo" Grid.Column="1" Header="Tipo" />
+                        <CalendarDatePicker x:Name="FilterDateFromPicker"
+                                            Grid.Row="1"
+                                            Header="Data inicial"
+                                            PlaceholderText="dd/mm/aaaa" />
+                        <CalendarDatePicker x:Name="FilterDateToPicker"
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Header="Data final"
+                                            PlaceholderText="dd/mm/aaaa" />
+                        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8">
+                            <Button Content="Aplicar filtros" Click="ApplyFilters_Click" />
+                            <Button Content="Limpar filtros" Click="ClearFilters_Click" />
+                        </StackPanel>
+                    </Grid>
                     <ListView x:Name="MaterialsList"
                               SelectionChanged="MaterialsList_SelectionChanged"
-                              Height="440"
+                              Height="330"
                               BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                               BorderThickness="1" />
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button Content="Recarregar" Click="Reload_Click" />
-                        <Button Content="Filtrar por curso" Click="FilterByCourse_Click" />
+                        <Button Content="Usar curso do cadastro" Click="FilterByCourse_Click" />
                         <Button Content="Ver todos" Click="ShowAll_Click" />
+                        <Button Content="Abrir pasta" Click="OpenFolder_Click" />
                     </StackPanel>
                 </StackPanel>
             </Border>
