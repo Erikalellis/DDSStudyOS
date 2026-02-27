@@ -21,7 +21,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="Meus Cursos" Style="{StaticResource TitleTextBlockStyle}"/>
-                <TextBlock Text="Gerencie seu aprendizado em um só lugar." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.6"/>
+                <TextBlock Text="Gerencie seu aprendizado em um só lugar." Style="{StaticResource BodyTextBlockStyle}" Opacity="0.82"/>
             </StackPanel>
             <Button Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Click="NewCourse_Click">
                 <Button.Content>
@@ -57,7 +57,7 @@
                         <DataTemplate>
                             <StackPanel Padding="12">
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Text="{Binding Platform}" FontSize="12" Opacity="0.6"/>
+                                <TextBlock Text="{Binding Platform}" FontSize="12" Opacity="0.82"/>
                                 <TextBlock Text="{Binding FavoriteBadge}" FontSize="11" Foreground="#FFD28A00"/>
                                 <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" HorizontalAlignment="Left" CornerRadius="4" Padding="4,2" Margin="0,4,0,0">
                                     <TextBlock Text="{Binding Status}" FontSize="10"/>
@@ -110,7 +110,7 @@
                                            FontSize="20"
                                            FontWeight="SemiBold"
                                            TextTrimming="CharacterEllipsis"/>
-                                <TextBlock x:Name="DetailsPlatformText" Text="Plataforma" Opacity="0.75"/>
+                                <TextBlock x:Name="DetailsPlatformText" Text="Plataforma" Opacity="0.9"/>
                             </StackPanel>
 
                             <Grid ColumnSpacing="12" RowSpacing="10">
@@ -125,23 +125,23 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="Status" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock Text="Status" FontSize="12" Opacity="0.88"/>
                                     <TextBlock x:Name="DetailsStatusText" Text="-" FontWeight="SemiBold"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
-                                    <TextBlock Text="Usuário" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock Text="Usuário" FontSize="12" Opacity="0.88"/>
                                     <TextBlock x:Name="DetailsUsernameText" Text="-" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="2">
-                                    <TextBlock Text="Link" FontSize="12" Opacity="0.7"/>
+                                    <TextBlock Text="Link" FontSize="12" Opacity="0.88"/>
                                     <TextBlock x:Name="DetailsUrlText" Text="-" TextWrapping="WrapWholeWords"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="2">
-                                    <TextBlock Text="Observações" FontSize="12" Opacity="0.7"/>
-                                    <TextBlock x:Name="DetailsNotesText" Text="-" Opacity="0.9" TextWrapping="WrapWholeWords"/>
+                                    <TextBlock Text="Observações" FontSize="12" Opacity="0.88"/>
+                                    <TextBlock x:Name="DetailsNotesText" Text="-" Opacity="1" TextWrapping="WrapWholeWords"/>
                                 </StackPanel>
                             </Grid>
 
