@@ -4,7 +4,8 @@ Obrigado por usar o DDS StudyOS.
 
 ## Canais de suporte
 - E-mail: `erikalellis.dev@gmail.com`
-- Site: `https://177.71.165.60/`
+- Site: `http://177.71.165.60/`
+- Issues: `https://github.com/Erikalellis/DDSStudyOS/issues`
 
 ## Antes de abrir chamado
 - Confirme a versão do app em `Configurações > Sobre`.

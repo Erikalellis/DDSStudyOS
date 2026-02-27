@@ -21,7 +21,7 @@ Evidencias atuais do fechamento: `artifacts/installer-logs/first-use-smoke-20260
 
 ## Proximo patch (3.1.4)
 
-- [ ] Metas semanais (nao so diarias) com relatorio de consistencia.
+- [x] Metas semanais (nao so diarias) com relatorio de consistencia.
 - [ ] Pomodoro por perfil com presets (foco profundo, revisao e pratica).
 - [ ] Agenda com lembretes recorrentes e snooze configuravel.
 

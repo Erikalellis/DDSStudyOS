@@ -13,6 +13,37 @@ Este playbook consolida em um unico comando:
 .\scripts\release-one-click.ps1
 ```
 
+## Fluxo completo recomendado (fim-a-fim)
+
+1. Gerar artefatos + DLC + smoke + gate:
+
+```powershell
+.\scripts\release-one-click.ps1 -Owner Erikalellis -Repo DDSStudyOS -ReleaseTag v3.1.3
+```
+
+2. Commitar atualizações de versionamento/feed/evidências:
+
+```powershell
+git add .
+git commit -m "release: fechar ciclo 3.1.3"
+git push origin main
+```
+
+3. Criar tag e publicar release:
+
+```powershell
+git tag -a v3.1.3 -m "Release 3.1.3"
+git push origin v3.1.3
+gh release create v3.1.3 `
+  artifacts/installer-output/DDSStudyOS-Setup.exe `
+  artifacts/installer-output/DDSStudyOS-Beta-Setup.exe `
+  artifacts/installer-output/DDSStudyOS-Portable.zip `
+  artifacts/installer-output/DDSStudyOS-SHA256.txt `
+  artifacts/dlc-output/DDSStudyOS-DLC-web-content.zip `
+  --repo Erikalellis/DDSStudyOS `
+  --title "DDS StudyOS v3.1.3"
+```
+
 ## Saidas esperadas
 
 - `artifacts/installer-output/DDSStudyOS-Setup.exe`

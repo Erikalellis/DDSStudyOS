@@ -6,7 +6,11 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Adicionado
-- _Sem alteracoes ainda._
+- Meta semanal no Home e Dashboard com relatorio de consistencia (dias ativos + minutos da semana).
+
+### Alterado
+- Registro de abertura de curso agora gera atividade diaria em `study_activity` para alimentar metricas semanais por perfil.
+- Documentacao central atualizada (README raiz, `docs/README.md`, `docs/UPDATE_INFO.md`, playbook one-click e suporte) com links oficiais e fluxo completo de release.
 
 ## [3.1.3] - 2026-02-27
 ### Adicionado

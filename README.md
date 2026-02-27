@@ -2,6 +2,11 @@
 
 Projeto desktop em WinUI 3 para gestão de cursos, materiais, lembretes, navegação e backup local criptografado.
 
+## Status do produto
+- Release estável atual: `3.1.3`
+- Próximo ciclo: `3.1.4` (metas semanais, presets de pomodoro por perfil e agenda recorrente)
+- Página de releases: `https://github.com/Erikalellis/DDSStudyOS/releases`
+
 ## Pré-requisitos
 - Visual Studio 2022 ou superior
 - Workload `NET desktop development`
@@ -38,12 +43,15 @@ Fluxo oficial de instalador: `docs/INNO_SETUP.md` (Inno Setup).
 Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 
 ## Documentação (GitHub)
+- Manual completo de canais e atualizacoes (iniciante -> senior): `docs/MANUAL_CANAIS_E_ATUALIZACOES.md`
+- Guia rápido de uso: `docs/USER_GUIDE.md`
 - Guia oficial do instalador (Inno Setup): `docs/INNO_SETUP.md`
 - Guia legado (Advanced Installer): `docs/ADVANCED_INSTALLER_SETUP.md`
 - Projeto legado do instalador (Advanced Installer): `installer/advanced-installer/README.md`
 - Checklist oficial de regressão beta: `docs/BETA_REGRESSION_CHECKLIST.md`
 - Gate de promoção para versão 3.0: `docs/RELEASE_3_0_GATE.md`
 - Guia de release e empacotamento: `docs/MSIX_CICD.md`
+- Playbook one-click de release + gate automático: `docs/RELEASE_ONE_CLICK_PLAYBOOK.md`
 - Arquivos legais do instalador: `installer/legal/`
 - Informações de atualização (feeds/links): `docs/UPDATE_INFO.md`
 - Changelog técnico: `CHANGELOG.md`
@@ -57,6 +65,7 @@ Guia legado/backup: `docs/ADVANCED_INSTALLER_SETUP.md`.
 ## Scripts úteis
 - `scripts/build-inno-installer.ps1`: fluxo oficial de build do setup (`DDSStudyOS-Setup.exe`)
 - `scripts/build-release-package.ps1`: gera pacote completo de release (setup estavel + setup beta + portatil + SHA256 + sync de `update-info.json`)
+- `scripts/release-one-click.ps1`: executa release completa (setup + dlc + evidências + gate automático GO/FAIL)
 - `scripts/run-setup-with-log.ps1`: executa setup com log de instalação para diagnóstico
 - `scripts/build-release.ps1`: build + publish usando MSBuild do Visual Studio (via `vswhere`)
 - `scripts/sign-release.ps1`: assinatura de artefatos com `.pfx` ou certificado do store por thumbprint

@@ -3,19 +3,20 @@
 Este documento centraliza as URLs usadas no release do instalador oficial (Inno Setup) e no suporte do produto.
 
 ## Repositorio oficial
-- GitHub: `https://github.com/<OWNER>/<REPO>`
+- GitHub: `https://github.com/Erikalellis/DDSStudyOS`
 
 ## Canais de update
 - `stable`: producao
 - `beta`: homologacao interna
 
 ## URLs publicas
-- `Update Info URL (stable)`: `https://github.com/<OWNER>/<REPO>/blob/main/installer/update/stable/update-info.json`
-- `Update Info URL (beta)`: `https://github.com/<OWNER>/<REPO>/blob/main/installer/update/beta/update-info.json`
-- `DLC Manifest URL (stable)`: `https://github.com/<OWNER>/<REPO>/blob/main/installer/update/stable/dlc-manifest.json`
-- `DLC Manifest URL (beta)`: `https://github.com/<OWNER>/<REPO>/blob/main/installer/update/beta/dlc-manifest.json`
-- `Release Notes URL`: `https://github.com/<OWNER>/<REPO>/blob/main/CHANGELOG.md`
-- `Support URL`: `https://github.com/<OWNER>/<REPO>/blob/main/SUPPORT.md`
+- `Update Info URL (stable)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/stable/update-info.json`
+- `Update Info URL (beta)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/beta/update-info.json`
+- `DLC Manifest URL (stable)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/stable/dlc-manifest.json`
+- `DLC Manifest URL (beta)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/beta/dlc-manifest.json`
+- `Release Notes URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
+- `Support URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
+- `Releases`: `https://github.com/Erikalellis/DDSStudyOS/releases`
 
 ## Observacao sobre auto-update
 - O arquivo acima e informativo.
@@ -24,8 +25,8 @@ Este documento centraliza as URLs usadas no release do instalador oficial (Inno 
 - Se for usar Advanced Installer em contingencia, publique tambem o feed especifico do updater dele.
 
 ## Versionamento
-- Formato: `MAJOR.MINOR.PATCH` (exemplo: `3.1.0`)
-- Build de arquivo: `MAJOR.MINOR.PATCH.REVISION` (exemplo: `3.1.0.0`)
+- Formato: `MAJOR.MINOR.PATCH` (exemplo: `3.1.3`)
+- Build de arquivo: `MAJOR.MINOR.PATCH.REVISION` (exemplo: `3.1.3.0`)
 
 ## Campos opcionais no `update-info.json`
 - `signerThumbprint`: thumbprint esperado do certificado Authenticode do setup.
@@ -41,6 +42,7 @@ Este documento centraliza as URLs usadas no release do instalador oficial (Inno 
 1. Gerar pacote completo de release: `scripts/build-release-package.ps1`
 2. Gerar pacotes DLC por canal: `scripts/build-dlc-package.ps1 -Channel stable` e `scripts/build-dlc-package.ps1 -Channel beta`
 3. Assinar artefatos apos publish.
-4. Atualizar release notes no GitHub (CHANGELOG).
-5. Publicar juntos: setup estavel, setup beta, portatil e SHA256.
-6. Validar upgrade em maquina limpa.
+4. Sincronizar `update-info` e `dlc-manifest` com versao/tag do release.
+5. Atualizar release notes no GitHub (CHANGELOG).
+6. Publicar juntos: setup estavel, setup beta, portatil, SHA256 e DLC.
+7. Validar upgrade em maquina limpa.
