@@ -60,7 +60,7 @@ if ($RunSetup) {
     }
 
     Add-ReportLine "[INFO] Executando setup silencioso..."
-    $setupArgs = @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LOG=$setupLog")
+    $setupArgs = @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LOG=`"$setupLog`"")
     $setupProcess = Start-Process -FilePath $resolvedSetupPath -ArgumentList $setupArgs -PassThru -Wait
     if ($setupProcess.ExitCode -ne 0) {
         Add-ReportLine "[FAIL] Setup falhou. ExitCode=$($setupProcess.ExitCode)"
@@ -132,7 +132,7 @@ Start-Sleep -Seconds 1
 if ($RunSetup -and -not $KeepInstalled) {
     if (Test-Path $uninsExe) {
         Add-ReportLine "[INFO] Executando uninstall silencioso..."
-        $uninstallArgs = @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LOG=$uninstallLog")
+        $uninstallArgs = @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LOG=`"$uninstallLog`"")
         $uninstallProcess = Start-Process -FilePath $uninsExe -ArgumentList $uninstallArgs -PassThru -Wait
         if ($uninstallProcess.ExitCode -ne 0) {
             Add-ReportLine "[WARN] Uninstall retornou ExitCode=$($uninstallProcess.ExitCode)"

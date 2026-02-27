@@ -185,6 +185,9 @@ var
 begin
   if CurUninstallStep = usPostUninstall then
   begin
+    if UninstallSilent then
+      Exit;
+
     OpenFeedbackAnswer := MsgBox(
       'Desinstalacao concluida.' + #13#10 + #13#10 +
       'Quer nos contar o motivo da desinstalacao?' + #13#10 +

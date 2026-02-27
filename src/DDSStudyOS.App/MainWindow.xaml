@@ -68,23 +68,18 @@
                     <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
                     <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
                     <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
-                    <Setter Property="PlaceholderForeground" Value="#C9E3F5FF" />
-                    <Setter Property="FontSize" Value="14" />
                 </Style>
 
                 <Style TargetType="ComboBox">
                     <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
                     <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
                     <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
-                    <Setter Property="FontSize" Value="14" />
                 </Style>
 
                 <Style TargetType="NumberBox">
                     <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
                     <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
                     <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
-                    <Setter Property="PlaceholderForeground" Value="#C9E3F5FF" />
-                    <Setter Property="FontSize" Value="14" />
                 </Style>
 
                 <Style TargetType="ToggleSwitch">

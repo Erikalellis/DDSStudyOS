@@ -1,17 +1,17 @@
 {
     "channel":  "beta",
     "product":  "DDS StudyOS",
-    "appVersion":  "3.1.1",
-    "minimumAppVersion":  "3.1.1",
+    "appVersion":  "3.1.2",
+    "minimumAppVersion":  "3.1.2",
     "manifestVersion":  1,
-    "generatedAtUtc":  "2026-02-26T14:52:13.1434908Z",
-    "releaseTag":  "v3.1.1",
+    "generatedAtUtc":  "2026-02-27T04:17:54.1171002Z",
+    "releaseTag":  "v3.1.2",
     "modules":  [
                     {
                         "id":  "web-content",
                         "version":  "3.1.1",
                         "assetName":  "DDSStudyOS-DLC-web-content.zip",
-                        "downloadUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.1.1/DDSStudyOS-DLC-web-content.zip",
+                        "downloadUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.1.2/DDSStudyOS-DLC-web-content.zip",
                         "sha256":  "a693d56f1b4cb84f40916eeef89e2a1e5bc113e48198c59c33ac7a1cec7f1d94",
                         "sizeBytes":  525,
                         "extractSubdirectory":  "web-content",

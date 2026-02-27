@@ -125,22 +125,23 @@ $selfContainedValue = ConvertTo-BoolValue -Value $SelfContained -Name "SelfConta
 $windowsAppSdkSelfContainedValue = ConvertTo-BoolValue -Value $WindowsAppSDKSelfContained -Name "WindowsAppSDKSelfContained"
 $selfContainedArg = if ($selfContainedValue) { "1" } else { "0" }
 $windowsAppSdkSelfContainedArg = if ($windowsAppSdkSelfContainedValue) { "1" } else { "0" }
-    $publishArgs = @(
-        "-NoProfile",
-        "-ExecutionPolicy", "Bypass",
-        "-File", ('"{0}"' -f $publishScript),
-        "-Configuration", $Configuration,
-        "-Platform", $Platform,
-        "-RuntimeIdentifier", $RuntimeIdentifier,
-        "-SelfContained", $selfContainedArg,
-        "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
-    )
-    if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
-        $publishArgs += @("-InformationalVersion", $InformationalVersion)
-    }
-$publishProc = Start-Process -FilePath "powershell.exe" -ArgumentList $publishArgs -NoNewWindow -Wait -PassThru
-if ($publishProc.ExitCode -ne 0) {
-    throw "Falha no build/publish."
+$publishInvokeArgs = @{
+    Configuration = $Configuration
+    Platform = $Platform
+    RuntimeIdentifier = $RuntimeIdentifier
+    SelfContained = $selfContainedArg
+    WindowsAppSDKSelfContained = $windowsAppSdkSelfContainedArg
+}
+
+if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
+    $publishInvokeArgs.InformationalVersion = $InformationalVersion
+}
+
+try {
+    & $publishScript @publishInvokeArgs
+}
+catch {
+    throw "Falha no build/publish. Detalhe: $($_.Exception.Message)"
 }
 
 if (-not (Test-Path $exePath)) {
@@ -313,6 +314,42 @@ foreach ($requiredFile in $requiredAppFiles) {
 
 if ($missingRequired.Count -gt 0) {
     throw "Falha ao preparar input do instalador. Arquivos obrigatorios ausentes: $($missingRequired -join ', ')"
+}
+
+# Garante que os artefatos XAML compilados (.xbf) estejam alinhados com o build atual.
+# Sem esse passo, um cache antigo de .xbf pode sobreviver e causar XamlParseException em runtime.
+$appXbfFiles = Get-ChildItem -Path $appOut -Filter "*.xbf" -Recurse -File -ErrorAction SilentlyContinue
+foreach ($xbf in $appXbfFiles) {
+    Remove-Item -Path $xbf.FullName -Force -ErrorAction SilentlyContinue
+}
+
+$buildOutputDirectory = Split-Path -Path $publishDir -Parent
+$buildOutputRoot = [System.IO.Path]::GetFullPath($buildOutputDirectory).TrimEnd('\', '/')
+$buildXbfFiles = Get-ChildItem -Path $buildOutputDirectory -Filter "*.xbf" -Recurse -File -ErrorAction SilentlyContinue
+if (-not $buildXbfFiles -or $buildXbfFiles.Count -eq 0) {
+    throw "Nenhum arquivo .xbf encontrado no build para sincronizar com o instalador: $buildOutputDirectory"
+}
+
+foreach ($xbf in $buildXbfFiles) {
+    $xbfFullPath = [System.IO.Path]::GetFullPath($xbf.FullName)
+    if (-not $xbfFullPath.StartsWith($buildOutputRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        continue
+    }
+
+    $relative = $xbfFullPath.Substring($buildOutputRoot.Length).TrimStart('\', '/')
+    if ([string]::IsNullOrWhiteSpace($relative)) {
+        continue
+    }
+
+    $destinationXbf = Join-Path $appOut $relative
+    $destinationDir = Split-Path -Path $destinationXbf -Parent
+    if (-not (Test-Path $destinationDir)) {
+        New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+    }
+
+    Invoke-WithRetry -Description "sincronizar XBF: $relative" -MaxAttempts 20 -DelayMilliseconds 500 -Action {
+        Copy-Item -Path $xbfFullPath -Destination $destinationXbf -Force -ErrorAction Stop
+    } | Out-Null
 }
 
 Copy-Item (Join-Path $repoRoot "scripts\install-internal-cert.ps1") $scriptsOut -Force

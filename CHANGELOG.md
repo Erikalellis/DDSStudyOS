@@ -8,6 +8,19 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Adicionado
 - _Sem alteracoes ainda._
 
+## [3.1.2] - 2026-02-27
+### Alterado
+- Fluxo de onboarding/tour refinado para escalas 100% e 125%, com foco em texto, posicionamento e navegacao de retorno.
+- Navegacao curso -> navegador interno reforcada para manter contexto e permitir retorno sem perda de estado.
+- Formularios principais (onboarding, agenda, materiais e cursos) ajustados para melhor contraste e legibilidade.
+
+### Corrigido
+- Regressao de primeiro uso validada novamente com marcadores de onboarding/tour/navegador no modo `--smoke-first-use`.
+- Regressao de maquina limpa validada novamente com setup, abertura do app, registro de desinstalacao e uninstall silencioso.
+- Pipeline de release/instalador robustecido para caminhos com espacos (execucao direta dos scripts `build-release`, `prepare-installer-input` e `build-inno-installer`).
+- `validate-clean-machine-smoke.ps1` ajustado para gerar logs de setup/uninstall com caminho completo (`/LOG=\"...\"`) sem falhar em pastas com espacos.
+- Uninstall silencioso nao abre mais prompt de feedback no fim da remocao (`UninstallSilent` no Inno), evitando travamento em regressao automatizada.
+
 ## [3.1.1] - 2026-02-26
 ### Adicionado
 - Base do updater incremental por modulos (`DlcUpdateService`) com download, validacao de hash, aplicacao e rollback local.

@@ -65,3 +65,11 @@ Use esta lista antes de cada pre-release e release.
 - [x] Uninstall log do ciclo: `artifacts/installer-logs/clean-machine-uninstall-20260226-200127.log`.
 - [x] `update-info` stable/beta sincronizado com SHA256 real dos artefatos finais.
 - [x] Assets do release `v3.1.1` atualizados com `--clobber` (stable/beta/portable/SHA256).
+
+## 9) Fechamento 3.1.2 (27/02/2026)
+- [x] Smoke automatizado de primeiro uso executado: `artifacts/installer-logs/first-use-smoke-20260227-032127.txt`.
+- [x] Smoke clean-machine (setup + abrir + uninstall) executado: `artifacts/installer-logs/clean-machine-smoke-20260227-031935.txt`.
+- [x] Setup log do ciclo: `artifacts/installer-logs/clean-machine-setup-20260227-031935-inno.log`.
+- [x] Uninstall log do ciclo: `artifacts/installer-logs/clean-machine-uninstall-20260227-031935.log`.
+- [x] `update-info` stable/beta sincronizado com SHA256 real dos artefatos finais (`installer/update/stable/update-info.json`, `installer/update/beta/update-info.json`).
+- [x] Uninstall silencioso validado sem prompt final (correcao de `CurUninstallStepChanged` para respeitar `UninstallSilent`).

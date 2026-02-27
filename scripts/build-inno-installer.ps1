@@ -131,19 +131,6 @@ function ConvertTo-RelativePath {
     return $relativePath
 }
 
-function Invoke-PowerShellScript {
-    param(
-        [string[]]$Arguments,
-        [string]$ErrorMessage
-    )
-
-    & powershell.exe @Arguments
-    $exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
-    if ($exitCode -ne 0) {
-        throw $ErrorMessage
-    }
-}
-
 function Resolve-GeneratedSetupPath {
     param(
         [string]$OutputDirectory,
@@ -336,15 +323,12 @@ if ($generateBrandingValue) {
     }
 
     Write-Host "==> Gerando branding do instalador Inno"
-    $brandingArgs = @(
-        "-NoProfile",
-        "-ExecutionPolicy", "Bypass",
-        "-File", $brandingScript,
-        "-SourceImage", $BrandingSourceImage,
-        "-OutputDir", $BrandingOutputDir,
-        "-Force"
-    )
-    Invoke-PowerShellScript -Arguments $brandingArgs -ErrorMessage "Falha ao gerar branding do instalador Inno."
+    try {
+        & $brandingScript -SourceImage $BrandingSourceImage -OutputDir $BrandingOutputDir -Force
+    }
+    catch {
+        throw "Falha ao gerar branding do instalador Inno. Detalhe: $($_.Exception.Message)"
+    }
 }
 
 if ($prepareInputValue) {
@@ -356,39 +340,42 @@ if ($prepareInputValue) {
     $selfContainedArg = if ($selfContainedValue) { "1" } else { "0" }
     $windowsAppSdkSelfContainedArg = if ($windowsAppSdkSelfContainedValue) { "1" } else { "0" }
 
-    $prepareArgs = @(
-        "-NoProfile",
-        "-ExecutionPolicy", "Bypass",
-        "-File", $prepareScript,
-        "-Configuration", $Configuration,
-        "-Platform", $Platform,
-        "-RuntimeIdentifier", $RuntimeIdentifier,
-        "-GitHubOwner", $repoLinks.Owner,
-        "-GitHubRepo", $repoLinks.Repo,
-        "-SelfContained", $selfContainedArg,
-        "-WindowsAppSDKSelfContained", $windowsAppSdkSelfContainedArg
-    )
+    $prepareArgs = @{
+        Configuration = $Configuration
+        Platform = $Platform
+        RuntimeIdentifier = $RuntimeIdentifier
+        GitHubOwner = $repoLinks.Owner
+        GitHubRepo = $repoLinks.Repo
+        SelfContained = $selfContainedArg
+        WindowsAppSDKSelfContained = $windowsAppSdkSelfContainedArg
+    }
 
     if (-not [string]::IsNullOrWhiteSpace($InformationalVersion)) {
-        $prepareArgs += @("-InformationalVersion", $InformationalVersion)
+        $prepareArgs.InformationalVersion = $InformationalVersion
     }
 
     if ($SignExecutable) {
-        $prepareArgs += "-SignExecutable"
+        $prepareArgs.SignExecutable = $true
         if (-not [string]::IsNullOrWhiteSpace($CertThumbprint)) {
-            $prepareArgs += @("-CertThumbprint", $CertThumbprint)
+            $prepareArgs.CertThumbprint = $CertThumbprint
         }
         if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
-            $prepareArgs += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+            $prepareArgs.PfxPath = $PfxPath
+            $prepareArgs.PfxPassword = $PfxPassword
         }
         if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
-            $prepareArgs += @("-TimestampUrl", $TimestampUrl)
+            $prepareArgs.TimestampUrl = $TimestampUrl
         }
-        $prepareArgs += @("-CertStoreScope", $CertStoreScope)
+        $prepareArgs.CertStoreScope = $CertStoreScope
     }
 
     Write-Host "==> Preparando arquivos para o instalador"
-    Invoke-PowerShellScript -Arguments $prepareArgs -ErrorMessage "Falha ao preparar arquivos de entrada."
+    try {
+        & $prepareScript @prepareArgs
+    }
+    catch {
+        throw "Falha ao preparar arquivos de entrada. Detalhe: $($_.Exception.Message)"
+    }
 }
 
 if (-not (Test-Path $resolvedInputPath)) {
@@ -441,28 +428,32 @@ if ($SignInstaller) {
     }
 
     Write-Host "==> Assinando instalador"
-    $signArgs = @(
-        "-NoProfile",
-        "-ExecutionPolicy", "Bypass",
-        "-File", $signScript,
-        "-TargetPaths", $setupPath
-    )
+    $signArgs = @{
+        TargetPaths = @($setupPath)
+    }
 
     if (-not [string]::IsNullOrWhiteSpace($TimestampUrl)) {
-        $signArgs += @("-TimestampUrl", $TimestampUrl)
+        $signArgs.TimestampUrl = $TimestampUrl
     }
 
     if (-not [string]::IsNullOrWhiteSpace($PfxPath)) {
-        $signArgs += @("-PfxPath", $PfxPath, "-PfxPassword", $PfxPassword)
+        $signArgs.PfxPath = $PfxPath
+        $signArgs.PfxPassword = $PfxPassword
     }
     else {
         if ([string]::IsNullOrWhiteSpace($CertThumbprint)) {
             throw "Para assinar o instalador, informe -CertThumbprint ou -PfxPath."
         }
-        $signArgs += @("-CertThumbprint", $CertThumbprint, "-CertStoreScope", $CertStoreScope)
+        $signArgs.CertThumbprint = $CertThumbprint
+        $signArgs.CertStoreScope = $CertStoreScope
     }
 
-    Invoke-PowerShellScript -Arguments $signArgs -ErrorMessage "Falha ao assinar instalador: $setupPath"
+    try {
+        & $signScript @signArgs
+    }
+    catch {
+        throw "Falha ao assinar instalador: $setupPath. Detalhe: $($_.Exception.Message)"
+    }
 }
 
 Write-Host ""

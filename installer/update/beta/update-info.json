@@ -2,13 +2,13 @@
     "channel":  "beta",
     "product":  "DDS StudyOS",
     "company":  "Deep Darkness Studios",
-    "currentVersion":  "3.1.1-beta.1",
+    "currentVersion":  "3.1.2-beta.1",
     "installerAssetName":  "DDSStudyOS-Beta-Setup.exe",
-    "downloadUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.1.1/DDSStudyOS-Beta-Setup.exe",
+    "downloadUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.1.2/DDSStudyOS-Beta-Setup.exe",
     "releasePageUrl":  "https://github.com/Erikalellis/DDSStudyOS/releases",
     "releaseNotesUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
     "supportUrl":  "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
-    "updatedAtUtc":  "2026-02-26T20:58:59.7584514Z",
+    "updatedAtUtc":  "2026-02-27T06:19:24.9501929Z",
     "signerThumbprint":  "6780CE530A33615B591727F5334B3DD075B76422",
-    "installerSha256":  "9c4af0d4e7dcc999e1d4748aec84088b0e55c2570d0f03760c84f29beccbf6d6"
+    "installerSha256":  "bd1e58043c1e0e3906948aee1844a4c26ea5b0593d46a29371a579aba78db2e9"
 }
