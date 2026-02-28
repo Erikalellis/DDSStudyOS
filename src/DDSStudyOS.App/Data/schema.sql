@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS reminders (
     notes      TEXT,
     is_completed INTEGER DEFAULT 0, -- Novo: Marcar como feito
     last_notified_at TEXT, -- Novo: evita repetição de notificações entre sessões
+    recurrence_pattern TEXT NOT NULL DEFAULT 'none',
+    snooze_minutes INTEGER NOT NULL DEFAULT 10,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE SET NULL
 );
@@ -81,3 +83,14 @@ CREATE TABLE IF NOT EXISTS course_history (
 
 CREATE INDEX IF NOT EXISTS idx_course_history_profile ON course_history(profile_key, last_accessed DESC);
 CREATE INDEX IF NOT EXISTS idx_course_history_course ON course_history(course_id);
+
+CREATE TABLE IF NOT EXISTS study_activity (
+    profile_key TEXT NOT NULL,
+    activity_date TEXT NOT NULL, -- yyyy-MM-dd (hora local)
+    activity_count INTEGER NOT NULL DEFAULT 0,
+    total_minutes INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (profile_key, activity_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_study_activity_profile_date ON study_activity(profile_key, activity_date DESC);

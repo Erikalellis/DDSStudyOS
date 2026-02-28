@@ -78,6 +78,25 @@
                                            SpinButtonPlacementMode="Compact"/>
                             </Grid>
 
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="PomoPresetCombo"
+                                          Grid.Column="0"
+                                          Header="Preset por perfil"/>
+                                <Button Grid.Column="1"
+                                        Content="Aplicar preset"
+                                        VerticalAlignment="Bottom"
+                                        Click="ApplyPomodoroPreset_Click"/>
+                            </Grid>
+                            <TextBlock x:Name="PomoPresetHintText"
+                                       Text="Preset salvo por perfil."
+                                       FontSize="12"
+                                       Opacity="0.65"
+                                       TextWrapping="WrapWholeWords"/>
+
                             <ToggleSwitch x:Name="PomoAutoBreakToggle"
                                           Header="Iniciar pausa automaticamente ao fim do foco"/>
                             <ToggleSwitch x:Name="PomoAutoWorkToggle"

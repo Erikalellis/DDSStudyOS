@@ -29,6 +29,15 @@
                             <TimePicker Grid.Column="1" x:Name="DueTimePicker" Header="Hora" />
                         </Grid>
 
+                        <Grid ColumnSpacing="12" ColumnDefinitions="*,*">
+                            <ComboBox x:Name="RecurrenceCombo"
+                                      Grid.Column="0"
+                                      Header="Recorrência" />
+                            <ComboBox x:Name="SnoozeCombo"
+                                      Grid.Column="1"
+                                      Header="Adiar (snooze)" />
+                        </Grid>
+
                         <TextBox x:Name="NotesBox"
                                  Header="Notas (opcional)"
                                  AcceptsReturn="True"
@@ -39,6 +48,8 @@
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <Button Content="Salvar (novo)" Click="Create_Click" Style="{StaticResource AccentButtonStyle}" />
                             <Button Content="Atualizar selecionado" Click="Update_Click" />
+                            <Button Content="Concluir / próxima" Click="Complete_Click" />
+                            <Button Content="Adiar" Click="Snooze_Click" />
                             <Button Content="Excluir selecionado" Click="Delete_Click" />
                             <Button Content="Limpar" Click="Clear_Click" />
                         </StackPanel>
@@ -77,7 +88,7 @@
         <InfoBar Grid.Row="2"
                  Margin="0,12,0,0"
                  Title="Dica"
-                 Message="No MVP, a notificação é simples: o app avisa quando estiver aberto e houver lembretes próximos/vencidos."
+                 Message="Agora você pode definir recorrência e adiar lembretes com snooze sem perder o histórico."
                  IsOpen="True"
                  Severity="Informational" />
     </Grid>

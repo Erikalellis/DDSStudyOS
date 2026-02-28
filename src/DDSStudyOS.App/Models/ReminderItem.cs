@@ -11,4 +11,6 @@ public sealed class ReminderItem
     public string? Notes { get; set; }
     public bool IsCompleted { get; set; } // Dashboard: Checkbox
     public DateTimeOffset? LastNotifiedAt { get; set; }
+    public string RecurrencePattern { get; set; } = "none";
+    public int SnoozeMinutes { get; set; } = 10;
 }

@@ -80,11 +80,14 @@ public sealed partial class SettingsPage : Page
 
     private void InitializePomodoroSettings()
     {
+        PopulatePomodoroPresetCombo();
         PomoFocusBox.Value = SettingsService.PomodoroFocusMinutes;
         PomoBreakBox.Value = SettingsService.PomodoroBreakMinutes;
         PomoAutoBreakToggle.IsOn = SettingsService.PomodoroAutoStartBreak;
         PomoAutoWorkToggle.IsOn = SettingsService.PomodoroAutoStartWork;
         PomoNotifyToggle.IsOn = SettingsService.PomodoroNotifyOnFinish;
+        SelectPomodoroPreset(SettingsService.PomodoroPreset);
+        UpdatePomodoroPresetHint();
     }
 
     private void SaveFeedback_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -122,14 +125,106 @@ public sealed partial class SettingsPage : Page
     {
         var focus = (int)Math.Round(double.IsNaN(PomoFocusBox.Value) ? 25 : PomoFocusBox.Value);
         var pause = (int)Math.Round(double.IsNaN(PomoBreakBox.Value) ? 5 : PomoBreakBox.Value);
+        var autoBreak = PomoAutoBreakToggle.IsOn;
+        var autoWork = PomoAutoWorkToggle.IsOn;
 
         SettingsService.PomodoroFocusMinutes = focus;
         SettingsService.PomodoroBreakMinutes = pause;
-        SettingsService.PomodoroAutoStartBreak = PomoAutoBreakToggle.IsOn;
-        SettingsService.PomodoroAutoStartWork = PomoAutoWorkToggle.IsOn;
+        SettingsService.PomodoroAutoStartBreak = autoBreak;
+        SettingsService.PomodoroAutoStartWork = autoWork;
         SettingsService.PomodoroNotifyOnFinish = PomoNotifyToggle.IsOn;
+
+        var resolvedPreset = SettingsService.ResolvePomodoroPresetFromValues(
+            focusMinutes: focus,
+            breakMinutes: pause,
+            autoStartBreak: autoBreak,
+            autoStartWork: autoWork);
+        SettingsService.PomodoroPreset = resolvedPreset;
+        SelectPomodoroPreset(resolvedPreset);
+        UpdatePomodoroPresetHint();
+
         AppState.RaisePomodoroSettingsChanged();
         MsgText.Text = "Configurações do Pomodoro salvas e aplicadas.";
+    }
+
+    private void ApplyPomodoroPreset_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var presetId = GetSelectedPomodoroPresetId();
+        if (string.Equals(presetId, "custom", StringComparison.OrdinalIgnoreCase))
+        {
+            MsgText.Text = "Preset personalizado selecionado. Ajuste manualmente e clique em salvar.";
+            return;
+        }
+
+        if (!SettingsService.ApplyPomodoroPreset(presetId))
+        {
+            MsgText.Text = "Preset inválido.";
+            return;
+        }
+
+        PomoFocusBox.Value = SettingsService.PomodoroFocusMinutes;
+        PomoBreakBox.Value = SettingsService.PomodoroBreakMinutes;
+        PomoAutoBreakToggle.IsOn = SettingsService.PomodoroAutoStartBreak;
+        PomoAutoWorkToggle.IsOn = SettingsService.PomodoroAutoStartWork;
+        SelectPomodoroPreset(SettingsService.PomodoroPreset);
+        UpdatePomodoroPresetHint();
+
+        AppState.RaisePomodoroSettingsChanged();
+        MsgText.Text = $"Preset '{GetSelectedPomodoroPresetLabel()}' aplicado para o perfil atual.";
+    }
+
+    private void PopulatePomodoroPresetCombo()
+    {
+        PomoPresetCombo.Items.Clear();
+        PomoPresetCombo.Items.Add(new ComboBoxItem
+        {
+            Content = "Personalizado",
+            Tag = "custom"
+        });
+
+        foreach (var preset in SettingsService.GetPomodoroPresets())
+        {
+            PomoPresetCombo.Items.Add(new ComboBoxItem
+            {
+                Content = $"{preset.DisplayName} ({preset.FocusMinutes}/{preset.BreakMinutes})",
+                Tag = preset.Id
+            });
+        }
+    }
+
+    private void SelectPomodoroPreset(string presetId)
+    {
+        var targetId = string.IsNullOrWhiteSpace(presetId) ? "custom" : presetId.Trim();
+        for (int i = 0; i < PomoPresetCombo.Items.Count; i++)
+        {
+            if (PomoPresetCombo.Items[i] is ComboBoxItem comboItem &&
+                string.Equals(comboItem.Tag as string, targetId, StringComparison.OrdinalIgnoreCase))
+            {
+                PomoPresetCombo.SelectedIndex = i;
+                return;
+            }
+        }
+
+        PomoPresetCombo.SelectedIndex = 0;
+    }
+
+    private string GetSelectedPomodoroPresetId()
+        => (PomoPresetCombo.SelectedItem as ComboBoxItem)?.Tag as string ?? "custom";
+
+    private string GetSelectedPomodoroPresetLabel()
+        => (PomoPresetCombo.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Personalizado";
+
+    private void UpdatePomodoroPresetHint()
+    {
+        var profileName = "perfil atual";
+        if (UserProfileService.TryLoad(out var profile))
+        {
+            var preferred = string.IsNullOrWhiteSpace(profile.PreferredName) ? null : profile.PreferredName.Trim();
+            var name = string.IsNullOrWhiteSpace(profile.Name) ? null : profile.Name.Trim();
+            profileName = preferred ?? name ?? "perfil atual";
+        }
+
+        PomoPresetHintText.Text = $"Preset salvo por perfil: {profileName}.";
     }
 
     private void DownloadsToggle_Toggled(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

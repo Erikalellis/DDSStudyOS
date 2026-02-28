@@ -54,6 +54,8 @@ public sealed class DatabaseService
             await SafeExecuteAsync(conn, "ALTER TABLE courses ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0;");
             await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN is_completed INTEGER DEFAULT 0;");
             await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN last_notified_at TEXT;");
+            await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN recurrence_pattern TEXT NOT NULL DEFAULT 'none';");
+            await SafeExecuteAsync(conn, "ALTER TABLE reminders ADD COLUMN snooze_minutes INTEGER NOT NULL DEFAULT 10;");
             await SafeExecuteAsync(conn, "ALTER TABLE materials ADD COLUMN storage_mode TEXT NOT NULL DEFAULT 'reference';");
             await SafeExecuteAsync(conn, @"
 CREATE TABLE IF NOT EXISTS course_favorites (
@@ -75,6 +77,16 @@ CREATE TABLE IF NOT EXISTS course_history (
 );");
             await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_history_profile ON course_history(profile_key, last_accessed DESC);");
             await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_course_history_course ON course_history(course_id);");
+            await SafeExecuteAsync(conn, @"
+CREATE TABLE IF NOT EXISTS study_activity (
+    profile_key TEXT NOT NULL,
+    activity_date TEXT NOT NULL,
+    activity_count INTEGER NOT NULL DEFAULT 0,
+    total_minutes INTEGER NOT NULL DEFAULT 0,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (profile_key, activity_date)
+);");
+            await SafeExecuteAsync(conn, "CREATE INDEX IF NOT EXISTS idx_study_activity_profile_date ON study_activity(profile_key, activity_date DESC);");
         }
     }
 

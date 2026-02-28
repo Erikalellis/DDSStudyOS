@@ -1,11 +1,13 @@
 # Documentacao - DDS StudyOS
 
 ## Estado atual
-- Versao estavel publicada: `3.1.3` (`v3.1.3` no GitHub Releases)
-- Proximo ciclo em andamento: `3.1.4` (metas semanais, presets de pomodoro por perfil e agenda recorrente)
+- Versao estavel validada localmente: `3.1.4`
+- Ultimo release publico consolidado: `3.1.3` (`v3.1.3` no GitHub Releases)
+- Ciclo atual fechado localmente: `3.1.4` (metas semanais, presets de pomodoro por perfil, agenda recorrente/snooze e DLC automatico no startup)
 
 ## Guias principais
 - Manual completo de canais e atualizacoes (iniciante -> senior): `docs/MANUAL_CANAIS_E_ATUALIZACOES.md`
+- Manual tecnico do app (iniciante -> intermediario): `docs/MANUAL_TECNICO_APP.md`
 - Guia rapido de uso do app: `docs/USER_GUIDE.md`
 - Setup oficial de instalador (Inno): `docs/INNO_SETUP.md`
 - Setup legado (Advanced): `docs/ADVANCED_INSTALLER_SETUP.md`

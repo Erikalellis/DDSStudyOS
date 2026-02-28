@@ -96,6 +96,33 @@
                 <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                         CornerRadius="8"
                         Padding="14"
+                        Width="280">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Meta semanal"
+                                   FontWeight="SemiBold"
+                                   Opacity="0.85" />
+                        <TextBlock x:Name="WeeklyGoalDaysText"
+                                   Text="0/5 dias"
+                                   FontWeight="SemiBold" />
+                        <TextBlock x:Name="WeeklyGoalMinutesText"
+                                   Text="0/450 min"
+                                   Opacity="0.8" />
+                        <ProgressBar x:Name="WeeklyGoalProgressBar"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="0"
+                                     Height="6" />
+                        <TextBlock x:Name="WeeklyGoalSummaryText"
+                                   Text="Acompanhe sua consistencia semanal."
+                                   TextWrapping="WrapWholeWords"
+                                   Opacity="0.75"
+                                   FontSize="12" />
+                    </StackPanel>
+                </Border>
+
+                <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                        CornerRadius="8"
+                        Padding="14"
                         MinWidth="360">
                     <StackPanel Spacing="10">
                         <TextBlock Text="Próximos Lembretes"

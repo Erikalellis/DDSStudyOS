@@ -46,7 +46,7 @@ public sealed class BackupService
 
         var pkg = new ExportPackage
         {
-            Version = 3,
+            Version = 4,
             AppName = AppReleaseInfo.ProductName,
             AppVersion = AppReleaseInfo.VersionString,
             ExportedAtUtc = DateTimeOffset.UtcNow.ToString("o"),
@@ -83,6 +83,8 @@ public sealed class BackupService
                 Notes = r.Notes,
                 IsCompleted = r.IsCompleted,
                 LastNotifiedAt = r.LastNotifiedAt?.ToString("o"),
+                RecurrencePattern = r.RecurrencePattern,
+                SnoozeMinutes = r.SnoozeMinutes,
                 CreatedAt = null
             }).ToList()
         };
@@ -293,8 +295,8 @@ VALUES ($course_id, $file_name, $file_path, $file_type, $storage_mode, datetime(
         var cmd = conn.CreateCommand();
         cmd.Transaction = tx;
         cmd.CommandText = @"
-INSERT INTO reminders (course_id, title, due_at, notes, is_completed, last_notified_at, created_at)
-VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, datetime('now'));";
+INSERT INTO reminders (course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes, created_at)
+VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, $recurrence_pattern, $snooze_minutes, datetime('now'));";
 
         cmd.Parameters.AddWithValue("$course_id", (object?)MapCourseId(reminder.CourseId, courseIdMap) ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$title", reminder.Title);
@@ -302,6 +304,8 @@ VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, d
         cmd.Parameters.AddWithValue("$notes", (object?)reminder.Notes ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$is_completed", reminder.IsCompleted ? 1 : 0);
         cmd.Parameters.AddWithValue("$last_notified_at", ToDbDate(TryParseDto(reminder.LastNotifiedAt)));
+        cmd.Parameters.AddWithValue("$recurrence_pattern", NormalizeReminderRecurrence(reminder.RecurrencePattern));
+        cmd.Parameters.AddWithValue("$snooze_minutes", NormalizeReminderSnooze(reminder.SnoozeMinutes));
 
         await cmd.ExecuteNonQueryAsync();
     }
@@ -325,6 +329,24 @@ VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, d
 
         return MaterialStorageService.ModeReference;
     }
+
+    private static string NormalizeReminderRecurrence(string? recurrencePattern)
+    {
+        if (string.IsNullOrWhiteSpace(recurrencePattern))
+            return "none";
+
+        var normalized = recurrencePattern.Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "daily" => "daily",
+            "weekly" => "weekly",
+            "monthly" => "monthly",
+            _ => "none"
+        };
+    }
+
+    private static int NormalizeReminderSnooze(int value)
+        => Math.Clamp(value <= 0 ? 10 : value, 5, 240);
 }
 
 public sealed class BackupValidationResult

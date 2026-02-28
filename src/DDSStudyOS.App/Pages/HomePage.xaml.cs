@@ -13,6 +13,7 @@ public sealed partial class HomePage : Page
     private readonly UserStatsService _statsService;
     private readonly CourseRepository _courseRepo;
     private readonly ReminderRepository _reminderRepo;
+    private readonly WeeklyGoalService _weeklyGoalService;
     private Course? _lastCourse;
 
     public HomePage()
@@ -22,6 +23,7 @@ public sealed partial class HomePage : Page
         _statsService = new UserStatsService(_db);
         _courseRepo = new CourseRepository(_db);
         _reminderRepo = new ReminderRepository(_db);
+        _weeklyGoalService = new WeeklyGoalService(_db);
 
         Loaded += HomePage_Loaded;
     }
@@ -30,6 +32,7 @@ public sealed partial class HomePage : Page
     {
         await _db.EnsureCreatedAsync();
         await UpdateStreak();
+        await UpdateWeeklyGoal();
         await UpdateContinueCard();
         await UpdateReminders();
     }
@@ -44,6 +47,23 @@ public sealed partial class HomePage : Page
         catch (Exception ex)
         {
             AppLogger.Error("HomePage: falha ao atualizar streak.", ex);
+        }
+    }
+
+    private async Task UpdateWeeklyGoal()
+    {
+        try
+        {
+            var report = await _weeklyGoalService.GetCurrentWeekReportAsync();
+            WeeklyGoalDaysText.Text = $"{report.ActiveDays}/{report.WeeklyGoalDays} dias";
+            WeeklyGoalMinutesText.Text = $"{report.LoggedMinutes}/{report.WeeklyGoalMinutes} min";
+            WeeklyGoalProgressBar.Value = report.ConsistencyScore;
+            WeeklyGoalSummaryText.Text = report.Summary;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("HomePage: falha ao atualizar meta semanal.", ex);
+            WeeklyGoalSummaryText.Text = "Nao foi possivel carregar a meta semanal.";
         }
     }
 

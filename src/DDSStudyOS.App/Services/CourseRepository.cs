@@ -9,6 +9,7 @@ namespace DDSStudyOS.App.Services;
 
 public sealed class CourseRepository
 {
+    private const int StudyActivityMinutesPerOpen = 15;
     private readonly DatabaseService _db;
 
     public CourseRepository(DatabaseService db)
@@ -188,6 +189,8 @@ DO UPDATE SET last_accessed = excluded.last_accessed;";
         upsertHistory.Parameters.AddWithValue("$profile_key", profileKey);
         upsertHistory.Parameters.AddWithValue("$course_id", courseId);
         await upsertHistory.ExecuteNonQueryAsync();
+
+        await RegisterStudyActivityAsync(conn, profileKey, StudyActivityMinutesPerOpen);
     }
 
     public async Task<Course?> GetMostRecentAsync()
@@ -352,6 +355,24 @@ VALUES ($profile_key, $course_id, datetime('now'));";
         update.CommandText = "UPDATE courses SET updated_at = datetime('now') WHERE id = $id;";
         update.Parameters.AddWithValue("$id", courseId);
         await update.ExecuteNonQueryAsync();
+    }
+
+    private static async Task RegisterStudyActivityAsync(SqliteConnection conn, string profileKey, int minutes)
+    {
+        var safeMinutes = Math.Clamp(minutes, 1, 180);
+
+        var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+INSERT INTO study_activity (profile_key, activity_date, activity_count, total_minutes, updated_at)
+VALUES ($profile_key, date('now', 'localtime'), 1, $minutes, datetime('now'))
+ON CONFLICT(profile_key, activity_date)
+DO UPDATE SET
+    activity_count = study_activity.activity_count + 1,
+    total_minutes = study_activity.total_minutes + $minutes,
+    updated_at = datetime('now');";
+        cmd.Parameters.AddWithValue("$profile_key", profileKey);
+        cmd.Parameters.AddWithValue("$minutes", safeMinutes);
+        await cmd.ExecuteNonQueryAsync();
     }
 
     public async Task DeleteAsync(long id)

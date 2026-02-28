@@ -12,6 +12,7 @@ public partial class App : Application
 
     private const uint MbOk = 0x00000000;
     private const uint MbIconError = 0x00000010;
+    private static bool _backgroundDlcCheckStarted;
 
     public App()
     {
@@ -25,11 +26,78 @@ public partial class App : Application
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         Services.WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
-        Services.AppState.LaunchArguments = args.Arguments ?? string.Empty;
+        var launchArguments = args.Arguments ?? string.Empty;
+        var disableAutoDlc = launchArguments.Contains("--smoke", StringComparison.OrdinalIgnoreCase) ||
+                             launchArguments.Contains("--no-dlc-startup", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(Environment.GetEnvironmentVariable("DDS_DISABLE_AUTO_DLC"), "1", StringComparison.OrdinalIgnoreCase);
+
+        Services.AppState.LaunchArguments = launchArguments;
 
         var window = new MainWindow();
         Services.AppState.MainWindow = window;
         window.Activate();
+        StartBackgroundDlcUpdateIfNeeded(disableAutoDlc);
+    }
+
+    private static void StartBackgroundDlcUpdateIfNeeded(bool disableAutoDlc)
+    {
+        if (_backgroundDlcCheckStarted)
+        {
+            return;
+        }
+
+        if (disableAutoDlc)
+        {
+            if ((Services.AppState.LaunchArguments ?? string.Empty).Contains("--smoke", StringComparison.OrdinalIgnoreCase))
+            {
+                Services.AppLogger.Info("DLC(auto): desabilitado em modo smoke.");
+            }
+
+            return;
+        }
+
+        _backgroundDlcCheckStarted = true;
+        _ = Task.Run(() => RunBackgroundDlcUpdateAsync(disableAutoDlc));
+    }
+
+    private static async Task RunBackgroundDlcUpdateAsync(bool disableAutoDlc)
+    {
+        try
+        {
+            if (disableAutoDlc)
+            {
+                Services.AppLogger.Info("DLC(auto): cancelado antes da verificacao por startup desabilitado.");
+                return;
+            }
+
+            var service = new Services.DlcUpdateService();
+            var checkResult = await service.CheckForUpdatesAsync().ConfigureAwait(false);
+
+            if (!checkResult.IsSuccess)
+            {
+                Services.AppLogger.Warn($"DLC(auto): verificacao falhou. Motivo: {checkResult.Message}");
+                return;
+            }
+
+            if (!checkResult.UpdateAvailable)
+            {
+                Services.AppLogger.Info("DLC(auto): nenhum modulo pendente no startup.");
+                return;
+            }
+
+            var applyResult = await service.DownloadAndApplyAsync(checkResult).ConfigureAwait(false);
+            if (applyResult.IsSuccess)
+            {
+                Services.AppLogger.Info($"DLC(auto): {applyResult.Message}");
+                return;
+            }
+
+            Services.AppLogger.Warn($"DLC(auto): aplicacao falhou. Motivo: {applyResult.Message}");
+        }
+        catch (Exception ex)
+        {
+            Services.AppLogger.Warn($"DLC(auto): falha inesperada no startup. Motivo: {ex.Message}");
+        }
     }
 
     private void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)

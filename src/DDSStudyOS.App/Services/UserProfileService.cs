@@ -18,6 +18,7 @@ public sealed class UserProfile
     public string ExperienceLevel { get; set; } = "Iniciante";
     public string StudyShift { get; set; } = "Flexivel";
     public int DailyGoalMinutes { get; set; } = 90;
+    public int WeeklyGoalDays { get; set; } = 5;
     public bool ReceiveReminders { get; set; } = true;
     public bool HasSeenTour { get; set; } = false;
     public string? Notes { get; set; }

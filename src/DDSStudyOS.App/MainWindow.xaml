@@ -11,6 +11,9 @@
         <NavigationView
             x:Name="NavView"
             PaneDisplayMode="Left"
+            IsPaneOpen="True"
+            CompactModeThresholdWidth="0"
+            ExpandedModeThresholdWidth="0"
             IsBackButtonVisible="Collapsed"
             SelectionChanged="NavView_SelectionChanged"
             ItemInvoked="NavView_ItemInvoked">

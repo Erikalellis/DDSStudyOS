@@ -2,9 +2,10 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
-Status atual: `3.1.3` fechado em 2026-02-27 (stable/beta/portable + DLC + gate one-click).
-Status tecnico 3.1.3 (fechado): favoritos por perfil com export/import e limpeza de historico, materiais com filtros por curso/tipo/data e acao de abrir pasta com fallback, release one-click com gate automatico.
-Evidencias atuais do fechamento: `artifacts/installer-logs/first-use-smoke-20260227-085924.txt`, `artifacts/installer-logs/clean-machine-smoke-20260227-090002.txt` e `artifacts/release-gate/release-gate-20260227-084607.md`.
+Status atual: `3.1.4` fechado localmente em 2026-02-28 (stable/beta/portable + DLC automatico + gate tecnico).
+Status tecnico 3.1.4 (fechado local): metas semanais, presets de pomodoro por perfil, agenda recorrente/snooze, auto-check DLC no startup, backup preservando recorrencia e smoke de primeiro uso corrigido.
+Ultimo release publico consolidado: `3.1.3` (favoritos por perfil com export/import, limpeza de historico, materiais com filtros por curso/tipo/data e acao de abrir pasta com fallback, release one-click com gate automatico).
+Evidencias atuais do fechamento local: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`, `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt` e `artifacts/installer-logs/clean-machine-setup-20260228-100341-inno.log`.
 
 ## Patch fechado (3.1.2)
 
@@ -19,11 +20,12 @@ Evidencias atuais do fechamento: `artifacts/installer-logs/first-use-smoke-20260
 - [x] Adicionar filtros avancados em Materiais (tipo/curso/data) e acao de abrir pasta com fallback.
 - [x] Consolidar playbook de release one-click (setup + dlc + evidencias) com gate automatico.
 
-## Proximo patch (3.1.4)
+## Patch fechado local (3.1.4)
 
 - [x] Metas semanais (nao so diarias) com relatorio de consistencia.
-- [ ] Pomodoro por perfil com presets (foco profundo, revisao e pratica).
-- [ ] Agenda com lembretes recorrentes e snooze configuravel.
+- [x] Pomodoro por perfil com presets (foco profundo, revisao e pratica).
+- [x] Agenda com lembretes recorrentes e snooze configuravel.
+- [x] Atualizacao incremental (DLC) em segundo plano no startup, mantendo setup completo como fallback.
 
 ## Objetivo do ciclo
 

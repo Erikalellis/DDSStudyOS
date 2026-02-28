@@ -46,5 +46,7 @@ public sealed class ReminderExport
     public string? Notes { get; set; }
     public bool IsCompleted { get; set; }
     public string? LastNotifiedAt { get; set; }
+    public string? RecurrencePattern { get; set; }
+    public int SnoozeMinutes { get; set; } = 10;
     public string? CreatedAt { get; set; }
 }

@@ -23,8 +23,8 @@ public sealed class ReminderRepository
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-INSERT INTO reminders (course_id, title, due_at, notes, is_completed, last_notified_at, created_at)
-VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, datetime('now'));
+INSERT INTO reminders (course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes, created_at)
+VALUES ($course_id, $title, $due_at, $notes, $is_completed, $last_notified_at, $recurrence_pattern, $snooze_minutes, datetime('now'));
 SELECT last_insert_rowid();";
 
         cmd.Parameters.AddWithValue("$course_id", (object?)item.CourseId ?? DBNull.Value);
@@ -33,6 +33,8 @@ SELECT last_insert_rowid();";
         cmd.Parameters.AddWithValue("$notes", (object?)item.Notes ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$is_completed", item.IsCompleted ? 1 : 0);
         cmd.Parameters.AddWithValue("$last_notified_at", ToDbDate(item.LastNotifiedAt));
+        cmd.Parameters.AddWithValue("$recurrence_pattern", NormalizeRecurrencePattern(item.RecurrencePattern));
+        cmd.Parameters.AddWithValue("$snooze_minutes", NormalizeSnoozeMinutes(item.SnoozeMinutes));
 
         var idObj = await cmd.ExecuteScalarAsync();
         return Convert.ToInt64(idObj);
@@ -47,7 +49,7 @@ SELECT last_insert_rowid();";
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at
+SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes
 FROM reminders
 WHERE is_completed = 0
 ORDER BY due_at ASC
@@ -72,7 +74,7 @@ LIMIT $limit;";
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at
+SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes
 FROM reminders
 WHERE is_completed = 0
   AND due_at >= $from_due
@@ -103,14 +105,14 @@ LIMIT $limit;";
         if (courseId is null)
         {
             cmd.CommandText = @"
-SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at
+SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes
 FROM reminders
 ORDER BY due_at ASC;";
         }
         else
         {
             cmd.CommandText = @"
-SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at
+SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes
 FROM reminders
 WHERE course_id=$course_id
 ORDER BY due_at ASC;";
@@ -141,7 +143,9 @@ SET course_id=$course_id,
     due_at=$due_at,
     notes=$notes,
     is_completed=$is_completed,
-    last_notified_at=$last_notified_at
+    last_notified_at=$last_notified_at,
+    recurrence_pattern=$recurrence_pattern,
+    snooze_minutes=$snooze_minutes
 WHERE id=$id;";
 
         cmd.Parameters.AddWithValue("$id", item.Id);
@@ -151,6 +155,8 @@ WHERE id=$id;";
         cmd.Parameters.AddWithValue("$notes", (object?)item.Notes ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$is_completed", item.IsCompleted ? 1 : 0);
         cmd.Parameters.AddWithValue("$last_notified_at", ToDbDate(item.LastNotifiedAt));
+        cmd.Parameters.AddWithValue("$recurrence_pattern", NormalizeRecurrencePattern(item.RecurrencePattern));
+        cmd.Parameters.AddWithValue("$snooze_minutes", NormalizeSnoozeMinutes(item.SnoozeMinutes));
 
         await cmd.ExecuteNonQueryAsync();
     }
@@ -164,7 +170,7 @@ WHERE id=$id;";
 
         var cmd = conn.CreateCommand();
         cmd.CommandText = @"
-SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at
+SELECT id, course_id, title, due_at, notes, is_completed, last_notified_at, recurrence_pattern, snooze_minutes
 FROM reminders
 WHERE is_completed = 0
   AND due_at >= $from_due
@@ -214,7 +220,6 @@ WHERE id = $id;";
 
     private static ReminderItem ReadReminder(SqliteDataReader reader)
     {
-        // 0:id, 1:course_id, 2:title, 3:due_at, 4:notes, 5:is_completed, 6:last_notified_at
         return new ReminderItem
         {
             Id = reader.GetInt64(0),
@@ -225,7 +230,13 @@ WHERE id = $id;";
             IsCompleted = reader.FieldCount > 5 ? (reader.GetInt64(5) == 1) : false,
             LastNotifiedAt = reader.FieldCount > 6
                 ? FromDbDate(reader.IsDBNull(6) ? DBNull.Value : reader.GetString(6))
-                : null
+                : null,
+            RecurrencePattern = reader.FieldCount > 7 && !reader.IsDBNull(7)
+                ? NormalizeRecurrencePattern(reader.GetString(7))
+                : "none",
+            SnoozeMinutes = reader.FieldCount > 8 && !reader.IsDBNull(8)
+                ? NormalizeSnoozeMinutes(Convert.ToInt32(reader.GetInt64(8), CultureInfo.InvariantCulture))
+                : 10
         };
     }
 
@@ -239,4 +250,24 @@ WHERE id = $id;";
             return dt;
         return null;
     }
+
+    private static string NormalizeRecurrencePattern(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "none";
+        }
+
+        var normalized = value.Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "daily" => "daily",
+            "weekly" => "weekly",
+            "monthly" => "monthly",
+            _ => "none"
+        };
+    }
+
+    private static int NormalizeSnoozeMinutes(int value)
+        => Math.Clamp(value <= 0 ? 10 : value, 5, 240);
 }

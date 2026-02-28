@@ -13,6 +13,7 @@ public sealed partial class DashboardPage : Page
     private readonly UserStatsService _statsService;
     private readonly CourseRepository _courseRepo;
     private readonly ReminderRepository _reminderRepo;
+    private readonly WeeklyGoalService _weeklyGoalService;
     private Course? _lastCourse;
 
     public DashboardPage()
@@ -24,6 +25,7 @@ public sealed partial class DashboardPage : Page
         _statsService = new UserStatsService(_db);
         _courseRepo = new CourseRepository(_db);
         _reminderRepo = new ReminderRepository(_db);
+        _weeklyGoalService = new WeeklyGoalService(_db);
 
         ContinueBtn.Click += Continue_Click;
         QuickActionNewCourseBtn.Click += QuickActionButton_Click;
@@ -39,6 +41,7 @@ public sealed partial class DashboardPage : Page
         AppLogger.Info("DashboardPage: evento Loaded acionado.");
         await _db.EnsureCreatedAsync();
         await UpdateStreak();
+        await UpdateWeeklyGoal();
         await UpdateContinueCard();
         await UpdateReminders();
         AppLogger.Info("DashboardPage: carregamento concluído.");
@@ -55,6 +58,31 @@ public sealed partial class DashboardPage : Page
         catch (Exception ex)
         {
             AppLogger.Error("Falha ao atualizar streak no dashboard.", ex);
+        }
+    }
+
+    private async Task UpdateWeeklyGoal()
+    {
+        try
+        {
+            var report = await _weeklyGoalService.GetCurrentWeekReportAsync();
+
+            if (WeeklyGoalDaysText != null)
+                WeeklyGoalDaysText.Text = $"{report.ActiveDays}/{report.WeeklyGoalDays} dias";
+            if (WeeklyGoalMinutesText != null)
+                WeeklyGoalMinutesText.Text = $"{report.LoggedMinutes}/{report.WeeklyGoalMinutes} min";
+            if (WeeklyGoalProgressBar != null)
+                WeeklyGoalProgressBar.Value = report.ConsistencyScore;
+            if (WeeklyGoalSummaryText != null)
+                WeeklyGoalSummaryText.Text = report.Summary;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Falha ao atualizar meta semanal no dashboard.", ex);
+            if (WeeklyGoalSummaryText != null)
+            {
+                WeeklyGoalSummaryText.Text = "Nao foi possivel carregar a meta semanal.";
+            }
         }
     }
 

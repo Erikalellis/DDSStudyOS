@@ -657,7 +657,22 @@ public sealed partial class MainWindow : Window
         }
         finally
         {
-            await Task.Delay(900);
+            if (AppState.IsSmokeFirstUseMode)
+            {
+                // Smoke mode is an automated harness. Exiting immediately avoids
+                // intermittent WinUI/WebView2 teardown crashes during shutdown.
+                Environment.Exit(0);
+            }
+
+            await Task.Delay(400);
+            await EnqueueOnUIAsync(() =>
+            {
+                if (ContentFrame.CurrentSourcePageType == typeof(BrowserPage))
+                {
+                    NavigateToTag("dashboard");
+                }
+            });
+            await Task.Delay(300);
             await EnqueueOnUIAsync(Close);
         }
     }
@@ -774,8 +789,12 @@ public sealed partial class MainWindow : Window
         try
         {
             NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
+            NavView.CompactModeThresholdWidth = 0;
+            NavView.ExpandedModeThresholdWidth = 0;
+            NavView.OpenPaneLength = 320;
             NavView.IsPaneToggleButtonVisible = true;
             NavView.IsPaneOpen = true;
+            NavView.UpdateLayout();
         }
         catch (Exception ex)
         {
@@ -841,6 +860,7 @@ public sealed partial class MainWindow : Window
         try
         {
             GuidedTourTip.IsOpen = false;
+            GuidedTourTip.Target = null;
         }
         catch (Exception ex)
         {
@@ -863,6 +883,11 @@ public sealed partial class MainWindow : Window
                 AppLogger.Warn($"Tour: falha ao marcar como visto. Motivo: {ex.Message}");
             }
         }
+
+        _tourStepIndex = 0;
+        _tourSteps = Array.Empty<TourStep>();
+        EnsureNavigationPaneVisible();
+        _ = DispatcherQueue.TryEnqueue(EnsureNavigationPaneVisible);
 
         _tourCompletion?.TrySetResult(true);
         _tourCompletion = null;
