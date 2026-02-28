@@ -21,8 +21,9 @@
 - Suporte tecnico: `SUPPORT.md`
 
 ## Evidencias recentes de release
-- Gate one-click (GO): `artifacts/release-gate/release-gate-20260227-084607.md`
-- Smoke update 3.1.3: `docs/UPDATE_SMOKE_EVIDENCE_2026-02-27_v3_1_3.md`
+- Smoke update 3.1.4: `docs/UPDATE_SMOKE_EVIDENCE_2026-02-28_v3_1_4.md`
+- Smoke clean-machine 3.1.4: `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt`
+- Smoke first-use 3.1.4: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`
 - Regressao oficial: `docs/BETA_REGRESSION_CHECKLIST.md`
 
 ## Links publicos (GitHub)
@@ -30,4 +31,4 @@ Depois de publicar o repositorio, use estes links na pagina de release/instalado
 - Update Info: `https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md`
 - Suporte: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
 - Release notes: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
-- Release atual: `https://github.com/Erikalellis/DDSStudyOS/releases/tag/v3.1.3`
+- Tag atual: `https://github.com/Erikalellis/DDSStudyOS/tree/v3.1.4`

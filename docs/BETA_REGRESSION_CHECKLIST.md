@@ -82,3 +82,12 @@ Use esta lista antes de cada pre-release e release.
 - [x] Uninstall log do ciclo: `artifacts/installer-logs/clean-machine-uninstall-20260227-090002.log`.
 - [x] Gate automatico da release em `GO`: `artifacts/release-gate/release-gate-20260227-084607.md`.
 - [x] `update-info` e `dlc-manifest` stable/beta sincronizados com a versao `3.1.3`.
+
+## 11) Fechamento 3.1.4 (28/02/2026)
+- [x] `ReminderRepositoryRecurringTests` validou criacao, persistencia, snooze e proxima ocorrencia dos lembretes recorrentes.
+- [x] Smoke automatizado de primeiro uso executado: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`.
+- [x] Smoke clean-machine (setup + abrir + uninstall) executado: `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt`.
+- [x] Setup log do ciclo: `artifacts/installer-logs/clean-machine-setup-20260228-100341-inno.log`.
+- [x] Uninstall log do ciclo: `artifacts/installer-logs/clean-machine-uninstall-20260228-100341.log`.
+- [x] `update-info` e `dlc-manifest` stable/beta sincronizados com a versao `3.1.4`.
+- [x] Tag `v3.1.4` enviada para `origin`.
