@@ -248,8 +248,15 @@ function Invoke-IsccCompileWithRetry {
 
         $existingProcessIds = @(Get-IsccProcessesForSetupBaseName -SetupBaseName $SetupBaseName | ForEach-Object { [int]$_.ProcessId })
         $startArgs = @($IsccArguments | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
-        $isccProcess = Start-Process -FilePath $IsccPath -ArgumentList $startArgs -WorkingDirectory $WorkingDirectory -NoNewWindow -Wait -PassThru
-        $exitCode = if ($null -eq $isccProcess) { 1 } else { [int]$isccProcess.ExitCode }
+        Push-Location $WorkingDirectory
+        try {
+            $global:LASTEXITCODE = 0
+            & $IsccPath @startArgs
+            $exitCode = if ($null -eq $LASTEXITCODE) { 0 } else { [int]$LASTEXITCODE }
+        }
+        finally {
+            Pop-Location
+        }
 
         if ($exitCode -eq 0) {
             Wait-InnoCompilerCompletion -SetupBaseName $SetupBaseName -IgnoreProcessIds $existingProcessIds -TimeoutSeconds 300 -PollMilliseconds 1000

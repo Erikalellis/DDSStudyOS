@@ -6,7 +6,18 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Planejado
-- Proxima entrega: `3.2.1` em modelo DLC, com refinamento do modulo `web-content`, sincronizacao dos manifestos incrementais e ajustes finos de onboarding/branding.
+- Proxima entrega: `3.2.2` em modelo DLC (`Power-Up`), com templates de estudo, presets extras de Pomodoro e publicacao do `help-center`.
+
+## [3.2.1] - 2026-03-01
+### Adicionado
+- Migracao dos clientes `3.2.1+` para o novo canal publico de distribuicao `Erikalellis/DDSStudyOS-Updates`, mantendo o repositório de código pronto para ser privado apos a janela de transicao.
+- Integracao de `web-content`, `onboarding-content` e `branding-assets` como base do pack `Checkpoint`, com suporte a conteudo carregado por modulos DLC.
+- Scripts de publicacao separados para distribuir manifests e assets em um repositório publico dedicado, com suporte a bridge de transicao.
+
+### Alterado
+- `AppUpdateService` e `DlcUpdateService` agora usam `UpdateDistributionConfig` para centralizar endpoints publicos de update e DLC.
+- Home interna do navegador, paginas `dds://` e pagina 404 passam a priorizar conteudo externo do modulo `web-content`, com fallback local.
+- Roadmap e pagina `Desenvolvimento` atualizados para comunicar a linha oficial de DLCs (`Checkpoint`, `Power-Up`, `Signal Boost` e `Quest Hub`).
 
 ## [3.2.0] - 2026-02-28
 ### Adicionado

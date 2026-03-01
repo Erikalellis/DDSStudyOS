@@ -1,22 +1,46 @@
 {
   "channel": "beta",
   "product": "DDS StudyOS",
-  "appVersion": "3.2.0",
-  "minimumAppVersion": "3.2.0",
+  "appVersion": "3.2.1",
+  "minimumAppVersion": "3.2.1",
   "manifestVersion": 1,
-  "generatedAtUtc": "2026-02-28T23:55:00.3076116Z",
-  "releaseTag": "v3.2.0",
+  "generatedAtUtc": "2026-03-01T22:42:13.4241254Z",
+  "releaseTag": "v3.2.1",
   "modules": [
     {
+      "id": "branding-assets",
+      "version": "3.2.1",
+      "assetName": "DDSStudyOS-DLC-branding-assets.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.1/DDSStudyOS-DLC-branding-assets.zip",
+      "sha256": "97327c057facc15f5d669e7cf25036db0bc695e23b89cdcf638a2ef51bb9f8bd",
+      "sizeBytes": 901,
+      "extractSubdirectory": "branding-assets",
+      "required": false,
+      "description": "Metadados de identidade visual para splash, janelas e cards internos.",
+      "enabled": true
+    },
+    {
+      "id": "onboarding-content",
+      "version": "3.2.1",
+      "assetName": "DDSStudyOS-DLC-onboarding-content.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.1/DDSStudyOS-DLC-onboarding-content.zip",
+      "sha256": "021e318cb0ad67112539092a10de4d66a94d4772795a10c36b339ac596c5adbd",
+      "sizeBytes": 1006,
+      "extractSubdirectory": "onboarding-content",
+      "required": false,
+      "description": "Textos e configuracoes de polimento do onboarding em 4 etapas.",
+      "enabled": true
+    },
+    {
       "id": "web-content",
-      "version": "3.2.0",
+      "version": "3.2.1",
       "assetName": "DDSStudyOS-DLC-web-content.zip",
-      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.0/DDSStudyOS-DLC-web-content.zip",
-      "sha256": "8b89a97ca78132e1a1e3a3659a9cd7145986728244618891b1c8fa8bf03b852b",
-      "sizeBytes": 524,
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.1/DDSStudyOS-DLC-web-content.zip",
+      "sha256": "576af7f263d68440a69efa05166ec1f82ef34c9569ee4e4036092ae3c396b36f",
+      "sizeBytes": 4951,
       "extractSubdirectory": "web-content",
       "required": false,
-      "description": "Conteudo web interno e atalhos do navegador integrado.",
+      "description": "Conteudo web interno, paginas dds:// refinadas e 404 personalizada.",
       "enabled": true
     }
   ]
