@@ -1,10 +1,14 @@
-﻿using DDSStudyOS.App.Pages;
+using DDSStudyOS.App.Pages;
 using DDSStudyOS.App.Services;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -12,7 +16,7 @@ namespace DDSStudyOS.App;
 
 public sealed partial class MainWindow : Window
 {
-    private static readonly string AppTitle = AppReleaseInfo.ProductName;
+    private static readonly string WindowTitle = $"{AppReleaseInfo.CompanyName} : StudyOS";
     private readonly DownloadOrganizerService _downloadOrganizer = new();
     private readonly ReminderNotificationService _reminderNotifier = new(new DatabaseService());
     private PomodoroService? _pomodoro;
@@ -23,6 +27,10 @@ public sealed partial class MainWindow : Window
     private int _tourStepIndex;
     private TourStep[] _tourSteps = Array.Empty<TourStep>();
     private bool _ignoreNextNavSelectionChanged;
+    private int _onboardingStepIndex;
+    private string _selectedOnboardingArea = "Desenvolvimento";
+    private string _selectedOnboardingLevel = "Iniciante";
+    private string _selectedOnboardingShift = "Flexível";
     private readonly bool _isSmokeFirstUseMode = AppState.IsSmokeFirstUseMode;
 
     private sealed record TourStep(
@@ -38,13 +46,13 @@ public sealed partial class MainWindow : Window
         SizeChanged += MainWindow_SizeChanged;
         AppState.PomodoroSettingsChanged += OnPomodoroSettingsChanged;
 
-        // Custom Window Title
-        this.Title = AppTitle;
+        // Custom Window Title + Icon
+        ApplyWindowBranding();
         ApplySplashTheme();
         UpdateUserGreeting();
 
-        // Mantém o menu lateral visível desde a primeira execução.
-        EnsureNavigationPaneVisible();
+        // Mantém o menu lateral estável desde a primeira execução.
+        RefreshNavigationMenuVisualState();
 
         NavigateToTag("dashboard");
 
@@ -62,6 +70,28 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private void ApplyWindowBranding()
+    {
+        try
+        {
+            this.Title = WindowTitle;
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+            var appWindow = AppWindow.GetFromWindowId(windowId);
+            var iconPath = Process.GetCurrentProcess().MainModule?.FileName;
+
+            if (!string.IsNullOrWhiteSpace(iconPath))
+            {
+                appWindow.SetIcon(iconPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            this.Title = WindowTitle;
+            AppLogger.Warn($"Branding da janela: falha ao aplicar icone. Motivo: {ex.Message}");
+        }
+    }
     private void ApplySplashTheme()
     {
         var isBeta = AppReleaseInfo.IsBetaChannel;
@@ -115,14 +145,20 @@ public sealed partial class MainWindow : Window
 
     private void RootGrid_Loaded(object sender, RoutedEventArgs e)
     {
-        // Reaplica abertura do pane apos o primeiro layout para evitar compactacao na 1a execucao.
-        EnsureNavigationPaneVisible();
-        _ = DispatcherQueue.TryEnqueue(EnsureNavigationPaneVisible);
+        // Reaplica a estrutura do menu apos o primeiro layout para evitar pane "vazio" na 1a execucao.
+        RefreshNavigationMenuVisualState(hardReset: true);
+        _ = DispatcherQueue.TryEnqueue(() => RefreshNavigationMenuVisualState(hardReset: true));
 
         if (_bootstrapped) return;
         _bootstrapped = true;
 
         _ = BootstrapWithSplashAsync();
+    }
+
+    private void NavView_Loaded(object sender, RoutedEventArgs e)
+    {
+        RefreshNavigationMenuVisualState(hardReset: true);
+        _ = DispatcherQueue.TryEnqueue(() => RefreshNavigationMenuVisualState(hardReset: true));
     }
 
     private async Task BootstrapWithSplashAsync()
@@ -385,11 +421,13 @@ public sealed partial class MainWindow : Window
         {
             Name = normalized,
             PreferredName = normalized,
-            Country = "Brasil",
+            StudyArea = "Geral",
             ExperienceLevel = "Iniciante",
-            StudyShift = "Flexivel",
-            DailyGoalMinutes = 90,
+            StudyShift = "Flexível",
+            DailyGoalMinutes = 60,
+            WeeklyGoalDays = 5,
             ReceiveReminders = true,
+            ReminderTime = "19:00",
             HasSeenTour = false,
             RegisteredAt = now,
             UpdatedAt = now
@@ -403,21 +441,26 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            // Defaults suaves para reduzir atrito no primeiro uso.
-            if (string.IsNullOrWhiteSpace(OnboardingCountryBox.Text))
-            {
-                OnboardingCountryBox.Text = "Brasil";
-            }
+            _onboardingStepIndex = 0;
+            _selectedOnboardingArea = "Desenvolvimento";
+            _selectedOnboardingLevel = "Iniciante";
+            _selectedOnboardingShift = "Flexível";
 
-            OnboardingExperienceLevelCombo.SelectedIndex = OnboardingExperienceLevelCombo.SelectedIndex < 0 ? 0 : OnboardingExperienceLevelCombo.SelectedIndex;
-            OnboardingStudyShiftCombo.SelectedIndex = OnboardingStudyShiftCombo.SelectedIndex < 0 ? 4 : OnboardingStudyShiftCombo.SelectedIndex;
-
-            if (double.IsNaN(OnboardingDailyGoalNumber.Value) || OnboardingDailyGoalNumber.Value <= 0)
-            {
-                OnboardingDailyGoalNumber.Value = 90;
-            }
-
+            OnboardingFullNameBox.Text = string.Empty;
+            OnboardingPreferredNameBox.Text = string.Empty;
+            OnboardingEmailBox.Text = string.Empty;
+            OnboardingCustomAreaBox.Text = string.Empty;
+            OnboardingCustomAreaBox.Visibility = Visibility.Collapsed;
+            OnboardingProgressBar.Minimum = 0;
+            OnboardingProgressBar.Maximum = 100;
+            OnboardingProgressBar.Value = 25;
+            OnboardingDailyGoalSlider.Minimum = 15;
+            OnboardingDailyGoalSlider.Maximum = 120;
+            OnboardingDailyGoalSlider.Value = 60;
             OnboardingRemindersToggle.IsOn = true;
+            OnboardingReminderTimePicker.Time = new TimeSpan(19, 0, 0);
+
+            UpdateOnboardingStepVisualState();
         }
         catch (Exception ex)
         {
@@ -429,6 +472,7 @@ public sealed partial class MainWindow : Window
     {
         OnboardingOverlay.Visibility = Visibility.Visible;
         OnboardingOverlay.IsHitTestVisible = true;
+        UpdateOnboardingStepVisualState();
         OnboardingFullNameBox.Focus(FocusState.Programmatic);
     }
 
@@ -438,65 +482,108 @@ public sealed partial class MainWindow : Window
         OnboardingOverlay.Visibility = Visibility.Collapsed;
     }
 
-    private async void OnboardingContinue_Click(object sender, RoutedEventArgs e)
+    private void OnboardingFieldChanged(object sender, TextChangedEventArgs e)
     {
+        UpdateOnboardingStepVisualState();
+    }
+
+    private void OnboardingGoalSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        UpdateOnboardingStepVisualState();
+    }
+
+    private void OnboardingRemindersToggle_Toggled(object sender, RoutedEventArgs e)
+    {
+        UpdateOnboardingStepVisualState();
+    }
+
+    private void OnboardingArea_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is string area)
+        {
+            _selectedOnboardingArea = area;
+            OnboardingCustomAreaBox.Visibility = area == "Outros"
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        UpdateOnboardingStepVisualState();
+    }
+
+    private void OnboardingLevel_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is string level)
+        {
+            _selectedOnboardingLevel = level;
+        }
+
+        UpdateOnboardingStepVisualState();
+    }
+
+    private void OnboardingShift_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is string shift)
+        {
+            _selectedOnboardingShift = shift;
+        }
+
+        UpdateOnboardingStepVisualState();
+    }
+
+    private void OnboardingBack_Click(object sender, RoutedEventArgs e)
+    {
+        if (_onboardingStepIndex <= 0)
+        {
+            return;
+        }
+
+        _onboardingStepIndex--;
+        UpdateOnboardingStepVisualState();
+    }
+
+    private async void OnboardingNext_Click(object sender, RoutedEventArgs e)
+    {
+        if (!await ValidateCurrentOnboardingStepAsync())
+        {
+            return;
+        }
+
+        if (_onboardingStepIndex < 3)
+        {
+            _onboardingStepIndex++;
+            UpdateOnboardingStepVisualState();
+            return;
+        }
+
         try
         {
             var fullName = (OnboardingFullNameBox.Text ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(fullName))
-            {
-                await ShowInfoDialogAsync("Nome obrigatório", "Informe seu nome completo para concluir o cadastro.");
-                OnboardingFullNameBox.Focus(FocusState.Programmatic);
-                return;
-            }
-
             var preferredName = (OnboardingPreferredNameBox.Text ?? string.Empty).Trim();
             var email = (OnboardingEmailBox.Text ?? string.Empty).Trim();
-            var phone = (OnboardingPhoneBox.Text ?? string.Empty).Trim();
-            var city = (OnboardingCityBox.Text ?? string.Empty).Trim();
-            var state = (OnboardingStateBox.Text ?? string.Empty).Trim();
-            var country = (OnboardingCountryBox.Text ?? string.Empty).Trim();
-            var studyArea = (OnboardingStudyAreaBox.Text ?? string.Empty).Trim();
-            var notes = (OnboardingNotesBox.Text ?? string.Empty).Trim();
-
-            var experience = OnboardingExperienceLevelCombo.SelectedItem?.ToString() ?? "Iniciante";
-            var shift = OnboardingStudyShiftCombo.SelectedItem?.ToString() ?? "Flexivel";
-
-            var goalVal = OnboardingDailyGoalNumber.Value;
-            var dailyGoalMinutes = 90;
-            if (!double.IsNaN(goalVal) && goalVal > 0)
-            {
-                dailyGoalMinutes = (int)Math.Round(goalVal);
-            }
-            dailyGoalMinutes = Math.Clamp(dailyGoalMinutes, 15, 720);
-
             var now = DateTimeOffset.Now;
+
             UserProfileService.Save(new UserProfile
             {
                 Name = fullName,
-                PreferredName = string.IsNullOrWhiteSpace(preferredName) ? null : preferredName,
-                Email = string.IsNullOrWhiteSpace(email) ? null : email,
-                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone,
-                City = string.IsNullOrWhiteSpace(city) ? null : city,
-                State = string.IsNullOrWhiteSpace(state) ? null : state,
-                Country = string.IsNullOrWhiteSpace(country) ? null : country,
-                StudyArea = string.IsNullOrWhiteSpace(studyArea) ? null : studyArea,
-                ExperienceLevel = experience,
-                StudyShift = shift,
-                DailyGoalMinutes = dailyGoalMinutes,
+                PreferredName = preferredName,
+                Email = email,
+                StudyArea = ResolveOnboardingStudyArea(),
+                ExperienceLevel = _selectedOnboardingLevel,
+                StudyShift = _selectedOnboardingShift,
+                DailyGoalMinutes = (int)Math.Round(OnboardingDailyGoalSlider.Value),
+                WeeklyGoalDays = 5,
                 ReceiveReminders = OnboardingRemindersToggle.IsOn,
-                HasSeenTour = false,
-                Notes = string.IsNullOrWhiteSpace(notes) ? null : notes,
+                ReminderTime = OnboardingReminderTimePicker.Time.ToString(@"hh\:mm"),
+                HasSeenTour = true,
                 RegisteredAt = now,
                 UpdatedAt = now
             });
 
             UpdateReminderServiceFromProfile();
             UpdateUserGreeting();
-
             HideOnboardingOverlay();
 
-            AppLogger.Info($"Onboarding concluído para: {fullName}");
+            AppLogger.Info($"Onboarding 3.2 concluído para: {fullName}");
         }
         catch (Exception ex)
         {
@@ -531,63 +618,229 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private Task EnsureFirstRunTourAsync()
+    private void UpdateOnboardingStepVisualState()
     {
+        OnboardingStep1Panel.Visibility = _onboardingStepIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+        OnboardingStep2Panel.Visibility = _onboardingStepIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+        OnboardingStep3Panel.Visibility = _onboardingStepIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
+        OnboardingStep4Panel.Visibility = _onboardingStepIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
+
+        switch (_onboardingStepIndex)
+        {
+            case 0:
+                OnboardingStepCounterText.Text = "Passo 1 de 4";
+                OnboardingProgressBar.Value = 25;
+                OnboardingHeadlineText.Text = "Bem-vinda(o) ao DDS StudyOS";
+                OnboardingSubheadlineText.Text = "Crie seu perfil para começar.";
+                break;
+            case 1:
+                OnboardingStepCounterText.Text = "Passo 2 de 4";
+                OnboardingProgressBar.Value = 50;
+                OnboardingHeadlineText.Text = "O que você quer estudar?";
+                OnboardingSubheadlineText.Text = "Escolha sua área principal e o seu nível atual.";
+                break;
+            case 2:
+                OnboardingStepCounterText.Text = "Passo 3 de 4";
+                OnboardingProgressBar.Value = 75;
+                OnboardingHeadlineText.Text = "Como você prefere estudar?";
+                OnboardingSubheadlineText.Text = "Vamos criar um plano inicial para o seu ritmo.";
+                break;
+            default:
+                OnboardingStepCounterText.Text = "Passo 4 de 4";
+                OnboardingProgressBar.Value = 100;
+                OnboardingHeadlineText.Text = "Seu plano inicial está pronto";
+                OnboardingSubheadlineText.Text = "Revise os dados e comece sua jornada.";
+                break;
+        }
+
+        var goalMinutes = (int)Math.Round(OnboardingDailyGoalSlider.Value);
+        OnboardingGoalValueText.Text = $"{goalMinutes} minutos";
+        OnboardingReminderTimePanel.Visibility = OnboardingRemindersToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+
+        var displayName = (OnboardingPreferredNameBox.Text ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            displayName = (OnboardingFullNameBox.Text ?? string.Empty).Trim();
+        }
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            displayName = "Estudante";
+        }
+
+        OnboardingSummaryNameText.Text = $"Nome: {displayName}";
+        OnboardingSummaryAreaText.Text = $"Área: {ResolveOnboardingStudyArea()}";
+        OnboardingSummaryLevelText.Text = $"Nível: {_selectedOnboardingLevel}";
+        OnboardingSummaryGoalText.Text = $"Meta diária: {goalMinutes} minutos";
+        OnboardingSummaryShiftText.Text = $"Turno: {_selectedOnboardingShift}";
+
+        OnboardingBackButton.Visibility = _onboardingStepIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+        OnboardingSkipButton.Visibility = _onboardingStepIndex >= 3 ? Visibility.Collapsed : Visibility.Visible;
+        OnboardingNextButton.Content = _onboardingStepIndex >= 3 ? "Começar minha jornada" : "Continuar →";
+        OnboardingNextButton.IsEnabled = CanAdvanceCurrentOnboardingStep();
+
+        RefreshOnboardingSelectionVisuals();
+    }
+
+    private bool CanAdvanceCurrentOnboardingStep()
+    {
+        switch (_onboardingStepIndex)
+        {
+            case 0:
+                var fullName = (OnboardingFullNameBox.Text ?? string.Empty).Trim();
+                var preferredName = (OnboardingPreferredNameBox.Text ?? string.Empty).Trim();
+                var email = (OnboardingEmailBox.Text ?? string.Empty).Trim();
+                return HasAtLeastTwoWords(fullName)
+                    && !string.IsNullOrWhiteSpace(preferredName)
+                    && IsValidEmail(email);
+            case 1:
+                return !string.IsNullOrWhiteSpace(_selectedOnboardingLevel)
+                    && !string.IsNullOrWhiteSpace(ResolveOnboardingStudyArea());
+            default:
+                return true;
+        }
+    }
+
+    private async Task<bool> ValidateCurrentOnboardingStepAsync()
+    {
+        switch (_onboardingStepIndex)
+        {
+            case 0:
+                var fullName = (OnboardingFullNameBox.Text ?? string.Empty).Trim();
+                if (!HasAtLeastTwoWords(fullName))
+                {
+                    await ShowInfoDialogAsync("Nome incompleto", "Informe nome e sobrenome para continuar.");
+                    OnboardingFullNameBox.Focus(FocusState.Programmatic);
+                    return false;
+                }
+
+                var preferredName = (OnboardingPreferredNameBox.Text ?? string.Empty).Trim();
+                if (string.IsNullOrWhiteSpace(preferredName))
+                {
+                    await ShowInfoDialogAsync("Nome de exibição obrigatório", "Informe como prefere ser chamada.");
+                    OnboardingPreferredNameBox.Focus(FocusState.Programmatic);
+                    return false;
+                }
+
+                var email = (OnboardingEmailBox.Text ?? string.Empty).Trim();
+                if (!IsValidEmail(email))
+                {
+                    await ShowInfoDialogAsync("E-mail inválido", "Digite um e-mail válido para continuar.");
+                    OnboardingEmailBox.Focus(FocusState.Programmatic);
+                    return false;
+                }
+                break;
+            case 1:
+                if (string.IsNullOrWhiteSpace(ResolveOnboardingStudyArea()))
+                {
+                    await ShowInfoDialogAsync("Área principal obrigatória", "Escolha uma área de estudo para continuar.");
+                    if (_selectedOnboardingArea == "Outros")
+                    {
+                        OnboardingCustomAreaBox.Focus(FocusState.Programmatic);
+                    }
+                    return false;
+                }
+
+                if (string.IsNullOrWhiteSpace(_selectedOnboardingLevel))
+                {
+                    await ShowInfoDialogAsync("Nível obrigatório", "Selecione seu nível atual de estudo.");
+                    return false;
+                }
+                break;
+        }
+
+        return true;
+    }
+
+    private string ResolveOnboardingStudyArea()
+    {
+        if (string.Equals(_selectedOnboardingArea, "Outros", StringComparison.Ordinal))
+        {
+            var custom = (OnboardingCustomAreaBox.Text ?? string.Empty).Trim();
+            return string.IsNullOrWhiteSpace(custom) ? string.Empty : custom;
+        }
+
+        return string.IsNullOrWhiteSpace(_selectedOnboardingArea) ? "Geral" : _selectedOnboardingArea;
+    }
+
+    private void RefreshOnboardingSelectionVisuals()
+    {
+        SetOnboardingChoiceButtonState(AreaDevButton, _selectedOnboardingArea == "Desenvolvimento");
+        SetOnboardingChoiceButtonState(AreaDataButton, _selectedOnboardingArea == "Dados");
+        SetOnboardingChoiceButtonState(AreaMarketingButton, _selectedOnboardingArea == "Marketing");
+        SetOnboardingChoiceButtonState(AreaDesignButton, _selectedOnboardingArea == "Design");
+        SetOnboardingChoiceButtonState(AreaExamButton, _selectedOnboardingArea == "Concurso");
+        SetOnboardingChoiceButtonState(AreaLanguageButton, _selectedOnboardingArea == "Idiomas");
+        SetOnboardingChoiceButtonState(AreaOtherButton, _selectedOnboardingArea == "Outros");
+
+        SetOnboardingChoiceButtonState(LevelBeginnerButton, _selectedOnboardingLevel == "Iniciante");
+        SetOnboardingChoiceButtonState(LevelIntermediateButton, _selectedOnboardingLevel == "Intermediário");
+        SetOnboardingChoiceButtonState(LevelAdvancedButton, _selectedOnboardingLevel == "Avançado");
+
+        SetOnboardingChoiceButtonState(ShiftMorningButton, _selectedOnboardingShift == "Manhã");
+        SetOnboardingChoiceButtonState(ShiftAfternoonButton, _selectedOnboardingShift == "Tarde");
+        SetOnboardingChoiceButtonState(ShiftNightButton, _selectedOnboardingShift == "Noite");
+        SetOnboardingChoiceButtonState(ShiftFlexibleButton, _selectedOnboardingShift == "Flexível");
+    }
+
+    private void SetOnboardingChoiceButtonState(Button button, bool selected)
+    {
+        if (selected)
+        {
+            button.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x7C, 0x3A, 0xED));
+            button.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0xA8, 0x55, 0xF7));
+            button.Foreground = new SolidColorBrush(Microsoft.UI.Colors.White);
+        }
+        else
+        {
+            button.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x1D, 0x22, 0x36));
+            button.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(0xFF, 0x4B, 0x55, 0x63));
+            button.Foreground = new SolidColorBrush(Microsoft.UI.Colors.White);
+        }
+    }
+
+    private static bool HasAtLeastTwoWords(string value)
+    {
+        return value
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Length >= 2;
+    }
+
+    private static bool IsValidEmail(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
         try
         {
-            if (!UserProfileService.TryLoad(out var profile))
-            {
-                return Task.CompletedTask;
-            }
-
-            if (profile.HasSeenTour)
-            {
-                return Task.CompletedTask;
-            }
+            var _ = new System.Net.Mail.MailAddress(value);
+            return true;
         }
-        catch (Exception ex)
+        catch
         {
-            AppLogger.Warn($"Tour: falha ao checar perfil. Motivo: {ex.Message}");
-            return Task.CompletedTask;
+            return false;
         }
+    }
 
+    private Task EnsureFirstRunTourAsync()
+    {
         if (_isSmokeFirstUseMode)
         {
             return RunFirstRunTourSmokeAsync();
         }
 
-        var tcs = new TaskCompletionSource<bool>();
-        _tourCompletion = tcs;
-
-        if (!DispatcherQueue.TryEnqueue(() =>
-        {
-            try
-            {
-                EnsureNavigationPaneVisible();
-                BuildTourSteps();
-                _tourStepIndex = 0;
-                ShowTourStep();
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Error("Tour: falha ao iniciar.", ex);
-                EndGuidedTour(markSeen: false);
-            }
-        }))
-        {
-            EndGuidedTour(markSeen: false);
-        }
-
-        return tcs.Task;
+        AppLogger.Info("Tour: desabilitado temporariamente no fluxo normal (onboarding 3.2 substitui o guia inicial).");
+        return Task.CompletedTask;
     }
 
     private async Task RunFirstRunTourSmokeAsync()
     {
         try
         {
+            await StabilizeNavigationForTourAsync();
             await EnqueueOnUIAsync(() =>
             {
-                EnsureNavigationPaneVisible();
                 BuildTourSteps();
                 if (_tourSteps.Length == 0)
                 {
@@ -630,6 +883,36 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             AppLogger.Error("SMOKE_FIRST_USE:TOUR_FAIL", ex);
+        }
+    }
+
+    private async Task StartGuidedTourAsync()
+    {
+        try
+        {
+            await StabilizeNavigationForTourAsync();
+            await EnqueueOnUIAsync(() =>
+            {
+                BuildTourSteps();
+                _tourStepIndex = 0;
+                ShowTourStep();
+            });
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Tour: falha ao iniciar.", ex);
+            EndGuidedTour(markSeen: false);
+        }
+    }
+
+    private async Task StabilizeNavigationForTourAsync()
+    {
+        // O TeachingTip abre melhor quando o NavigationView ja passou por alguns ciclos de layout.
+        for (var i = 0; i < 3; i++)
+        {
+            var hardReset = i > 0;
+            await EnqueueOnUIAsync(() => RefreshNavigationMenuVisualState(hardReset));
+            await Task.Delay(110);
         }
     }
 
@@ -718,14 +1001,14 @@ public sealed partial class MainWindow : Window
         _tourSteps = new[]
         {
             new TourStep(NavView, "Navegação", "Use este menu lateral para acessar todas as áreas do DDS StudyOS.", TeachingTipPlacementMode.Right),
-            new TourStep(NavItemDashboard, "Dashboard", "Acompanhe visão geral do dia, atalhos e status do estudo.", TeachingTipPlacementMode.Right),
-            new TourStep(NavItemCourses, "Cursos", "Cadastre cursos, organize links e acompanhe o progresso.", TeachingTipPlacementMode.Right),
-            new TourStep(NavItemMaterials, "Materiais & Certificados", "Guarde PDFs, links e certificados em um só lugar.", TeachingTipPlacementMode.Right),
-            new TourStep(NavItemAgenda, "Agenda", "Planeje tarefas e lembretes importantes para a semana.", TeachingTipPlacementMode.Right),
-            new TourStep(NavItemBrowser, "Navegador interno", "Abra aulas e sites sem sair do app, com menos distrações.", TeachingTipPlacementMode.Right),
+            new TourStep(ContentFrame, "Dashboard", "Acompanhe visão geral do dia, atalhos e status do estudo.", TeachingTipPlacementMode.Bottom),
+            new TourStep(NavView, "Cursos", "Cadastre cursos, organize links e acompanhe o progresso.", TeachingTipPlacementMode.Right),
+            new TourStep(NavView, "Materiais & Certificados", "Guarde PDFs, links e certificados em um só lugar.", TeachingTipPlacementMode.Right),
+            new TourStep(NavView, "Agenda", "Planeje tarefas e lembretes importantes para a semana.", TeachingTipPlacementMode.Right),
+            new TourStep(NavView, "Navegador interno", "Abra aulas e sites sem sair do app, com menos distrações.", TeachingTipPlacementMode.Right),
             new TourStep(ProfileCardBorder, "Perfil e Pomodoro", "Seu perfil ativo e foco Pomodoro ficam aqui.", TeachingTipPlacementMode.Top),
-            new TourStep(NavItemSettings, "Configurações", "Ajuste preferências, notificações e opções do navegador.", TeachingTipPlacementMode.Right),
-            new TourStep(NavItemDev, "Desenvolvimento", "Veja melhorias do canal beta e envie feedback.", TeachingTipPlacementMode.Right)
+            new TourStep(NavView, "Configurações", "Ajuste preferências, notificações e opções do navegador.", TeachingTipPlacementMode.Right),
+            new TourStep(NavView, "Desenvolvimento", "Veja melhorias do canal beta e envie feedback.", TeachingTipPlacementMode.Right)
         };
     }
 
@@ -737,7 +1020,7 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        EnsureNavigationPaneVisible();
+        RefreshNavigationMenuVisualState();
 
         _tourStepIndex = Math.Clamp(_tourStepIndex, 0, _tourSteps.Length - 1);
         var step = _tourSteps[_tourStepIndex];
@@ -786,19 +1069,42 @@ public sealed partial class MainWindow : Window
 
     private void EnsureNavigationPaneVisible()
     {
+        RefreshNavigationMenuVisualState();
+    }
+
+    private void RefreshNavigationMenuVisualState(bool hardReset = false)
+    {
         try
         {
-            NavView.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
-            NavView.CompactModeThresholdWidth = 0;
-            NavView.ExpandedModeThresholdWidth = 0;
-            NavView.OpenPaneLength = 320;
-            NavView.IsPaneToggleButtonVisible = true;
-            NavView.IsPaneOpen = true;
+            if (hardReset)
+            {
+                NavView.SelectedItem = null;
+                NavView.UpdateLayout();
+            }
+
+            foreach (var item in GetNavItems())
+            {
+                item.Visibility = Visibility.Visible;
+                item.IsEnabled = true;
+                item.Opacity = 1;
+                item.UpdateLayout();
+            }
+
+            var currentTag = ResolveTagFromPageType(ContentFrame.CurrentSourcePageType) ?? "dashboard";
+            var currentItem = FindNavItemByTag(currentTag);
+            if (currentItem is not null && !ReferenceEquals(NavView.SelectedItem, currentItem))
+            {
+                _ignoreNextNavSelectionChanged = true;
+                NavView.SelectedItem = currentItem;
+            }
+
+            NavView.InvalidateMeasure();
+            NavView.InvalidateArrange();
             NavView.UpdateLayout();
         }
         catch (Exception ex)
         {
-            AppLogger.Warn($"NavView: falha ao garantir painel visivel. Motivo: {ex.Message}");
+            AppLogger.Warn($"NavList: falha ao estabilizar menu lateral. Motivo: {ex.Message}");
         }
     }
 
@@ -886,8 +1192,9 @@ public sealed partial class MainWindow : Window
 
         _tourStepIndex = 0;
         _tourSteps = Array.Empty<TourStep>();
-        EnsureNavigationPaneVisible();
-        _ = DispatcherQueue.TryEnqueue(EnsureNavigationPaneVisible);
+        RefreshNavigationMenuVisualState(hardReset: true);
+        _ = DispatcherQueue.TryEnqueue(() => RefreshNavigationMenuVisualState(hardReset: true));
+        _ = DispatcherQueue.TryEnqueue(() => RefreshNavigationMenuVisualState());
 
         _tourCompletion?.TrySetResult(true);
         _tourCompletion = null;
@@ -933,8 +1240,7 @@ public sealed partial class MainWindow : Window
                 // Update UI Text
                 PomoTimerText.Text = time;
 
-                // Update Window Title (Clock Integration)
-                this.Title = $"{time} - {status} | {AppTitle}";
+                // Window title remains fixed.
 
                 // Update Taskbar Progress
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
@@ -980,7 +1286,7 @@ public sealed partial class MainWindow : Window
 
                 PomoTimerText.Text = "00:00";
                 PomoActionBtn.Content = "\uE768";
-                this.Title = AppTitle;
+                this.Title = WindowTitle;
 
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
                 TaskbarService.SetState(hwnd, TaskbarService.TbpFlag.TBPF_NOPROGRESS);
@@ -989,7 +1295,7 @@ public sealed partial class MainWindow : Window
 
         _pomodoro.SetIdlePreview(workMode: true, minutes: SettingsService.PomodoroFocusMinutes);
         PomoActionBtn.Content = "\uE768";
-        this.Title = AppTitle;
+        this.Title = WindowTitle;
     }
 
     private void OnPomodoroSettingsChanged()
@@ -1086,7 +1392,7 @@ public sealed partial class MainWindow : Window
 
         _pomodoro.Stop();
         PomoActionBtn.Content = "\uE768"; // Play
-        this.Title = AppTitle;
+        this.Title = WindowTitle;
 
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         TaskbarService.SetState(hwnd, TaskbarService.TbpFlag.TBPF_NOPROGRESS);
@@ -1224,24 +1530,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-    {
-        if (args.IsSettingsInvoked)
-        {
-            NavigateToTag("settings");
-            return;
-        }
-
-        if (args.InvokedItemContainer is not NavigationViewItem item)
-        {
-            return;
-        }
-
-        var tag = item.Tag?.ToString() ?? "dashboard";
-        NavigateToTag(tag);
-    }
-
-    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void NavView_SelectionChanged(object sender, SelectionChangedEventArgs args)
     {
         if (_ignoreNextNavSelectionChanged)
         {
@@ -1249,7 +1538,7 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        if (args.SelectedItem is not NavigationViewItem item) return;
+        if (NavView.SelectedItem is not ListViewItem item) return;
         var tag = item.Tag?.ToString() ?? "dashboard";
         NavigateToTag(tag);
     }
@@ -1329,18 +1618,31 @@ public sealed partial class MainWindow : Window
         return null;
     }
 
-    private NavigationViewItem? FindNavItemByTag(string tag)
+    private ListViewItem? FindNavItemByTag(string tag)
     {
-        foreach (var item in NavView.MenuItems)
+        foreach (var navItem in GetNavItems())
         {
-            if (item is NavigationViewItem navItem &&
-                string.Equals(navItem.Tag?.ToString(), tag, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(navItem.Tag?.ToString(), tag, StringComparison.OrdinalIgnoreCase))
             {
                 return navItem;
             }
         }
 
         return null;
+    }
+
+    private ListViewItem[] GetNavItems()
+    {
+        return
+        [
+            NavItemDashboard,
+            NavItemCourses,
+            NavItemMaterials,
+            NavItemAgenda,
+            NavItemBrowser,
+            NavItemSettings,
+            NavItemDev
+        ];
     }
 }
 

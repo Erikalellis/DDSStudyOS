@@ -8,64 +8,126 @@
     mc:Ignorable="d">
 
     <Grid x:Name="RootGrid" Loaded="RootGrid_Loaded">
-        <NavigationView
-            x:Name="NavView"
-            PaneDisplayMode="Left"
-            IsPaneOpen="True"
-            CompactModeThresholdWidth="0"
-            ExpandedModeThresholdWidth="0"
-            IsBackButtonVisible="Collapsed"
-            SelectionChanged="NavView_SelectionChanged"
-            ItemInvoked="NavView_ItemInvoked">
+        <Grid x:Name="ShellRoot">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-            <NavigationView.MenuItems>
-                <NavigationViewItem x:Name="NavItemDashboard" Content="Dashboard" Icon="Home" Tag="dashboard" />
-                <NavigationViewItem x:Name="NavItemCourses" Content="Cursos" Icon="Library" Tag="courses" />
-                <NavigationViewItem x:Name="NavItemMaterials" Content="Materiais &amp; Certificados" Icon="Folder" Tag="materials" />
-                <NavigationViewItem x:Name="NavItemAgenda" Content="Agenda" Icon="Calendar" Tag="agenda" />
-                <NavigationViewItem x:Name="NavItemBrowser" Content="Navegador" Icon="Globe" Tag="browser" />
-                <NavigationViewItem x:Name="NavItemSettings" Content="Configurações" Icon="Setting" Tag="settings" />
-                <NavigationViewItem x:Name="NavItemDev" Content="Desenvolvimento" Icon="Contact" Tag="dev" />
-            </NavigationView.MenuItems>
+            <Border Grid.Column="0"
+                    Background="#FFF7F7FA"
+                    BorderBrush="#22000000"
+                    BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-            <NavigationView.PaneFooter>
-                <Border BorderBrush="#33000000" BorderThickness="0,1,0,0" Padding="12">
-                    <StackPanel Spacing="8">
-                        <Border x:Name="ProfileCardBorder" Background="#221D4ED8" CornerRadius="8" Padding="10">
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="Perfil ativo" FontSize="11" Opacity="0.8" />
-                                <TextBlock x:Name="UserGreetingText" Text="Olá, estudante!" FontWeight="SemiBold" FontSize="14" />
-                                <TextBlock x:Name="UserSubtitleText" Text="Configure seu cadastro inicial." FontSize="11" Opacity="0.8" />
+                    <ListView x:Name="NavView"
+                              Grid.Row="0"
+                              Loaded="NavView_Loaded"
+                              Margin="12,16,12,12"
+                              SelectionChanged="NavView_SelectionChanged"
+                              SelectionMode="Single"
+                              HorizontalAlignment="Stretch"
+                              HorizontalContentAlignment="Stretch"
+                              ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                              ScrollViewer.HorizontalScrollMode="Disabled">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="MinHeight" Value="48" />
+                                <Setter Property="Margin" Value="0,0,0,6" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+
+                        <ListViewItem x:Name="NavItemDashboard" Tag="dashboard">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Home" />
+                                <TextBlock Text="Dashboard" VerticalAlignment="Center" />
                             </StackPanel>
-                        </Border>
+                        </ListViewItem>
+                        <ListViewItem x:Name="NavItemCourses" Tag="courses">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Library" />
+                                <TextBlock Text="Cursos" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="NavItemMaterials" Tag="materials">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Folder" />
+                                <TextBlock Text="Materiais &amp; Certificados" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="NavItemAgenda" Tag="agenda">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Calendar" />
+                                <TextBlock Text="Agenda" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="NavItemBrowser" Tag="browser">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Globe" />
+                                <TextBlock Text="Navegador" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="NavItemSettings" Tag="settings">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Setting" />
+                                <TextBlock Text="Configurações" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
+                        <ListViewItem x:Name="NavItemDev" Tag="dev">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Contact" />
+                                <TextBlock Text="Desenvolvimento" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
+                    </ListView>
 
-                        <TextBlock Text="Pomodoro Focus" FontWeight="SemiBold" FontSize="12" Opacity="0.8"/>
-                        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
-                            <TextBlock x:Name="PomoTimerText" Text="25:00" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Consolas"/>
-                            <Button x:Name="PomoActionBtn" Content="&#xE768;" FontFamily="Segoe MDL2 Assets" Click="PomoAction_Click" ToolTipService.ToolTip="Iniciar/Pausar"/>
-                            <Button x:Name="PomoResetBtn" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets" Click="PomoReset_Click" ToolTipService.ToolTip="Parar"/>
+                    <Border Grid.Row="1" BorderBrush="#33000000" BorderThickness="0,1,0,0" Padding="12">
+                        <StackPanel Spacing="8">
+                            <Border x:Name="ProfileCardBorder" Background="#221D4ED8" CornerRadius="8" Padding="10">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="Perfil ativo" FontSize="11" Opacity="0.8" />
+                                    <TextBlock x:Name="UserGreetingText" Text="Olá, estudante!" FontWeight="SemiBold" FontSize="14" />
+                                    <TextBlock x:Name="UserSubtitleText" Text="Configure seu cadastro inicial." FontSize="11" Opacity="0.8" />
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Text="Pomodoro Focus" FontWeight="SemiBold" FontSize="12" Opacity="0.8"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                                <TextBlock x:Name="PomoTimerText" Text="25:00" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Consolas"/>
+                                <Button x:Name="PomoActionBtn" Content="&#xE768;" FontFamily="Segoe MDL2 Assets" Click="PomoAction_Click" ToolTipService.ToolTip="Iniciar/Pausar"/>
+                                <Button x:Name="PomoResetBtn" Content="&#xE74D;" FontFamily="Segoe MDL2 Assets" Click="PomoReset_Click" ToolTipService.ToolTip="Parar"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <Button Content="Foco" Click="PomoWork_Click" FontSize="11"/>
+                                <Button Content="Pausa" Click="PomoBreak_Click" FontSize="11"/>
+                            </StackPanel>
+                            <Button Content="Config. Pomodoro" Click="PomoSettings_Click" FontSize="11" HorizontalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                            <Button Content="Foco" Click="PomoWork_Click" FontSize="11"/>
-                            <Button Content="Pausa" Click="PomoBreak_Click" FontSize="11"/>
-                        </StackPanel>
-                        <Button Content="Config. Pomodoro" Click="PomoSettings_Click" FontSize="11" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-            </NavigationView.PaneFooter>
+                    </Border>
+                </Grid>
+            </Border>
 
-            <Frame x:Name="ContentFrame" />
-        </NavigationView>
+            <Frame Grid.Column="1" x:Name="ContentFrame" />
+        </Grid>
 
-        <!-- Onboarding / "login" overlay (first run). -->
+        <!-- Onboarding wizard (first run). -->
         <Grid x:Name="OnboardingOverlay" IsHitTestVisible="True" Visibility="Collapsed" RequestedTheme="Dark">
             <Grid.Background>
                 <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
             </Grid.Background>
             <Grid.Resources>
-                <SolidColorBrush x:Key="OnboardingInputBackgroundBrush" Color="#FF1A2542" />
-                <SolidColorBrush x:Key="OnboardingInputBorderBrush" Color="#66FFFFFF" />
+                <SolidColorBrush x:Key="OnboardingInputBackgroundBrush" Color="#FF121B31" />
+                <SolidColorBrush x:Key="OnboardingInputBorderBrush" Color="#6CF5F7FF" />
                 <SolidColorBrush x:Key="OnboardingInputForegroundBrush" Color="#FFF7F9FF" />
+                <SolidColorBrush x:Key="OnboardingChipBackgroundBrush" Color="#1D2236" />
+                <SolidColorBrush x:Key="OnboardingChipSelectedBrush" Color="#7C3AED" />
+                <SolidColorBrush x:Key="OnboardingChipBorderBrush" Color="#4B5563" />
 
                 <Style TargetType="TextBox">
                     <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
@@ -73,151 +135,219 @@
                     <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
                 </Style>
 
-                <Style TargetType="ComboBox">
+                <Style TargetType="TimePicker">
                     <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
                     <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
                     <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
                 </Style>
 
-                <Style TargetType="NumberBox">
-                    <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
-                    <Setter Property="Background" Value="{StaticResource OnboardingInputBackgroundBrush}" />
-                    <Setter Property="BorderBrush" Value="{StaticResource OnboardingInputBorderBrush}" />
-                </Style>
-
-                <Style TargetType="ToggleSwitch">
-                    <Setter Property="Foreground" Value="{StaticResource OnboardingInputForegroundBrush}" />
+                <Style x:Key="OnboardingChoiceButtonStyle" TargetType="Button">
+                    <Setter Property="MinHeight" Value="44" />
+                    <Setter Property="CornerRadius" Value="22" />
+                    <Setter Property="Background" Value="{StaticResource OnboardingChipBackgroundBrush}" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="BorderBrush" Value="{StaticResource OnboardingChipBorderBrush}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Padding" Value="14,8" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
             </Grid.Resources>
-            <Rectangle Fill="#CC05060A" />
+            <Rectangle Fill="#D9060812" />
 
-            <ScrollViewer HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          HorizontalScrollMode="Disabled"
-                          VerticalScrollMode="Enabled"
-                          VerticalScrollBarVisibility="Auto"
-                          MaxWidth="760"
-                          MaxHeight="860"
-                          Margin="24">
-                <Border Background="#D30A1228"
-                        BorderBrush="#66FFFFFF"
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  MaxWidth="540"
+                  Width="540"
+                  Margin="24">
+                <Border Background="#E60A1228"
+                        BorderBrush="#66C6D8FF"
                         BorderThickness="1"
                         CornerRadius="18"
-                        Padding="22">
-                    <StackPanel Spacing="14">
-                        <StackPanel Orientation="Horizontal" Spacing="14">
-                            <Border CornerRadius="999" Background="#22FFFFFF" Padding="10" VerticalAlignment="Top">
-                                <Image Source="ms-appx:///Assets/SplashBackground.png"
-                                       Width="56"
-                                       Height="56"
-                                       Stretch="UniformToFill" />
-                            </Border>
+                        Padding="28">
+                    <StackPanel Spacing="20">
+                        <StackPanel Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="14">
+                                <Border CornerRadius="999" Background="#22FFFFFF" Padding="10" VerticalAlignment="Top">
+                                    <Image Source="ms-appx:///Assets/SplashBackground.png"
+                                           Width="52"
+                                           Height="52"
+                                           Stretch="UniformToFill" />
+                                </Border>
 
-                            <StackPanel Spacing="2">
-                                <TextBlock Text="Bem-vinda(o) ao DDS StudyOS"
+                                <StackPanel Spacing="4">
+                                    <TextBlock x:Name="OnboardingStepCounterText"
+                                               Text="Passo 1 de 4"
+                                               Foreground="#BFE4E8FF"
+                                               FontSize="12"
+                                               FontWeight="SemiBold" />
+                                    <ProgressBar x:Name="OnboardingProgressBar"
+                                                 Width="360"
+                                                 Height="8"
+                                                 Foreground="#FF7B61FF" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Name="OnboardingHeadlineText"
+                                           Text="Bem-vinda(o) ao DDS StudyOS"
                                            Foreground="White"
                                            FontSize="24"
                                            FontWeight="SemiBold" />
-                                <TextBlock Text="Crie seu perfil para personalizar a experiência. Você pode editar depois em Configurações."
-                                           Foreground="#E6FFFFFF"
-                                           FontSize="12"
+                                <TextBlock x:Name="OnboardingSubheadlineText"
+                                           Text="Crie seu perfil para começar."
+                                           Foreground="#DDE9F2FF"
+                                           FontSize="13"
                                            TextWrapping="WrapWholeWords" />
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Spacing="10">
-                            <TextBox x:Name="OnboardingFullNameBox"
-                                     Header="Nome completo"
-                                     PlaceholderText="Ex.: Erika Lellis" />
+                        <Grid>
+                            <StackPanel x:Name="OnboardingStep1Panel" Spacing="12">
+                                <TextBox x:Name="OnboardingFullNameBox"
+                                         Header="Nome completo *"
+                                         PlaceholderText="Ex.: Erika Lellis"
+                                         TextChanged="OnboardingFieldChanged" />
+                                <TextBox x:Name="OnboardingPreferredNameBox"
+                                         Header="Como prefere ser chamada *"
+                                         PlaceholderText="Ex.: Erika"
+                                         TextChanged="OnboardingFieldChanged" />
+                                <TextBox x:Name="OnboardingEmailBox"
+                                         Header="E-mail *"
+                                         PlaceholderText="exemplo@dominio.com"
+                                         TextChanged="OnboardingFieldChanged" />
+                            </StackPanel>
 
-                            <TextBox x:Name="OnboardingPreferredNameBox"
-                                     Header="Como prefere ser chamada(o)"
-                                     PlaceholderText="Ex.: Erika (opcional)" />
+                            <StackPanel x:Name="OnboardingStep2Panel" Spacing="16" Visibility="Collapsed">
+                                <TextBlock Text="Escolha sua área principal."
+                                           Foreground="#E6FFFFFF"
+                                           FontSize="13" />
+                                <Grid RowSpacing="12" ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
 
-                            <TextBox x:Name="OnboardingEmailBox"
-                                     Header="E-mail"
-                                     PlaceholderText="exemplo@dominio.com (opcional)" />
+                                    <Button x:Name="AreaDevButton" Grid.Row="0" Grid.Column="0" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="💻 Desenvolvimento" Tag="Desenvolvimento" Click="OnboardingArea_Click" />
+                                    <Button x:Name="AreaDataButton" Grid.Row="0" Grid.Column="1" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="📊 Dados" Tag="Dados" Click="OnboardingArea_Click" />
+                                    <Button x:Name="AreaMarketingButton" Grid.Row="1" Grid.Column="0" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="📈 Marketing" Tag="Marketing" Click="OnboardingArea_Click" />
+                                    <Button x:Name="AreaDesignButton" Grid.Row="1" Grid.Column="1" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="🎨 Design" Tag="Design" Click="OnboardingArea_Click" />
+                                    <Button x:Name="AreaExamButton" Grid.Row="2" Grid.Column="0" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="📚 Concurso" Tag="Concurso" Click="OnboardingArea_Click" />
+                                    <Button x:Name="AreaLanguageButton" Grid.Row="2" Grid.Column="1" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="✏️ Idiomas" Tag="Idiomas" Click="OnboardingArea_Click" />
+                                    <Button x:Name="AreaOtherButton" Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="➕ Outros" Tag="Outros" Click="OnboardingArea_Click" />
+                                </Grid>
 
-                            <TextBox x:Name="OnboardingPhoneBox"
-                                     Header="Telefone"
-                                     PlaceholderText="(11) 90000-0000 (opcional)" />
+                                <TextBox x:Name="OnboardingCustomAreaBox"
+                                         Header="Descreva a área (quando selecionar Outros)"
+                                         PlaceholderText="Ex.: Música, Finanças, Direito..."
+                                         TextChanged="OnboardingFieldChanged"
+                                         Visibility="Collapsed" />
 
-                            <Grid ColumnSpacing="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1.6*" />
-                                    <ColumnDefinition Width="0.8*" />
-                                    <ColumnDefinition Width="1.2*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="OnboardingCityBox"
-                                         Grid.Column="0"
-                                          Header="Cidade"
-                                          PlaceholderText="Ex.: Osasco (opcional)" />
-                                <TextBox x:Name="OnboardingStateBox"
-                                         Grid.Column="1"
-                                          Header="Estado"
-                                          PlaceholderText="Ex.: SP (opcional)" />
-                                <TextBox x:Name="OnboardingCountryBox"
-                                         Grid.Column="2"
-                                          Header="País"
-                                          PlaceholderText="Ex.: Brasil (opcional)" />
-                            </Grid>
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="Nível"
+                                               Foreground="#E6FFFFFF"
+                                               FontSize="13" />
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="LevelBeginnerButton" Grid.Column="0" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Iniciante" Tag="Iniciante" Click="OnboardingLevel_Click" />
+                                        <Button x:Name="LevelIntermediateButton" Grid.Column="1" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Intermediário" Tag="Intermediário" Click="OnboardingLevel_Click" />
+                                        <Button x:Name="LevelAdvancedButton" Grid.Column="2" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Avançado" Tag="Avançado" Click="OnboardingLevel_Click" />
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
 
-                            <TextBox x:Name="OnboardingStudyAreaBox"
-                                     Header="Área principal de estudo"
-                                     PlaceholderText="Ex.: Desenvolvimento de Software (opcional)" />
+                            <StackPanel x:Name="OnboardingStep3Panel" Spacing="18" Visibility="Collapsed">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="Meta diária"
+                                               Foreground="#E6FFFFFF"
+                                               FontSize="13" />
+                                    <TextBlock x:Name="OnboardingGoalValueText"
+                                               Text="60 minutos"
+                                               Foreground="White"
+                                               FontSize="20"
+                                               FontWeight="SemiBold" />
+                                    <Slider x:Name="OnboardingDailyGoalSlider"
+                                            ValueChanged="OnboardingGoalSlider_ValueChanged" />
+                                </StackPanel>
 
-                            <Grid ColumnSpacing="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <ComboBox x:Name="OnboardingExperienceLevelCombo"
-                                          Grid.Column="0"
-                                           Header="Nível atual"
-                                           MinWidth="220">
-                                    <x:String>Iniciante</x:String>
-                                    <x:String>Intermediário</x:String>
-                                    <x:String>Avançado</x:String>
-                                </ComboBox>
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="Turno preferido"
+                                               Foreground="#E6FFFFFF"
+                                               FontSize="13" />
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="ShiftMorningButton" Grid.Column="0" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Manhã" Tag="Manhã" Click="OnboardingShift_Click" />
+                                        <Button x:Name="ShiftAfternoonButton" Grid.Column="1" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Tarde" Tag="Tarde" Click="OnboardingShift_Click" />
+                                        <Button x:Name="ShiftNightButton" Grid.Column="2" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Noite" Tag="Noite" Click="OnboardingShift_Click" />
+                                        <Button x:Name="ShiftFlexibleButton" Grid.Column="3" Style="{StaticResource OnboardingChoiceButtonStyle}" Content="Flexível" Tag="Flexível" Click="OnboardingShift_Click" />
+                                    </Grid>
+                                </StackPanel>
 
-                                <ComboBox x:Name="OnboardingStudyShiftCombo"
-                                          Grid.Column="1"
-                                           Header="Turno preferido"
-                                           MinWidth="220">
-                                    <x:String>Manhã</x:String>
-                                    <x:String>Tarde</x:String>
-                                    <x:String>Noite</x:String>
-                                    <x:String>Madrugada</x:String>
-                                    <x:String>Flexível</x:String>
-                                </ComboBox>
-                            </Grid>
+                                <ToggleSwitch x:Name="OnboardingRemindersToggle"
+                                              Header="Ativar lembretes diários"
+                                              Toggled="OnboardingRemindersToggle_Toggled" />
 
-                            <NumberBox x:Name="OnboardingDailyGoalNumber"
-                                       Header="Meta diária (minutos)"
-                                       Minimum="15"
-                                       Maximum="720"
-                                       Value="90"
-                                       SpinButtonPlacementMode="Compact" />
+                                <StackPanel x:Name="OnboardingReminderTimePanel" Spacing="8">
+                                    <TextBlock Text="Horário preferido"
+                                               Foreground="#E6FFFFFF"
+                                               FontSize="13" />
+                                    <TimePicker x:Name="OnboardingReminderTimePicker" />
+                                </StackPanel>
+                            </StackPanel>
 
-                            <ToggleSwitch x:Name="OnboardingRemindersToggle"
-                                          Header="Ativar lembretes"
-                                          IsOn="True" />
+                            <StackPanel x:Name="OnboardingStep4Panel" Spacing="16" Visibility="Collapsed">
+                                <TextBlock Text="Seu plano inicial foi criado com base no seu perfil."
+                                           Foreground="#E6FFFFFF"
+                                           FontSize="13"
+                                           TextWrapping="WrapWholeWords" />
+                                <Border Background="#221D4ED8"
+                                        CornerRadius="14"
+                                        Padding="18">
+                                    <StackPanel Spacing="10">
+                                        <TextBlock x:Name="OnboardingSummaryNameText" Text="Nome: -" Foreground="White" FontSize="15" FontWeight="SemiBold" />
+                                        <TextBlock x:Name="OnboardingSummaryAreaText" Text="Área: -" Foreground="#E6FFFFFF" />
+                                        <TextBlock x:Name="OnboardingSummaryLevelText" Text="Nível: -" Foreground="#E6FFFFFF" />
+                                        <TextBlock x:Name="OnboardingSummaryGoalText" Text="Meta diária: -" Foreground="#E6FFFFFF" />
+                                        <TextBlock x:Name="OnboardingSummaryShiftText" Text="Turno: -" Foreground="#E6FFFFFF" />
+                                    </StackPanel>
+                                </Border>
+                                <TextBlock Text="Você poderá editar tudo depois em Configurações."
+                                           Foreground="#BFE4E8FF"
+                                           FontSize="12"
+                                           TextWrapping="WrapWholeWords" />
+                            </StackPanel>
+                        </Grid>
 
-                            <TextBox x:Name="OnboardingNotesBox"
-                                     Header="Observações pessoais"
-                                     PlaceholderText="Opcional"
-                                     AcceptsReturn="True"
-                                     TextWrapping="Wrap"
-                                     MinHeight="90" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-                            <HyperlinkButton Content="Pular por agora" Click="OnboardingSkip_Click" />
-                            <Button Content="Continuar" Click="OnboardingContinue_Click" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="12">
+                            <HyperlinkButton x:Name="OnboardingSkipButton"
+                                             Content="Pular por agora"
+                                             Click="OnboardingSkip_Click" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                                <Button x:Name="OnboardingBackButton"
+                                        Content="← Voltar"
+                                        Click="OnboardingBack_Click" />
+                                <Button x:Name="OnboardingNextButton"
+                                        Content="Continuar →"
+                                        Click="OnboardingNext_Click" />
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </Border>
-            </ScrollViewer>
+            </Grid>
         </Grid>
 
         <!-- Splash overlay (first launch + initialization). Hidden after bootstrap. -->

@@ -16,10 +16,11 @@ public sealed class UserProfile
     public string? Country { get; set; }
     public string? StudyArea { get; set; }
     public string ExperienceLevel { get; set; } = "Iniciante";
-    public string StudyShift { get; set; } = "Flexivel";
+    public string StudyShift { get; set; } = "Flexível";
     public int DailyGoalMinutes { get; set; } = 90;
     public int WeeklyGoalDays { get; set; } = 5;
     public bool ReceiveReminders { get; set; } = true;
+    public string ReminderTime { get; set; } = "19:00";
     public bool HasSeenTour { get; set; } = false;
     public string? Notes { get; set; }
     public DateTimeOffset RegisteredAt { get; set; } = DateTimeOffset.Now;

@@ -1,9 +1,10 @@
 # Documentacao - DDS StudyOS
 
 ## Estado atual
-- Versao estavel validada localmente: `3.1.4`
-- Ultimo release publico consolidado: `3.1.3` (`v3.1.3` no GitHub Releases)
-- Ciclo atual fechado localmente: `3.1.4` (metas semanais, presets de pomodoro por perfil, agenda recorrente/snooze e DLC automatico no startup)
+- Versao estavel validada localmente: `3.2.0`
+- Proxima release publica em preparacao: `3.2.0` (`v3.2.0` no GitHub Releases)
+- Ciclo atual fechado localmente: `3.2.0` (onboarding em 4 etapas, menu lateral proprio, branding da janela e ajustes de primeiro uso)
+- Proximo ciclo incremental (DLC): `3.2.1` (refino do modulo `web-content`, manifestos incrementais e polimento do onboarding)
 
 ## Guias principais
 - Manual completo de canais e atualizacoes (iniciante -> senior): `docs/MANUAL_CANAIS_E_ATUALIZACOES.md`
@@ -21,6 +22,7 @@
 - Suporte tecnico: `SUPPORT.md`
 
 ## Evidencias recentes de release
+- Smoke local 3.2.0: build + validacao automatica do shell/menu e titulo da janela concluídos em 2026-02-28
 - Smoke update 3.1.4: `docs/UPDATE_SMOKE_EVIDENCE_2026-02-28_v3_1_4.md`
 - Smoke clean-machine 3.1.4: `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt`
 - Smoke first-use 3.1.4: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`
@@ -31,4 +33,4 @@ Depois de publicar o repositorio, use estes links na pagina de release/instalado
 - Update Info: `https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md`
 - Suporte: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
 - Release notes: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
-- Tag atual: `https://github.com/Erikalellis/DDSStudyOS/tree/v3.1.4`
+- Proxima tag publica: `https://github.com/Erikalellis/DDSStudyOS/tree/v3.2.0`

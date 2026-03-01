@@ -2,10 +2,10 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
-Status atual: `3.1.4` fechado localmente em 2026-02-28 (stable/beta/portable + DLC automatico + gate tecnico).
-Status tecnico 3.1.4 (fechado local): metas semanais, presets de pomodoro por perfil, agenda recorrente/snooze, auto-check DLC no startup, backup preservando recorrencia e smoke de primeiro uso corrigido.
-Ultimo release publico consolidado: `3.1.3` (favoritos por perfil com export/import, limpeza de historico, materiais com filtros por curso/tipo/data e acao de abrir pasta com fallback, release one-click com gate automatico).
-Evidencias atuais do fechamento local: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`, `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt` e `artifacts/installer-logs/clean-machine-setup-20260228-100341-inno.log`.
+Status atual: `3.2.0` fechado localmente em 2026-02-28 (novo onboarding, shell lateral proprio, branding fixo de janela e base pronta para update incremental).
+Status tecnico 3.2.0 (fechado local): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho e build/testes validos.
+Proxima release publica em preparacao: `3.2.0` (novo onboarding em 4 etapas, shell lateral proprio, branding fixo de janela e base pronta para DLC 3.2.1).
+Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`, `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt` e `artifacts/installer-logs/clean-machine-setup-20260228-100341-inno.log`.
 
 ## Patch fechado (3.1.2)
 
@@ -26,6 +26,18 @@ Evidencias atuais do fechamento local: `artifacts/installer-logs/first-use-smoke
 - [x] Pomodoro por perfil com presets (foco profundo, revisao e pratica).
 - [x] Agenda com lembretes recorrentes e snooze configuravel.
 - [x] Atualizacao incremental (DLC) em segundo plano no startup, mantendo setup completo como fallback.
+
+## Patch fechado local (3.2.0)
+
+- [x] Substituir o tour inicial por onboarding em 4 etapas com validacao por passo e resumo final.
+- [x] Trocar o `NavigationView` por shell lateral proprio para eliminar o layout compacto inconsistente.
+- [x] Fixar branding da janela (titulo + icone) e remover o relogio do Pomodoro do cabecalho.
+
+## Proxima entrega incremental (3.2.1 - DLC)
+
+- [ ] Atualizar o modulo `web-content` com novo pacote e hash sincronizado.
+- [ ] Publicar manifestos DLC `stable` e `beta` em 3.2.1 com rollback validado.
+- [ ] Polir onboarding/branding final antes do proximo setup completo.
 
 ## Objetivo do ciclo
 
@@ -88,7 +100,7 @@ Evidencias atuais do fechamento local: `artifacts/installer-logs/first-use-smoke
 - Painel interno de saúde da aplicação (runtime, DB, update channel).
 - Playbook de suporte com respostas padrão por incidente.
 
-## Critérios de saída do ciclo 3.1
+## Critérios de saída do ciclo 3.2
 
 - Zero bug crítico aberto por 2 ciclos de regressão consecutivos.
 - Build/release 100% reproduzível com artefatos assinados.

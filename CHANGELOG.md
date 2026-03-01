@@ -5,8 +5,18 @@ Todas as mudanças importantes neste projeto serão documentadas neste arquivo.
 O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
+### Planejado
+- Proxima entrega: `3.2.1` em modelo DLC, com refinamento do modulo `web-content`, sincronizacao dos manifestos incrementais e ajustes finos de onboarding/branding.
+
+## [3.2.0] - 2026-02-28
 ### Adicionado
-- Nenhuma mudanca registrada.
+- Onboarding em 4 etapas com progresso visual, validacao por passo e resumo final para personalizar o perfil no primeiro uso.
+- Shell principal atualizado para menu lateral proprio (`ListView`), eliminando o layout compacto inconsistente do `NavigationView`.
+- Branding da janela reforcado com titulo fixo `Deep Darkness Studios : StudyOS` e aplicacao explicita do icone no `AppWindow`.
+
+### Alterado
+- Tour inicial automatico foi desabilitado temporariamente no fluxo normal; o onboarding 3.2 passa a guiar a primeira execucao.
+- Cabecalho da janela nao exibe mais o timer do Pomodoro; o cronometro continua apenas no painel lateral e na taskbar.
 
 ## [3.1.4] - 2026-02-28
 ### Adicionado

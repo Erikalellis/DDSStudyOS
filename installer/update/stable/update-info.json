@@ -2,13 +2,13 @@
   "channel": "stable",
   "product": "DDS StudyOS",
   "company": "Deep Darkness Studios",
-  "currentVersion": "3.1.4",
+  "currentVersion": "3.2.0",
   "installerAssetName": "DDSStudyOS-Setup.exe",
   "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/latest/download/DDSStudyOS-Setup.exe",
   "releasePageUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/latest",
   "releaseNotesUrl": "https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md",
   "supportUrl": "https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md",
-  "updatedAtUtc": "2026-02-28T13:03:05.8519930Z",
+  "updatedAtUtc": "2026-02-28T23:53:26.7364535Z",
   "signerThumbprint": "6780CE530A33615B591727F5334B3DD075B76422",
-  "installerSha256": "458576937752072a87f10e64f71346934c26ce5c7bac3c1ce3bcd8a91f925570"
+  "installerSha256": "9e14d3adf1f7f744fea3e340c329c92d52b0600d7378b52390ad2f4a36754fe1"
 }
