@@ -30,7 +30,7 @@ public sealed partial class DevelopmentPage : Page
     private void InitializeRoadmapHeader()
     {
         CurrentVersionText.Text = $"Versao atual: {AppReleaseInfo.VersionDisplay}";
-        NextUpdateTitleText.Text = $"O que esperar da próxima atualização (meta: v{GetNextTargetVersion()})";
+        NextUpdateTitleText.Text = $"Proximo pack DLC: v{GetNextTargetVersion()} - {GetNextPackName()}";
         ApplyReleaseChannelVisuals(SettingsService.UpdateChannel);
     }
 
@@ -52,9 +52,12 @@ public sealed partial class DevelopmentPage : Page
 
     private static string GetNextTargetVersion()
     {
-        var current = AppReleaseInfo.Version;
-        var nextMinor = current.Minor + 1;
-        return $"{current.Major}.{nextMinor}.0-beta";
+        return "3.2.1";
+    }
+
+    private static string GetNextPackName()
+    {
+        return "Checkpoint";
     }
 
     private void ApplyReleaseChannelVisuals(string channel)
@@ -609,3 +612,4 @@ public sealed partial class DevelopmentPage : Page
         return $"{gb:F2} GB";
     }
 }
+

@@ -33,11 +33,31 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 - [x] Trocar o `NavigationView` por shell lateral proprio para eliminar o layout compacto inconsistente.
 - [x] Fixar branding da janela (titulo + icone) e remover o relogio do Pomodoro do cabecalho.
 
-## Proxima entrega incremental (3.2.1 - DLC)
+## Linha oficial de DLCs (ciclos incrementais)
 
-- [ ] Atualizar o modulo `web-content` com novo pacote e hash sincronizado.
-- [ ] Publicar manifestos DLC `stable` e `beta` em 3.2.1 com rollback validado.
-- [ ] Polir onboarding/branding final antes do proximo setup completo.
+### 3.2.1 - Checkpoint (DLC)
+
+- [ ] Atualizar o modulo web-content com nova home interna, paginas dds:// refinadas e 404 personalizada.
+- [ ] Publicar os modulos onboarding-content e branding-assets como base de polimento visual e fluxo inicial.
+- [ ] Validar manifestos DLC stable e beta com rollback funcional antes do proximo setup completo.
+
+### 3.2.2 - Power-Up (DLC)
+
+- [ ] Entregar study-templates com modelos de rotina e trilhas de estudo.
+- [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
+- [ ] Publicar help-center com guias e resumo de changelog dentro do app.
+
+### 3.2.3 - Signal Boost (DLC)
+
+- [ ] Publicar browser-presets com atalhos e favoritos iniciais.
+- [ ] Publicar notification-pack com mensagens, presets de lembrete e snooze.
+- [ ] Publicar community-feed para mostrar proximas metas, novidades e comunicados dentro do app.
+
+### 3.3.0 - Quest Hub (release completa)
+
+- [ ] Consolidar nova leva de recursos que exigem mudancas no core.
+- [ ] Avaliar a aba de exploracao/catalogo beta de cursos como expansao de produto.
+- [ ] Fechar um novo setup completo apenas apos estabilizar a linha 3.2.x de DLCs.
 
 ## Objetivo do ciclo
 
@@ -105,3 +125,5 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 - Zero bug crítico aberto por 2 ciclos de regressão consecutivos.
 - Build/release 100% reproduzível com artefatos assinados.
 - Cobertura mínima dos fluxos críticos (onboarding, navegador, backup, instalação, desinstalação).
+
+

@@ -130,31 +130,31 @@
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Melhorias desta fase (beta)" FontWeight="SemiBold"/>
-                    <TextBlock Text="• Correções no navegador interno e estabilidade de navegação."/>
-                    <TextBlock Text="• Melhorias em onboarding/tour guiado."/>
-                    <TextBlock Text="• Ajustes em cursos, favoritos e fluxo de estudo."/>
-                    <TextBlock Text="• Evolução contínua do instalador e experiência inicial."/>
+                    <TextBlock Text="Base estavel 3.2.0" FontWeight="SemiBold"/>
+                    <TextBlock Text="• Novo onboarding em 4 etapas com validacao por passo."/>
+                    <TextBlock Text="• Shell lateral proprio para substituir o NavigationView."/>
+                    <TextBlock Text="• Branding fixo da janela e Pomodoro sem sobrescrever o cabecalho."/>
+                    <TextBlock Text="• Base pronta para ciclos incrementais em modelo DLC."/>
                 </StackPanel>
             </Border>
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
-                    <TextBlock x:Name="NextUpdateTitleText" Text="Próxima atualização" FontWeight="SemiBold"/>
-                    <TextBlock Text="• Refino de navegação entre Cursos e Navegador interno."/>
-                    <TextBlock Text="• Melhorias de visibilidade em formulários e onboarding."/>
-                    <TextBlock Text="• Ajustes finais no tour guiado (textos, posição e retorno)."/>
-                    <TextBlock Text="• Correções de estabilidade no fluxo de voltar/sair do navegador."/>
+                    <TextBlock x:Name="NextUpdateTitleText" Text="Proximo pack DLC" FontWeight="SemiBold"/>
+                    <TextBlock Text="• 3.2.1 - Checkpoint: web-content, onboarding-content e branding-assets."/>
+                    <TextBlock Text="• Nova home interna do navegador, paginas dds:// refinadas e 404 personalizada."/>
+                    <TextBlock Text="• Polimento do onboarding, mensagens de boas-vindas e assets visuais."/>
+                    <TextBlock Text="• Entrega incremental sem reinstalar a base do app."/>
                 </StackPanel>
             </Border>
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Roadmap pós-beta (Fase 2)" FontWeight="SemiBold"/>
-                    <TextBlock Text="• Evoluir o atualizador automático (rollback e canary)."/>
-                    <TextBlock Text="• Exportar/importar configurações do usuário."/>
-                    <TextBlock Text="• Telemetria opcional de erros (com consentimento)."/>
-                    <TextBlock Text="• Métricas semanais reais no dashboard."/>
+                    <TextBlock Text="Proximos packs" FontWeight="SemiBold"/>
+                    <TextBlock Text="• 3.2.2 - Power-Up: study-templates, pomodoro-presets e help-center."/>
+                    <TextBlock Text="• 3.2.3 - Signal Boost: browser-presets, notification-pack e community-feed."/>
+                    <TextBlock Text="• 3.3.0 - Quest Hub: nova leva de recursos que exigem atualizacao completa do core."/>
+                    <TextBlock Text="• A linha 3.2.x sera focada em conteudo, presets, branding e comunicacao dentro do app."/>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <HyperlinkButton Content="Ver changelog" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md" />
                         <HyperlinkButton Content="Acompanhar issues" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/issues" />
@@ -167,3 +167,4 @@
         </ScrollViewer>
     </Grid>
 </Page>
+
