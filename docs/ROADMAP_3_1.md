@@ -4,7 +4,7 @@ Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.
 
 Status atual: `3.2.0` fechado localmente em 2026-02-28 (novo onboarding, shell lateral proprio, branding fixo de janela e base pronta para update incremental).
 Status tecnico 3.2.0 (fechado local): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho e build/testes validos.
-Proxima release publica em preparacao: `3.2.0` (novo onboarding em 4 etapas, shell lateral proprio, branding fixo de janela e base pronta para DLC 3.2.1).
+Ultimo release publico consolidado: `3.2.0` (novo onboarding em 4 etapas, shell lateral proprio, branding fixo de janela e base pronta para DLC 3.2.1).
 Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`, `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt` e `artifacts/installer-logs/clean-machine-setup-20260228-100341-inno.log`.
 
 ## Patch fechado (3.1.2)

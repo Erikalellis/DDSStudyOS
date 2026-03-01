@@ -2,7 +2,7 @@
 
 ## Estado atual
 - Versao estavel validada localmente: `3.2.0`
-- Proxima release publica em preparacao: `3.2.0` (`v3.2.0` no GitHub Releases)
+- Ultimo release publico consolidado: `3.2.0` (`v3.2.0` no GitHub Releases)
 - Ciclo atual fechado localmente: `3.2.0` (onboarding em 4 etapas, menu lateral proprio, branding da janela e ajustes de primeiro uso)
 - Proximo ciclo incremental (DLC): `3.2.1` (refino do modulo `web-content`, manifestos incrementais e polimento do onboarding)
 
@@ -33,4 +33,4 @@ Depois de publicar o repositorio, use estes links na pagina de release/instalado
 - Update Info: `https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md`
 - Suporte: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
 - Release notes: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
-- Proxima tag publica: `https://github.com/Erikalellis/DDSStudyOS/tree/v3.2.0`
+- Tag atual: `https://github.com/Erikalellis/DDSStudyOS/tree/v3.2.0`
