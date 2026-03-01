@@ -1249,6 +1249,18 @@ public sealed partial class BrowserPage : Page
     {
         var now = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         var feedbackUrl = WebUtility.HtmlEncode(SettingsService.FeedbackFormUrl);
+        var moduleHtml = BrowserContentModuleService.TryLoadWebTemplate(
+            "home.html",
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["CURRENT_TIMESTAMP"] = WebUtility.HtmlEncode(now),
+                ["FEEDBACK_URL"] = feedbackUrl
+            });
+
+        if (!string.IsNullOrWhiteSpace(moduleHtml))
+        {
+            return moduleHtml;
+        }
 
         return $$"""
 <!doctype html>
@@ -1383,6 +1395,18 @@ public sealed partial class BrowserPage : Page
     {
         var encodedUrl = WebUtility.HtmlEncode(attemptedUrl);
         var encodedStatus = WebUtility.HtmlEncode(status.ToString());
+        var moduleHtml = BrowserContentModuleService.TryLoadWebTemplate(
+            "error.html",
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["ATTEMPTED_URL"] = encodedUrl,
+                ["ERROR_STATUS"] = encodedStatus
+            });
+
+        if (!string.IsNullOrWhiteSpace(moduleHtml))
+        {
+            return moduleHtml;
+        }
 
         return $$"""
 <!doctype html>
@@ -1459,6 +1483,17 @@ public sealed partial class BrowserPage : Page
     private static string BuildAliasNotFoundPageHtml(string alias)
     {
         var encodedAlias = WebUtility.HtmlEncode(alias);
+        var moduleHtml = BrowserContentModuleService.TryLoadWebTemplate(
+            "404.html",
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                ["ALIAS"] = encodedAlias
+            });
+
+        if (!string.IsNullOrWhiteSpace(moduleHtml))
+        {
+            return moduleHtml;
+        }
 
         return $$"""
 <!doctype html>

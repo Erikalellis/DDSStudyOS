@@ -1,0 +1,9 @@
+{
+  "id": "onboarding-content",
+  "version": "3.2.1",
+  "assetName": "DDSStudyOS-DLC-onboarding-content.zip",
+  "extractSubdirectory": "onboarding-content",
+  "required": false,
+  "enabled": true,
+  "description": "Textos e configuracoes de polimento do onboarding em 4 etapas."
+}

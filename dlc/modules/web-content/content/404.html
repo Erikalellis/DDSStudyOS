@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DDS Browser - 404</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(980px 520px at 8% -10%, #302f7a66 0%, transparent 60%),
+        #060818;
+      color: #eef2ff;
+    }
+    .card {
+      width: min(780px, 96vw);
+      background: linear-gradient(180deg, #141f3b, #0f172e);
+      border: 1px solid #324985;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 22px 55px #0008;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 1.7rem;
+    }
+    p {
+      margin: 0 0 10px;
+      color: #b9c7ea;
+      line-height: 1.5;
+    }
+    code {
+      display: block;
+      margin: 12px 0 16px;
+      background: #0b1429;
+      border: 1px solid #29407a;
+      padding: 10px 12px;
+      border-radius: 12px;
+      word-break: break-all;
+      color: #dbe7ff;
+    }
+    .links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    a {
+      color: #8dd4ff;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #112040;
+      border: 1px solid #27417b;
+    }
+  </style>
+</head>
+<body>
+  <section class="card">
+    <h1>Pagina interna nao encontrada</h1>
+    <p>O alias solicitado nao existe neste momento no DDS Browser. Use um dos atalhos validos abaixo.</p>
+    <code>{{ALIAS}}</code>
+    <div class="links">
+      <a href="dds://inicio">dds://inicio</a>
+      <a href="dds://cursos">dds://cursos</a>
+      <a href="dds://favoritos">dds://favoritos</a>
+      <a href="dds://agenda">dds://agenda</a>
+      <a href="dds://config">dds://config</a>
+    </div>
+  </section>
+</body>
+</html>

@@ -7,7 +7,9 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -16,9 +18,12 @@ namespace DDSStudyOS.App;
 
 public sealed partial class MainWindow : Window
 {
-    private static readonly string WindowTitle = $"{AppReleaseInfo.CompanyName} : StudyOS";
+    private const string DefaultWindowTitle = AppReleaseInfo.CompanyName + " : StudyOS";
     private readonly DownloadOrganizerService _downloadOrganizer = new();
     private readonly ReminderNotificationService _reminderNotifier = new(new DatabaseService());
+    private readonly BrandingModuleContent _brandingContent;
+    private readonly OnboardingModuleContent _onboardingContent;
+    private readonly string _windowTitle;
     private PomodoroService? _pomodoro;
     private bool _bootstrapped;
     private bool _splashDismissed;
@@ -39,9 +44,37 @@ public sealed partial class MainWindow : Window
         string Subtitle,
         TeachingTipPlacementMode PreferredPlacement = TeachingTipPlacementMode.Auto);
 
+    private sealed class BrandingModuleContent
+    {
+        public string? WindowTitle { get; set; }
+        public string? BrandLine { get; set; }
+        public string? ProductName { get; set; }
+        public string? ChannelMessage { get; set; }
+    }
+
+    private sealed class OnboardingModuleContent
+    {
+        public string? Headline { get; set; }
+        public string? Subheadline { get; set; }
+        public List<OnboardingModuleStepContent> Steps { get; set; } = new();
+        public string? FooterHint { get; set; }
+    }
+
+    private sealed class OnboardingModuleStepContent
+    {
+        public string? Id { get; set; }
+        public string? Title { get; set; }
+        public string? Summary { get; set; }
+    }
+
     public MainWindow()
     {
         this.InitializeComponent();
+        _brandingContent = LoadBrandingContent();
+        _onboardingContent = LoadOnboardingContent();
+        _windowTitle = string.IsNullOrWhiteSpace(_brandingContent.WindowTitle)
+            ? DefaultWindowTitle
+            : _brandingContent.WindowTitle.Trim();
         Closed += MainWindow_Closed;
         SizeChanged += MainWindow_SizeChanged;
         AppState.PomodoroSettingsChanged += OnPomodoroSettingsChanged;
@@ -74,7 +107,7 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            this.Title = WindowTitle;
+            this.Title = _windowTitle;
 
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
@@ -88,7 +121,7 @@ public sealed partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            this.Title = WindowTitle;
+            this.Title = _windowTitle;
             AppLogger.Warn($"Branding da janela: falha ao aplicar icone. Motivo: {ex.Message}");
         }
     }
@@ -118,8 +151,12 @@ public sealed partial class MainWindow : Window
         SplashChannelBadge.BorderBrush = new SolidColorBrush(badgeBorder);
         SplashChannelBadgeText.Foreground = new SolidColorBrush(badgeForeground);
 
+        var productName = string.IsNullOrWhiteSpace(_brandingContent.ProductName)
+            ? AppReleaseInfo.ProductName
+            : _brandingContent.ProductName.Trim();
+
         SplashChannelBadgeText.Text = $"{AppReleaseInfo.ChannelBadge} v{AppReleaseInfo.MarketingVersion}";
-        SplashTitleText.Text = isBeta ? "Carregando DDS StudyOS Beta" : "Carregando DDS StudyOS";
+        SplashTitleText.Text = isBeta ? $"Carregando {productName} Beta" : $"Carregando {productName}";
         SplashVersionText.Text = AppReleaseInfo.SplashVersionLabel;
     }
 
@@ -135,7 +172,9 @@ public sealed partial class MainWindow : Window
             contentVisual.Scale = new Vector3(0.98f, 0.98f, 1f);
 
             SplashProgressBar.Value = 0;
-            SplashStatusText.Text = "Iniciando...";
+            SplashStatusText.Text = string.IsNullOrWhiteSpace(_brandingContent.ChannelMessage)
+                ? "Iniciando..."
+                : _brandingContent.ChannelMessage!.Trim();
         }
         catch (Exception ex)
         {
@@ -459,6 +498,7 @@ public sealed partial class MainWindow : Window
             OnboardingDailyGoalSlider.Value = 60;
             OnboardingRemindersToggle.IsOn = true;
             OnboardingReminderTimePicker.Time = new TimeSpan(19, 0, 0);
+            OnboardingFooterHintText.Text = ResolveOnboardingFooterHint();
 
             UpdateOnboardingStepVisualState();
         }
@@ -630,26 +670,26 @@ public sealed partial class MainWindow : Window
             case 0:
                 OnboardingStepCounterText.Text = "Passo 1 de 4";
                 OnboardingProgressBar.Value = 25;
-                OnboardingHeadlineText.Text = "Bem-vinda(o) ao DDS StudyOS";
-                OnboardingSubheadlineText.Text = "Crie seu perfil para começar.";
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(0, "Bem-vinda(o) ao DDS StudyOS");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(0, "Crie seu perfil para começar.");
                 break;
             case 1:
                 OnboardingStepCounterText.Text = "Passo 2 de 4";
                 OnboardingProgressBar.Value = 50;
-                OnboardingHeadlineText.Text = "O que você quer estudar?";
-                OnboardingSubheadlineText.Text = "Escolha sua área principal e o seu nível atual.";
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(1, "O que você quer estudar?");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(1, "Escolha sua área principal e o seu nível atual.");
                 break;
             case 2:
                 OnboardingStepCounterText.Text = "Passo 3 de 4";
                 OnboardingProgressBar.Value = 75;
-                OnboardingHeadlineText.Text = "Como você prefere estudar?";
-                OnboardingSubheadlineText.Text = "Vamos criar um plano inicial para o seu ritmo.";
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(2, "Como você prefere estudar?");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(2, "Vamos criar um plano inicial para o seu ritmo.");
                 break;
             default:
                 OnboardingStepCounterText.Text = "Passo 4 de 4";
                 OnboardingProgressBar.Value = 100;
-                OnboardingHeadlineText.Text = "Seu plano inicial está pronto";
-                OnboardingSubheadlineText.Text = "Revise os dados e comece sua jornada.";
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(3, "Seu plano inicial está pronto");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(3, "Revise os dados e comece sua jornada.");
                 break;
         }
 
@@ -672,6 +712,7 @@ public sealed partial class MainWindow : Window
         OnboardingSummaryLevelText.Text = $"Nível: {_selectedOnboardingLevel}";
         OnboardingSummaryGoalText.Text = $"Meta diária: {goalMinutes} minutos";
         OnboardingSummaryShiftText.Text = $"Turno: {_selectedOnboardingShift}";
+        OnboardingFooterHintText.Text = ResolveOnboardingFooterHint();
 
         OnboardingBackButton.Visibility = _onboardingStepIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
         OnboardingSkipButton.Visibility = _onboardingStepIndex >= 3 ? Visibility.Collapsed : Visibility.Visible;
@@ -821,6 +862,74 @@ public sealed partial class MainWindow : Window
         {
             return false;
         }
+    }
+
+    private BrandingModuleContent LoadBrandingContent()
+    {
+        return DlcModuleContentService.TryLoadJson<BrandingModuleContent>(
+                "branding-assets",
+                Path.Combine("content", "branding.json"))
+            ?? new BrandingModuleContent();
+    }
+
+    private OnboardingModuleContent LoadOnboardingContent()
+    {
+        var content = DlcModuleContentService.TryLoadJson<OnboardingModuleContent>(
+            "onboarding-content",
+            Path.Combine("content", "onboarding-copy.json"));
+
+        content ??= new OnboardingModuleContent();
+        content.Steps ??= new List<OnboardingModuleStepContent>();
+        return content;
+    }
+
+    private string GetOnboardingStepTitle(int stepIndex, string fallback)
+    {
+        var step = GetOnboardingStep(stepIndex);
+        if (!string.IsNullOrWhiteSpace(step?.Title))
+        {
+            return step!.Title!.Trim();
+        }
+
+        if (stepIndex == 0 && !string.IsNullOrWhiteSpace(_onboardingContent.Headline))
+        {
+            return _onboardingContent.Headline!.Trim();
+        }
+
+        return fallback;
+    }
+
+    private string GetOnboardingStepSummary(int stepIndex, string fallback)
+    {
+        var step = GetOnboardingStep(stepIndex);
+        if (!string.IsNullOrWhiteSpace(step?.Summary))
+        {
+            return step!.Summary!.Trim();
+        }
+
+        if (stepIndex == 0 && !string.IsNullOrWhiteSpace(_onboardingContent.Subheadline))
+        {
+            return _onboardingContent.Subheadline!.Trim();
+        }
+
+        return fallback;
+    }
+
+    private string ResolveOnboardingFooterHint()
+    {
+        return string.IsNullOrWhiteSpace(_onboardingContent.FooterHint)
+            ? "Você poderá editar tudo depois em Configurações."
+            : _onboardingContent.FooterHint!.Trim();
+    }
+
+    private OnboardingModuleStepContent? GetOnboardingStep(int stepIndex)
+    {
+        if (stepIndex < 0 || stepIndex >= _onboardingContent.Steps.Count)
+        {
+            return null;
+        }
+
+        return _onboardingContent.Steps[stepIndex];
     }
 
     private Task EnsureFirstRunTourAsync()
@@ -1286,7 +1395,7 @@ public sealed partial class MainWindow : Window
 
                 PomoTimerText.Text = "00:00";
                 PomoActionBtn.Content = "\uE768";
-                this.Title = WindowTitle;
+                this.Title = _windowTitle;
 
                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
                 TaskbarService.SetState(hwnd, TaskbarService.TbpFlag.TBPF_NOPROGRESS);
@@ -1295,7 +1404,7 @@ public sealed partial class MainWindow : Window
 
         _pomodoro.SetIdlePreview(workMode: true, minutes: SettingsService.PomodoroFocusMinutes);
         PomoActionBtn.Content = "\uE768";
-        this.Title = WindowTitle;
+        this.Title = _windowTitle;
     }
 
     private void OnPomodoroSettingsChanged()
@@ -1392,7 +1501,7 @@ public sealed partial class MainWindow : Window
 
         _pomodoro.Stop();
         PomoActionBtn.Content = "\uE768"; // Play
-        this.Title = WindowTitle;
+        this.Title = _windowTitle;
 
         var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
         TaskbarService.SetState(hwnd, TaskbarService.TbpFlag.TBPF_NOPROGRESS);

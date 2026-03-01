@@ -74,13 +74,13 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 - Adicionar teste automatizado para visibilidade do desinstalador no Windows.
 - Expandir logs de instalação/desinstalação para diagnóstico em campo.
 
-2. Navegador interno
+1. Navegador interno
 
 - Sincronizar favoritos por perfil com export/import.
 - Histórico de navegação por perfil com limpeza rápida.
 - Melhorar modo leitura para aulas longas (UI mais limpa, foco).
 
-3. Materiais e certificados
+1. Materiais e certificados
 
 - Detecção automática de arquivo temporário e limpeza em segundo plano.
 - Tags e filtro avançado por tipo/curso/data.
@@ -94,13 +94,13 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 - Verificação de update assinada (hash + assinatura do manifesto).
 - Script único de release "one click" com validação de gate.
 
-2. Produtividade de estudo
+1. Produtividade de estudo
 
 - Metas semanais (não só diárias) e relatório de consistência.
 - Pomodoro por perfil com presets (foco profundo, revisão, prática).
 - Agenda com lembretes recorrentes e snooze configurável.
 
-3. Segurança e dados
+1. Segurança e dados
 
 - Auditoria de backups (data, tamanho, origem, validade).
 - Verificação de integridade do banco antes de restore.
@@ -114,7 +114,7 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 - Templates de trilhas (frontend, backend, dados, segurança).
 - Integração opcional com calendário externo (Google/Microsoft).
 
-2. Operação
+1. Operação
 
 - Telemetria opt-in anonimizada para crash e performance.
 - Painel interno de saúde da aplicação (runtime, DB, update channel).
@@ -125,5 +125,3 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 - Zero bug crítico aberto por 2 ciclos de regressão consecutivos.
 - Build/release 100% reproduzível com artefatos assinados.
 - Cobertura mínima dos fluxos críticos (onboarding, navegador, backup, instalação, desinstalação).
-
-

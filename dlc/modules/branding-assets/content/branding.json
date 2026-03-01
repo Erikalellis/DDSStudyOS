@@ -1,0 +1,10 @@
+{
+  "windowTitle": "Deep Darkness Studios : StudyOS",
+  "brandLine": "Deep Darkness Studios",
+  "productName": "DDS StudyOS",
+  "channelMessage": "Linha 3.2.x preparada para packs incrementais.",
+  "notes": [
+    "Usar este modulo para assets e metadados visuais leves.",
+    "Nao usar para trocar binarios principais."
+  ]
+}

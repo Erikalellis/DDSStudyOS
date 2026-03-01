@@ -325,7 +325,7 @@
                                         <TextBlock x:Name="OnboardingSummaryShiftText" Text="Turno: -" Foreground="#E6FFFFFF" />
                                     </StackPanel>
                                 </Border>
-                                <TextBlock Text="Você poderá editar tudo depois em Configurações."
+                                <TextBlock x:Name="OnboardingFooterHintText" Text="Você poderá editar tudo depois em Configurações."
                                            Foreground="#BFE4E8FF"
                                            FontSize="12"
                                            TextWrapping="WrapWholeWords" />

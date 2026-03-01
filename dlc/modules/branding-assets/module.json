@@ -1,0 +1,9 @@
+{
+  "id": "branding-assets",
+  "version": "3.2.1",
+  "assetName": "DDSStudyOS-DLC-branding-assets.zip",
+  "extractSubdirectory": "branding-assets",
+  "required": false,
+  "enabled": true,
+  "description": "Metadados de identidade visual para splash, janelas e cards internos."
+}

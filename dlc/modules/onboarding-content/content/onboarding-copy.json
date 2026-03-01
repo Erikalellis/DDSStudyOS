@@ -1,0 +1,27 @@
+{
+  "headline": "Bem-vinda(o) ao DDS StudyOS",
+  "subheadline": "Crie seu perfil para comecar.",
+  "steps": [
+    {
+      "id": "identity",
+      "title": "Bem-vinda(o) ao DDS StudyOS",
+      "summary": "Crie seu perfil para comecar."
+    },
+    {
+      "id": "study-area",
+      "title": "O que voce quer estudar?",
+      "summary": "Escolha sua area principal e o seu nivel atual."
+    },
+    {
+      "id": "study-rhythm",
+      "title": "Como voce prefere estudar?",
+      "summary": "Vamos criar um plano inicial para o seu ritmo."
+    },
+    {
+      "id": "review",
+      "title": "Seu plano inicial esta pronto",
+      "summary": "Revise os dados e comece sua jornada."
+    }
+  ],
+  "footerHint": "Voce podera editar tudo depois em Configuracoes."
+}

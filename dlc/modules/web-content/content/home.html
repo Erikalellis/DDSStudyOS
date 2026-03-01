@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DDS StudyOS Browser</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050817;
+      --panel: #0f1730;
+      --panel-2: #121f43;
+      --line: #365086;
+      --text: #eef2ff;
+      --muted: #aeb9d9;
+      --accent: #6f7eff;
+      --accent-2: #47d3ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(980px 520px at 5% -10%, #2a3e8066 0%, transparent 60%),
+        radial-gradient(1100px 620px at 100% 0%, #48277155 0%, transparent 58%),
+        var(--bg);
+      padding: 24px;
+      display: grid;
+      place-items: center;
+    }
+    .shell {
+      width: min(960px, 96vw);
+      background: linear-gradient(180deg, #101831, #0c1429);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 24px 60px #0008;
+      overflow: hidden;
+    }
+    .hero {
+      padding: 26px 28px 18px;
+      border-bottom: 1px solid #223761;
+      background: linear-gradient(135deg, #121f43, #101831 60%, #15132b);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid #5471b8;
+      background: radial-gradient(circle at 30% 25%, #4d69f0, #111836 70%);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #d6e5ff;
+    }
+    h1 {
+      margin: 14px 0 8px;
+      font-size: 2rem;
+      line-height: 1.15;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .badge-row {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #34518d;
+      background: #132349;
+      color: #dbe6ff;
+      font-size: 0.82rem;
+    }
+    .content {
+      padding: 24px 28px 28px;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.25fr 1fr;
+    }
+    .panel {
+      background: linear-gradient(180deg, #111b37, #0f1730);
+      border: 1px solid #263d6e;
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .quick-links a,
+    .actions a {
+      text-decoration: none;
+      color: var(--text);
+      background: #101a34;
+      border: 1px solid #2e487f;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: block;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .quick-links a:hover,
+    .actions a:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent-2);
+      box-shadow: 0 12px 30px #0006;
+    }
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .small {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: #91a3cf;
+    }
+    code {
+      font-family: "Cascadia Code", "Consolas", monospace;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #0a1328;
+      border: 1px solid #203b73;
+    }
+    @media (max-width: 780px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="brand">
+        <div class="logo">DDS</div>
+        <div>
+          <strong>DDS StudyOS Browser</strong><br />
+          <span style="color:#9db4e5">Deep Darkness Studios</span>
+        </div>
+      </div>
+      <h1>Checkpoint concluido: seu navegador interno esta pronto</h1>
+      <p class="subtitle">Use os atalhos abaixo para retomar estudos, navegar pelo sistema e enviar feedback sem sair do app.</p>
+      <div class="badge-row">
+        <span class="badge">Alias rapido: <code>dds://inicio</code></span>
+        <span class="badge">Canal: base local 3.2.x</span>
+        <span class="badge">Atualizado em {{CURRENT_TIMESTAMP}}</span>
+      </div>
+    </section>
+    <section class="content">
+      <section class="panel">
+        <h2>Rotas internas</h2>
+        <p>As rotas <code>dds://</code> levam direto para areas importantes do DDS StudyOS. Isso reduz cliques e deixa a navegacao mais rapida.</p>
+        <div class="quick-links">
+          <a href="dds://cursos">Abrir lista de cursos</a>
+          <a href="dds://favoritos">Abrir favoritos</a>
+          <a href="dds://agenda">Abrir agenda</a>
+          <a href="dds://config">Abrir configuracoes</a>
+          <a href="dds://feedback">Enviar feedback</a>
+          <a href="dds://404">Testar pagina 404</a>
+        </div>
+        <div class="small">Dica: se voce digitar um alias invalido, o DDS Browser agora mostra uma pagina 404 dedicada.</div>
+      </section>
+      <section class="panel">
+        <h2>Acoes rapidas</h2>
+        <p>O navegador tambem pode servir como hub rapido para links externos que ajudam no ciclo de teste e validacao do app.</p>
+        <div class="actions">
+          <a href="http://177.71.165.60/">Site oficial DDS StudyOS</a>
+          <a href="https://github.com/Erikalellis/DDSStudyOS">Repositorio oficial no GitHub</a>
+          <a href="{{FEEDBACK_URL}}">Google Forms para feedback</a>
+          <a href="https://www.google.com/">Abrir busca web</a>
+        </div>
+        <div class="small">Esse conteudo pode ser atualizado por DLC sem reinstalar o aplicativo base.</div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
