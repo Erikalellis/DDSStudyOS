@@ -71,6 +71,7 @@ Regra pratica:
 - Checklist regressao: `docs/BETA_REGRESSION_CHECKLIST.md`
 - Evidencia de update: `docs/UPDATE_SMOKE_EVIDENCE_*.md`
 - Changelog: `CHANGELOG.md`
+- Rollout da bridge `3.2.1`: `docs/BRIDGE_3_2_1_ROLLOUT.md`
 
 ---
 
@@ -147,6 +148,21 @@ Quando voce quer separar etapas:
 5. Publicar release.
 
 Use este modo para depurar falha especifica de setup, hash, feed ou smoke.
+
+### Bridge `3.2.1` (codigo -> canal publico)
+
+Quando houver migracao de feed entre repositorios:
+
+1. publicar assets nos dois repositorios
+2. manter manifestos legados apontando para o repositorio antigo
+3. sincronizar o repo publico novo com os manifestos dele
+4. validar com:
+
+```powershell
+.\scripts\verify-bridge-release.ps1
+```
+
+5. somente depois da janela de adocao tornar o repositorio de codigo privado
 
 ---
 
