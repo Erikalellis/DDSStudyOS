@@ -72,6 +72,7 @@ Regra pratica:
 - Evidencia de update: `docs/UPDATE_SMOKE_EVIDENCE_*.md`
 - Changelog: `CHANGELOG.md`
 - Rollout da bridge `3.2.1`: `docs/BRIDGE_3_2_1_ROLLOUT.md`
+- Corte final para repo privado: `docs/PRIVATE_REPO_CUTOVER_CHECKLIST.md`
 
 ---
 
