@@ -23,8 +23,10 @@ param(
     [string]$PfxPassword = "",
     [ValidateSet("CurrentUser", "LocalMachine")]
     [string]$CertStoreScope = "CurrentUser",
-    [string]$GitHubOwner = "",
-    [string]$GitHubRepo = "",
+    [Alias("GitHubOwner")]
+    [string]$DistributionGitHubOwner = "Erikalellis",
+    [Alias("GitHubRepo")]
+    [string]$DistributionGitHubRepo = "DDSStudyOS-Updates",
     [string]$TimestampUrl = "http://timestamp.digicert.com"
 )
 
@@ -285,7 +287,7 @@ function Invoke-InnoBuild {
 }
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
-$repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $GitHubOwner -Repo $GitHubRepo
+$repoLinks = Get-DdsRepoLinks -RepoRoot $repoRoot -Owner $DistributionGitHubOwner -Repo $DistributionGitHubRepo
 $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path $repoRoot $OutputPath }
 $installerInputExePath = Join-Path $repoRoot "artifacts\installer-input\app\DDSStudyOS.App.exe"
 $buildInnoScript = Join-Path $PSScriptRoot "build-inno-installer.ps1"
@@ -423,8 +425,8 @@ Update-UpdateInfo `
     -InstallerAssetName "$StableSetupBaseName.exe" `
     -DownloadUrl "$($repoLinks.LatestReleaseUrl.TrimEnd('/'))/download/$([System.Uri]::EscapeDataString("$StableSetupBaseName.exe"))" `
     -ReleasePageUrl $repoLinks.LatestReleaseUrl `
-    -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
-    -SupportUrl $repoLinks.SupportUrl `
+    -ReleaseNotesUrl $repoLinks.ReleasesUrl `
+    -SupportUrl $repoLinks.ReleasesUrl `
     -UpdatedAtUtc $updatedAtUtc `
     -InstallerSha256 $stableSetupSha256 `
     -SignerThumbprint $expectedSignerThumbprint
@@ -435,8 +437,8 @@ if (-not $SkipBeta) {
         -InstallerAssetName "$BetaSetupBaseName.exe" `
         -DownloadUrl "$($repoLinks.BaseUrl)/releases/download/v$stableVersion/$([System.Uri]::EscapeDataString("$BetaSetupBaseName.exe"))" `
         -ReleasePageUrl $repoLinks.ReleasesUrl `
-        -ReleaseNotesUrl $repoLinks.ReleaseNotesUrl `
-        -SupportUrl $repoLinks.SupportUrl `
+        -ReleaseNotesUrl $repoLinks.ReleasesUrl `
+        -SupportUrl $repoLinks.ReleasesUrl `
         -UpdatedAtUtc $updatedAtUtc `
         -InstallerSha256 $betaSetupSha256 `
         -SignerThumbprint $expectedSignerThumbprint

@@ -10,8 +10,15 @@ param(
     [string]$BetaSetupBaseName = "DDSStudyOS-Beta-Setup",
     [string]$PortableBaseName = "DDSStudyOS-Portable",
     [string]$ShaFileName = "DDSStudyOS-SHA256.txt",
-    [string]$Owner = "Erikalellis",
-    [string]$Repo = "DDSStudyOS",
+    [string]$CodeGitHubOwner = "Erikalellis",
+    [string]$CodeGitHubRepo = "DDSStudyOS",
+    [Alias("Owner")]
+    [string]$DistributionGitHubOwner = "Erikalellis",
+    [Alias("Repo")]
+    [string]$DistributionGitHubRepo = "DDSStudyOS-Updates",
+    [switch]$BridgeLegacyPublish,
+    [string]$LegacyGitHubOwner = "Erikalellis",
+    [string]$LegacyGitHubRepo = "DDSStudyOS",
     [string]$ReleaseTag = "",
     [switch]$SkipFirstUseSmoke,
     [switch]$SkipCleanMachineSmoke,
@@ -158,13 +165,13 @@ Write-Host "==> 1/4 Build release package (setup + beta + portable + sha256)"
     -BetaSetupBaseName $BetaSetupBaseName `
     -PortableBaseName $PortableBaseName `
     -ShaFileName $ShaFileName `
-    -GitHubOwner $Owner `
-    -GitHubRepo $Repo
+    -DistributionGitHubOwner $DistributionGitHubOwner `
+    -DistributionGitHubRepo $DistributionGitHubRepo
 
 Write-Host ""
 Write-Host "==> 2/4 Build DLC manifests (stable + beta)"
-& $dlcScript -Channel stable -OutputPath $DlcOutputPath -Owner $Owner -Repo $Repo -ReleaseTag $ReleaseTag
-& $dlcScript -Channel beta -OutputPath $DlcOutputPath -Owner $Owner -Repo $Repo -ReleaseTag $ReleaseTag
+& $dlcScript -Channel stable -OutputPath $DlcOutputPath -DistributionGitHubOwner $DistributionGitHubOwner -DistributionGitHubRepo $DistributionGitHubRepo -ReleaseTag $ReleaseTag
+& $dlcScript -Channel beta -OutputPath $DlcOutputPath -DistributionGitHubOwner $DistributionGitHubOwner -DistributionGitHubRepo $DistributionGitHubRepo -ReleaseTag $ReleaseTag
 
 $stableSetupPath = Join-Path $resolvedOutputPath "$StableSetupBaseName.exe"
 $betaSetupPath = Join-Path $resolvedOutputPath "$BetaSetupBaseName.exe"
@@ -285,6 +292,11 @@ $reportLines += ""
 $reportLines += "- Data: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 $reportLines += "- Versao estavel: $stableVersion"
 $reportLines += "- Versao beta alvo: $effectiveBetaVersion"
+$reportLines += "- Repo de codigo: $CodeGitHubOwner/$CodeGitHubRepo"
+$reportLines += "- Repo de distribuicao: $DistributionGitHubOwner/$DistributionGitHubRepo"
+if ($BridgeLegacyPublish) {
+    $reportLines += "- Ponte legada habilitada: $LegacyGitHubOwner/$LegacyGitHubRepo"
+}
 $reportLines += ""
 $reportLines += "## Resultado dos checks"
 

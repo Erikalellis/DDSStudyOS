@@ -37,9 +37,11 @@ Evidencias atuais do fechamento local: build/testes de 2026-02-28, `artifacts/in
 
 ### 3.2.1 - Checkpoint (DLC)
 
-- [ ] Atualizar o modulo web-content com nova home interna, paginas dds:// refinadas e 404 personalizada.
-- [ ] Publicar os modulos onboarding-content e branding-assets como base de polimento visual e fluxo inicial.
+- [x] Atualizar o modulo web-content com nova home interna, paginas dds:// refinadas e 404 personalizada.
+- [x] Publicar os modulos onboarding-content e branding-assets como base de polimento visual e fluxo inicial.
 - [ ] Validar manifestos DLC stable e beta com rollback funcional antes do proximo setup completo.
+
+Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/DDSStudyOS-Updates`, com manifests e assets `3.2.0` publicados para a fase de transicao.
 
 ### 3.2.2 - Power-Up (DLC)
 

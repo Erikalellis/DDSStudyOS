@@ -14,12 +14,10 @@ namespace DDSStudyOS.App.Services;
 
 public sealed class DlcUpdateService
 {
-    private const string Owner = "Erikalellis";
-    private const string Repo = "DDSStudyOS";
     private const int HttpTimeoutSeconds = 30;
 
-    private static readonly Uri StableManifestUri = new($"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/update/stable/dlc-manifest.json");
-    private static readonly Uri BetaManifestUri = new($"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/update/beta/dlc-manifest.json");
+    private static readonly Uri StableManifestUri = UpdateDistributionConfig.GetStableDlcManifestUri();
+    private static readonly Uri BetaManifestUri = UpdateDistributionConfig.GetBetaDlcManifestUri();
     private static readonly HttpClient Http = CreateHttpClient();
 
     private static readonly string LocalDlcRoot = Path.Combine(
@@ -415,15 +413,15 @@ public sealed class DlcUpdateService
         var releaseTag = manifest.ReleaseTag?.Trim();
         if (!string.IsNullOrWhiteSpace(releaseTag))
         {
-            return $"https://github.com/{Owner}/{Repo}/releases/download/{Uri.EscapeDataString(releaseTag)}/{Uri.EscapeDataString(assetName)}";
+            return UpdateDistributionConfig.BuildReleaseDownloadUrl(releaseTag, assetName);
         }
 
         if (channel == "beta")
         {
-            return $"https://github.com/{Owner}/{Repo}/releases/latest/download/{Uri.EscapeDataString(assetName)}";
+            return UpdateDistributionConfig.BuildLatestReleaseDownloadUrl(assetName);
         }
 
-        return $"https://github.com/{Owner}/{Repo}/releases/latest/download/{Uri.EscapeDataString(assetName)}";
+        return UpdateDistributionConfig.BuildLatestReleaseDownloadUrl(assetName);
     }
 
     private static string NormalizeChannel(string? raw)

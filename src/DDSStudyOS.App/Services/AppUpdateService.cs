@@ -15,13 +15,11 @@ namespace DDSStudyOS.App.Services;
 
 public sealed class AppUpdateService
 {
-    private const string Owner = "Erikalellis";
-    private const string Repo = "DDSStudyOS";
     private const string DefaultSignerThumbprint = "6780CE530A33615B591727F5334B3DD075B76422";
     private const int HttpTimeoutSeconds = 20;
 
-    private static readonly Uri StableFeedUri = new($"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/update/stable/update-info.json");
-    private static readonly Uri BetaFeedUri = new($"https://raw.githubusercontent.com/{Owner}/{Repo}/main/installer/update/beta/update-info.json");
+    private static readonly Uri StableFeedUri = UpdateDistributionConfig.GetStableUpdateFeedUri();
+    private static readonly Uri BetaFeedUri = UpdateDistributionConfig.GetBetaUpdateFeedUri();
     private static readonly HttpClient Http = CreateHttpClient();
 
     public async Task<AppUpdateCheckResult> CheckForUpdatesAsync(string? channel = null, CancellationToken cancellationToken = default)
@@ -55,7 +53,7 @@ public sealed class AppUpdateService
 
             var remoteVersion = info.CurrentVersion.Trim();
             var updateAvailable = IsRemoteVersionNewer(localVersion, remoteVersion);
-            var releasePageUrl = NormalizeUrl(info.ReleasePageUrl, $"https://github.com/{Owner}/{Repo}/releases");
+            var releasePageUrl = NormalizeUrl(info.ReleasePageUrl, UpdateDistributionConfig.GetPublicReleasesUrl());
             var downloadUrl = ResolveDownloadUrl(info, effectiveChannel, remoteVersion);
             var expectedSha256 = NormalizeHex(info.InstallerSha256 ?? info.Sha256);
             var expectedSignerThumbprint = NormalizeHex(info.SignerThumbprint);
@@ -444,10 +442,10 @@ public sealed class AppUpdateService
 
         if (channel == "beta")
         {
-            return $"https://github.com/{Owner}/{Repo}/releases/download/v{remoteVersion}/{Uri.EscapeDataString(asset)}";
+            return UpdateDistributionConfig.BuildReleaseDownloadUrl($"v{remoteVersion}", asset);
         }
 
-        return $"https://github.com/{Owner}/{Repo}/releases/latest/download/{Uri.EscapeDataString(asset)}";
+        return UpdateDistributionConfig.BuildLatestReleaseDownloadUrl(asset);
     }
 
     private static string NormalizeInstallerAssetName(string? installerAssetName, string channel)

@@ -36,9 +36,30 @@ if (-not ($releaseProfile -is [System.Collections.IDictionary])) {
     throw "Profile invalido: o arquivo deve retornar um hashtable de parametros."
 }
 
+$releaseCommand = Get-Command $releaseScript -ErrorAction Stop
+$allowedKeys = @{}
+foreach ($parameterName in $releaseCommand.Parameters.Keys) {
+    $allowedKeys[$parameterName] = $true
+}
+
 $releaseParams = @{}
 foreach ($key in $releaseProfile.Keys) {
-    $releaseParams[$key] = $releaseProfile[$key]
+    if ($allowedKeys.ContainsKey([string]$key)) {
+        $releaseParams[$key] = $releaseProfile[$key]
+        continue
+    }
+
+    if ([string]::Equals([string]$key, "GitHubOwner", [System.StringComparison]::OrdinalIgnoreCase) -and
+        -not $releaseParams.ContainsKey("DistributionGitHubOwner")) {
+        $releaseParams["DistributionGitHubOwner"] = $releaseProfile[$key]
+        continue
+    }
+
+    if ([string]::Equals([string]$key, "GitHubRepo", [System.StringComparison]::OrdinalIgnoreCase) -and
+        -not $releaseParams.ContainsKey("DistributionGitHubRepo")) {
+        $releaseParams["DistributionGitHubRepo"] = $releaseProfile[$key]
+        continue
+    }
 }
 
 Write-Host "==> Usando profile: $resolvedProfilePath"

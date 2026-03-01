@@ -28,6 +28,11 @@
     CertStoreScope = "CurrentUser"
     TimestampUrl = "http://timestamp.digicert.com"
 
-    GitHubOwner = "Erikalellis"
-    GitHubRepo = "DDSStudyOS"
+    CodeGitHubOwner = "Erikalellis"
+    CodeGitHubRepo = "DDSStudyOS"
+    DistributionGitHubOwner = "Erikalellis"
+    DistributionGitHubRepo = "DDSStudyOS-Updates"
+    BridgeLegacyPublish = $true
+    LegacyGitHubOwner = "Erikalellis"
+    LegacyGitHubRepo = "DDSStudyOS"
 }

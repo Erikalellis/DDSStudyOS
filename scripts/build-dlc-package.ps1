@@ -4,8 +4,10 @@ param(
     [string]$ModuleRoot = "dlc/modules",
     [string]$OutputPath = "artifacts/dlc-output",
     [string]$ManifestPath = "",
-    [string]$Owner = "Erikalellis",
-    [string]$Repo = "DDSStudyOS",
+    [Alias("Owner", "GitHubOwner")]
+    [string]$DistributionGitHubOwner = "Erikalellis",
+    [Alias("Repo", "GitHubRepo")]
+    [string]$DistributionGitHubRepo = "DDSStudyOS-Updates",
     [string]$ReleaseTag = ""
 )
 
@@ -141,10 +143,10 @@ foreach ($moduleDir in $moduleDirectories) {
         ([string]$config.downloadUrl).Trim()
     }
     elseif (-not [string]::IsNullOrWhiteSpace($ReleaseTag)) {
-        "https://github.com/$Owner/$Repo/releases/download/$ReleaseTag/$assetName"
+        "https://github.com/$DistributionGitHubOwner/$DistributionGitHubRepo/releases/download/$ReleaseTag/$assetName"
     }
     else {
-        "https://github.com/$Owner/$Repo/releases/latest/download/$assetName"
+        "https://github.com/$DistributionGitHubOwner/$DistributionGitHubRepo/releases/latest/download/$assetName"
     }
 
     $moduleDescription = if ($config -and -not [string]::IsNullOrWhiteSpace($config.description)) {
@@ -194,3 +196,4 @@ Write-Host ""
 Write-Host "Manifesto DLC atualizado: $resolvedManifestPath"
 Write-Host "Modulos empacotados: $($modules.Count)"
 Write-Host "Pasta de saida: $resolvedOutputPath"
+Write-Host "Repo publico de distribuicao: $DistributionGitHubOwner/$DistributionGitHubRepo"
