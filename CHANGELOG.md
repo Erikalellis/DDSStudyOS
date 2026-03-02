@@ -17,6 +17,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Versao do app promovida para `3.2.3` para permitir comparacao de versao acima de `3.2.2` no canal `beta`.
 - Cabecalho da aba `Desenvolvimento` ajustado para comunicar a linha DLC em validacao da propria `3.2.3`.
 - Auto-cadastro de downloads agora ignora instaladores e scripts, e a tela `Materiais` remove registros poluidos antigos sem curso em modo `reference`.
+- Canal `beta` realinhado para o instalador assinado da tag `v3.2.3-beta.2`, levando o hotfix de `Materiais` para os testers.
 
 ## [3.2.2] - 2026-03-02
 ### Adicionado
