@@ -9,6 +9,24 @@ public sealed class DownloadAutoRegisterService
 {
     private readonly DatabaseService _db;
     private readonly MaterialRepository _materials;
+    private static readonly string[] BlockedAutoRegisterExtensions =
+    {
+        ".exe",
+        ".msi",
+        ".msix",
+        ".msixbundle",
+        ".appx",
+        ".appxbundle",
+        ".msu",
+        ".cab",
+        ".dll",
+        ".ps1",
+        ".bat",
+        ".cmd",
+        ".com",
+        ".scr",
+        ".iso"
+    };
 
     public DownloadAutoRegisterService(DatabaseService db)
     {
@@ -18,7 +36,7 @@ public sealed class DownloadAutoRegisterService
 
     public async Task RegisterAsync(string destPath, string fileName, string category)
     {
-        if (IsTemporaryFile(destPath, fileName))
+        if (!ShouldRegisterAsMaterial(destPath, fileName))
         {
             return;
         }
@@ -33,6 +51,30 @@ public sealed class DownloadAutoRegisterService
             FilePath = destPath,
             FileType = category
         });
+    }
+
+    private static bool ShouldRegisterAsMaterial(string path, string name)
+    {
+        if (IsTemporaryFile(path, name))
+        {
+            return false;
+        }
+
+        var ext = Path.GetExtension(string.IsNullOrWhiteSpace(name) ? path : name);
+        if (string.IsNullOrWhiteSpace(ext))
+        {
+            return true;
+        }
+
+        foreach (var blocked in BlockedAutoRegisterExtensions)
+        {
+            if (string.Equals(ext, blocked, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool IsTemporaryFile(string path, string name)

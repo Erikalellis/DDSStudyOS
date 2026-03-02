@@ -49,12 +49,24 @@ public sealed partial class MaterialsPage : Page
             _materials = new MaterialRepository(_db);
 
             var removedTemporary = await _materials.DeleteTemporaryEntriesAsync();
+            var removedBlockedAutoRegistered = await _materials.DeleteBlockedAutoRegisteredEntriesAsync();
             await LoadCoursesAsync();
             await ReloadAsync();
 
-            if (removedTemporary > 0)
+            if (removedTemporary > 0 || removedBlockedAutoRegistered > 0)
             {
-                MsgText.Text = $"Removidos {removedTemporary} registro(s) temporário(s).";
+                var parts = new List<string>();
+                if (removedTemporary > 0)
+                {
+                    parts.Add($"{removedTemporary} temporário(s)");
+                }
+
+                if (removedBlockedAutoRegistered > 0)
+                {
+                    parts.Add($"{removedBlockedAutoRegistered} instalador(es)/arquivo(s) não suportado(s)");
+                }
+
+                MsgText.Text = $"Removidos {string.Join(" e ", parts)}.";
             }
         }
         catch (Exception ex)

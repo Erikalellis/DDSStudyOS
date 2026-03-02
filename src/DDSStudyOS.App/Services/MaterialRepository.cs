@@ -10,6 +10,24 @@ public sealed class MaterialRepository
 {
     private readonly DatabaseService _db;
     private static readonly string[] TemporaryExtensions = { ".tmp", ".crdownload", ".part", ".partial", ".download" };
+    private static readonly string[] BlockedAutoRegisterExtensions =
+    {
+        ".exe",
+        ".msi",
+        ".msix",
+        ".msixbundle",
+        ".appx",
+        ".appxbundle",
+        ".msu",
+        ".cab",
+        ".dll",
+        ".ps1",
+        ".bat",
+        ".cmd",
+        ".com",
+        ".scr",
+        ".iso"
+    };
 
     public MaterialRepository(DatabaseService db)
     {
@@ -139,6 +157,36 @@ WHERE id=$id;";
         }
 
         cmd.CommandText = $"DELETE FROM materials WHERE {string.Join(" OR ", predicates)};";
+        return await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> DeleteBlockedAutoRegisteredEntriesAsync()
+    {
+        await using var conn = _db.CreateConnection();
+        await conn.OpenAsync();
+
+        var predicates = new List<string>();
+        var cmd = conn.CreateCommand();
+
+        cmd.Parameters.AddWithValue("$referenceMode", MaterialStorageService.ModeReference);
+
+        for (int i = 0; i < BlockedAutoRegisterExtensions.Length; i++)
+        {
+            var ext = BlockedAutoRegisterExtensions[i];
+            var keyPath = $"$blockedPath{i}";
+            var keyName = $"$blockedName{i}";
+            predicates.Add($"trim(lower(file_path)) LIKE {keyPath}");
+            predicates.Add($"trim(lower(file_name)) LIKE {keyName}");
+            cmd.Parameters.AddWithValue(keyPath, $"%{ext}");
+            cmd.Parameters.AddWithValue(keyName, $"%{ext}");
+        }
+
+        cmd.CommandText = $@"
+DELETE FROM materials
+WHERE course_id IS NULL
+  AND lower(ifnull(storage_mode, '')) = lower($referenceMode)
+  AND ({string.Join(" OR ", predicates)});";
+
         return await cmd.ExecuteNonQueryAsync();
     }
 }
