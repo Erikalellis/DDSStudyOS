@@ -30,7 +30,7 @@ public sealed partial class DevelopmentPage : Page
     private void InitializeRoadmapHeader()
     {
         CurrentVersionText.Text = $"Versao atual: {AppReleaseInfo.VersionDisplay}";
-        NextUpdateTitleText.Text = $"Proximo pack DLC: v{GetNextTargetVersion()} - {GetNextPackName()}";
+        NextUpdateTitleText.Text = $"Linha DLC em validacao: v{GetNextTargetVersion()} - {GetNextPackName()}";
         ApplyReleaseChannelVisuals(SettingsService.UpdateChannel);
     }
 

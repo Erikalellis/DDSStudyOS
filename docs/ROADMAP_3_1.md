@@ -2,8 +2,8 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
-Status atual: `3.2.2` fechado localmente em 2026-03-02 (hotfix de links publicos, canal de distribuicao consolidado e novo pacote local gerado).
-Status tecnico 3.2.2 (fechado local): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho e links publicos alinhados com `DDSStudyOS-Updates`.
+Status atual: `3.2.3-beta.1` publicado no canal `beta` em 2026-03-02 para destravar update in-app em clientes que ja estao na linha `3.2.2`.
+Status tecnico 3.2.2 (base fechada): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho e links publicos alinhados com `DDSStudyOS-Updates`.
 Ultimo release publico consolidado: `3.2.1` (bridge de transicao entre o repositorio de codigo e o canal publico de distribuicao).
 Evidencias atuais do fechamento local: build/testes de 2026-03-02 e artefatos em `artifacts/installer-output/` (`DDSStudyOS-Setup.exe`, `DDSStudyOS-Beta-Setup.exe`, `DDSStudyOS-Portable.zip`, `DDSStudyOS-SHA256.txt`).
 
@@ -50,7 +50,7 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 - [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [ ] Publicar help-center com guias e resumo de changelog dentro do app.
 
-Status atual: prerelease `3.2.2-beta.3` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para validacao controlada, com `study-templates` visivel no `Dashboard`, sem alterar o canal `stable`. Checklist operacional: `docs/BETA_3_2_2_TEST_CHECKLIST.md`.
+Status atual: prerelease `3.2.3-beta.1` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para destravar updates in-app em quem ja esta em `3.2.2`, mantendo `study-templates` visivel no `Dashboard` e sem alterar o canal `stable`. Checklist operacional: `docs/BETA_3_2_3_TEST_CHECKLIST.md`.
 
 ### 3.2.3 - Signal Boost (DLC)
 

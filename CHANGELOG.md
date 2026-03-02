@@ -6,7 +6,16 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Planejado
-- Proxima entrega: `3.2.3` em modelo DLC (`Signal Boost`), com browser-presets, notification-pack e `community-feed`.
+- Fechar a entrega funcional da linha `3.2.3` (`Signal Boost`), com browser-presets, notification-pack e `community-feed`.
+
+## [3.2.3] - 2026-03-02
+### Adicionado
+- Corte tecnico `3.2.3-beta.1` publicado no canal `beta` para destravar update in-app em clientes que ja estao na linha `3.2.2`.
+- Checklist dedicado de validacao para o beta em `docs/BETA_3_2_3_TEST_CHECKLIST.md`.
+
+### Alterado
+- Versao do app promovida para `3.2.3` para permitir comparacao de versao acima de `3.2.2` no canal `beta`.
+- Cabecalho da aba `Desenvolvimento` ajustado para comunicar a linha DLC em validacao da propria `3.2.3`.
 
 ## [3.2.2] - 2026-03-02
 ### Adicionado

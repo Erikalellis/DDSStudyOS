@@ -140,7 +140,7 @@
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
-                    <TextBlock x:Name="NextUpdateTitleText" Text="Proximo pack DLC" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="NextUpdateTitleText" Text="Linha DLC em validacao" FontWeight="SemiBold"/>
                     <TextBlock Text="• 3.2.3 - Signal Boost: browser-presets, notification-pack e community-feed."/>
                     <TextBlock Text="• Atalhos iniciais, mensagens de lembrete e comunicados dentro do app."/>
                     <TextBlock Text="• Melhor visibilidade para novidades, roadmap e operacao do produto."/>
