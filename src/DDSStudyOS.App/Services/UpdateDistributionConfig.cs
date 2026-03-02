@@ -32,6 +32,21 @@ public static class UpdateDistributionConfig
     public static string GetPublicLatestReleaseUrl()
         => BuildLatestReleaseUrl(PublicOwner, PublicRepo);
 
+    public static string GetPublicRepositoryUrl()
+        => $"https://github.com/{PublicOwner}/{PublicRepo}";
+
+    public static string GetPublicReadmeUrl()
+        => $"{GetPublicRepositoryUrl()}/blob/main/README.md";
+
+    public static string GetPublicUserGuideUrl()
+        => $"{GetPublicRepositoryUrl()}/blob/main/USER_GUIDE_PUBLIC.md";
+
+    public static string GetPublicChangelogUrl()
+        => $"{GetPublicRepositoryUrl()}/blob/main/CHANGELOG_PUBLIC.md";
+
+    public static string GetPublicRoadmapUrl()
+        => $"{GetPublicRepositoryUrl()}/blob/main/ROADMAP_PUBLIC.md";
+
     public static string BuildReleaseDownloadUrl(string tag, string assetName)
     {
         var normalizedAsset = assetName?.Trim() ?? string.Empty;

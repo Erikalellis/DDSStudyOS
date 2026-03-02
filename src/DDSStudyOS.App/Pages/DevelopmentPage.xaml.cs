@@ -120,15 +120,25 @@ public sealed partial class DevelopmentPage : Page
         var url = SettingsService.FeedbackFormUrl;
         if (string.IsNullOrWhiteSpace(url))
         {
-            url = "https://github.com/Erikalellis/DDSStudyOS/issues/new";
+            url = UpdateDistributionConfig.GetPublicRepositoryUrl();
         }
 
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
-        {
-            return;
-        }
+        OpenExternalUrl(url);
+    }
 
-        Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true });
+    private void OpenPublicRepo_Click(object sender, RoutedEventArgs e)
+    {
+        OpenExternalUrl(UpdateDistributionConfig.GetPublicRepositoryUrl());
+    }
+
+    private void OpenPublicChangelog_Click(object sender, RoutedEventArgs e)
+    {
+        OpenExternalUrl(UpdateDistributionConfig.GetPublicChangelogUrl());
+    }
+
+    private void OpenPublicRoadmap_Click(object sender, RoutedEventArgs e)
+    {
+        OpenExternalUrl(UpdateDistributionConfig.GetPublicRoadmapUrl());
     }
 
     private void UpdateChannelCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -211,9 +221,14 @@ public sealed partial class DevelopmentPage : Page
 
         if (string.IsNullOrWhiteSpace(target))
         {
-            target = "https://github.com/Erikalellis/DDSStudyOS/releases";
+            target = UpdateDistributionConfig.GetPublicReleasesUrl();
         }
 
+        OpenExternalUrl(target);
+    }
+
+    private static void OpenExternalUrl(string? target)
+    {
         if (!Uri.TryCreate(target, UriKind.Absolute, out var uri))
         {
             return;

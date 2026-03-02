@@ -1379,7 +1379,7 @@ public sealed partial class BrowserPage : Page
       <a href="dds://config">Abrir configurações</a>
       <a href="dds://feedback">Enviar feedback beta</a>
       <a href="http://177.71.165.60/">Site oficial DDS StudyOS</a>
-      <a href="https://github.com/Erikalellis/DDSStudyOS">Repositorio no GitHub</a>
+      <a href="https://github.com/Erikalellis/DDSStudyOS-Updates">Canal publico no GitHub</a>
       <a href="{{feedbackUrl}}">Google Forms (feedback direto)</a>
       <a href="https://www.google.com/">Busca web</a>
     </div>

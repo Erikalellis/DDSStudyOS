@@ -125,7 +125,7 @@
 
             <StackPanel Orientation="Horizontal" Spacing="12">
                 <Button Content="Enviar feedback" Click="Feedback_Click" Style="{StaticResource AccentButtonStyle}" />
-                <HyperlinkButton Content="GitHub (Issues)" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/issues" />
+                <HyperlinkButton Content="GitHub (Updates)" Click="OpenPublicRepo_Click" />
             </StackPanel>
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
@@ -156,8 +156,8 @@
                     <TextBlock Text="• 3.3.0 - Quest Hub: nova leva de recursos que exigem atualizacao completa do core."/>
                     <TextBlock Text="• A linha 3.2.x sera focada em conteudo, presets, branding e comunicacao dentro do app."/>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <HyperlinkButton Content="Ver changelog" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md" />
-                        <HyperlinkButton Content="Acompanhar issues" NavigateUri="https://github.com/Erikalellis/DDSStudyOS/issues" />
+                        <HyperlinkButton Content="Ver changelog" Click="OpenPublicChangelog_Click" />
+                        <HyperlinkButton Content="Ver roadmap publico" Click="OpenPublicRoadmap_Click" />
                     </StackPanel>
                 </StackPanel>
             </Border>
