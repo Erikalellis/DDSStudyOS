@@ -19,6 +19,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - `UpdateDistributionConfig` passa a expor URLs publicas de README, changelog e roadmap para reduzir links hardcoded no app.
 - Comunicacao visual da aba `Desenvolvimento` alinhada para o ciclo `3.2.2`, mantendo `3.2.3 - Signal Boost` como proxima meta incremental.
 - Canal `beta` realinhado para o instalador assinado da tag `v3.2.2-beta.2`, corrigindo a falha de validacao de assinatura no fim do download.
+- Novo pacote `v3.2.2-beta.3` publicado no canal `beta` com `study-templates` visivel no `Dashboard`.
 
 ## [3.2.1] - 2026-03-01
 ### Adicionado

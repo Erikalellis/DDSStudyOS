@@ -50,7 +50,7 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 - [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [ ] Publicar help-center com guias e resumo de changelog dentro do app.
 
-Status atual: prerelease `3.2.2-beta.2` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para validacao controlada, sem alterar o canal `stable`. Checklist operacional: `docs/BETA_3_2_2_TEST_CHECKLIST.md`.
+Status atual: prerelease `3.2.2-beta.3` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para validacao controlada, com `study-templates` visivel no `Dashboard`, sem alterar o canal `stable`. Checklist operacional: `docs/BETA_3_2_2_TEST_CHECKLIST.md`.
 
 ### 3.2.3 - Signal Boost (DLC)
 
