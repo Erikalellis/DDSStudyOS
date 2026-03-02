@@ -6,7 +6,18 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Planejado
-- Fechar a entrega funcional da linha `3.2.3` (`Signal Boost`), com browser-presets, notification-pack e `community-feed`.
+- Fechar a entrega funcional remanescente da linha `3.2.x`, com `pomodoro-presets`, `help-center`, `browser-presets`, `notification-pack` e `community-feed`.
+
+## [3.2.4] - 2026-03-02
+### Adicionado
+- Promocao do canal `stable` para `3.2.4`, consolidando os hotfixes validados na linha beta sem reescrever a bridge `3.2.1`.
+- Release publico estavel `v3.2.4` publicado nos dois canais de distribuicao (`DDSStudyOS` e `DDSStudyOS-Updates`) com instalador, pacote portatil, checksums e DLCs estaveis.
+
+### Alterado
+- Base estavel agora inclui o hotfix de links publicos apontando para `DDSStudyOS-Updates`.
+- `study-templates` e o card de sugestoes do `Dashboard` entram na linha estavel.
+- Limpeza automatica de `Materiais` passa a remover instaladores antigos em modo `reference`, e novos downloads de `.exe`/scripts deixam de ser cadastrados.
+- Comunicacao interna do app e da documentacao passa a tratar `3.2.4` como release estavel consolidado, mantendo a continuidade da linha incremental em `3.2.5`.
 
 ## [3.2.3] - 2026-03-02
 ### Adicionado

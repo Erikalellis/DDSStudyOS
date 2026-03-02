@@ -52,12 +52,12 @@ public sealed partial class DevelopmentPage : Page
 
     private static string GetNextTargetVersion()
     {
-        return "3.2.3";
+        return "3.2.5";
     }
 
     private static string GetNextPackName()
     {
-        return "Signal Boost";
+        return "Power-Up / Signal Boost";
     }
 
     private void ApplyReleaseChannelVisuals(string channel)

@@ -2,9 +2,10 @@
 
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
-Status atual: `3.2.3-beta.1` publicado no canal `beta` em 2026-03-02 para destravar update in-app em clientes que ja estao na linha `3.2.2`.
-Status tecnico 3.2.2 (base fechada): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho e links publicos alinhados com `DDSStudyOS-Updates`.
-Ultimo release publico consolidado: `3.2.1` (bridge de transicao entre o repositorio de codigo e o canal publico de distribuicao).
+Status atual: `3.2.4` promovido no canal `stable` em 2026-03-02 como consolidacao dos hotfixes validados no beta.
+Status beta atual: `3.2.3-beta.2` mantido para validacao incremental da linha 3.2.x sem interromper a base estavel.
+Status tecnico 3.2.4 (base fechada): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho, links publicos alinhados com `DDSStudyOS-Updates`, `study-templates` no `Dashboard` e limpeza de `Materiais`.
+Ultimo release publico consolidado: `3.2.4` (estavel para rollout geral, mantendo a bridge publica ativa enquanto o repositorio de codigo segue observacao).
 Evidencias atuais do fechamento local: build/testes de 2026-03-02 e artefatos em `artifacts/installer-output/` (`DDSStudyOS-Setup.exe`, `DDSStudyOS-Beta-Setup.exe`, `DDSStudyOS-Portable.zip`, `DDSStudyOS-SHA256.txt`).
 
 ## Patch fechado (3.1.2)
@@ -41,7 +42,7 @@ Evidencias atuais do fechamento local: build/testes de 2026-03-02 e artefatos em
 - [x] Publicar os modulos onboarding-content e branding-assets como base de polimento visual e fluxo inicial.
 - [ ] Validar manifestos DLC stable e beta com rollback funcional antes do proximo setup completo.
 
-Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/DDSStudyOS-Updates`, com a bridge publica `3.2.1` mantida no canal `stable`.
+Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/DDSStudyOS-Updates`, com a bridge publica absorvida pelo stable `3.2.4`.
 
 ### 3.2.2 - Power-Up (DLC)
 
@@ -50,13 +51,15 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 - [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [ ] Publicar help-center com guias e resumo de changelog dentro do app.
 
-Status atual: prerelease `3.2.3-beta.1` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para destravar updates in-app em quem ja esta em `3.2.2`, mantendo `study-templates` visivel no `Dashboard` e sem alterar o canal `stable`. Checklist operacional: `docs/BETA_3_2_3_TEST_CHECKLIST.md`.
+Status atual: parte do ciclo foi consolidada no `stable 3.2.4` (hotfix de links publicos + `study-templates`). Restam `pomodoro-presets` e `help-center` antes de considerar o ciclo funcionalmente encerrado.
 
 ### 3.2.3 - Signal Boost (DLC)
 
 - [ ] Publicar browser-presets com atalhos e favoritos iniciais.
 - [ ] Publicar notification-pack com mensagens, presets de lembrete e snooze.
 - [ ] Publicar community-feed para mostrar proximas metas, novidades e comunicados dentro do app.
+
+Status atual: hotfixes da linha foram validados no beta e consolidados no `stable 3.2.4`, mas os modulos de conteudo do ciclo ainda seguem pendentes.
 
 ### 3.3.0 - Quest Hub (release completa)
 

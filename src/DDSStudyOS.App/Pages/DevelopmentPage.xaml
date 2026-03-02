@@ -130,7 +130,7 @@
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Base estavel 3.2.2" FontWeight="SemiBold"/>
+                    <TextBlock Text="Base estavel 3.2.4" FontWeight="SemiBold"/>
                     <TextBlock Text="• Novo onboarding em 4 etapas com validacao por passo."/>
                     <TextBlock Text="• Shell lateral proprio para substituir o NavigationView."/>
                     <TextBlock Text="• Branding fixo da janela e Pomodoro sem sobrescrever o cabecalho."/>
@@ -141,18 +141,18 @@
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
                     <TextBlock x:Name="NextUpdateTitleText" Text="Linha DLC em validacao" FontWeight="SemiBold"/>
-                    <TextBlock Text="• 3.2.3 - Signal Boost: browser-presets, notification-pack e community-feed."/>
-                    <TextBlock Text="• Atalhos iniciais, mensagens de lembrete e comunicados dentro do app."/>
-                    <TextBlock Text="• Melhor visibilidade para novidades, roadmap e operacao do produto."/>
-                    <TextBlock Text="• Entrega incremental sem reinstalar a base do app."/>
+                    <TextBlock Text="• 3.2.5 - continuidade da linha 3.2.x: pomodoro-presets, help-center e browser-presets."/>
+                    <TextBlock Text="• Presets extras de foco, guias internos e atalhos iniciais do navegador."/>
+                    <TextBlock Text="• Notification-pack e community-feed seguem como etapa incremental seguinte."/>
+                    <TextBlock Text="• Entrega incremental sem reinstalar a base estavel 3.2.4."/>
                 </StackPanel>
             </Border>
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Proximos packs" FontWeight="SemiBold"/>
-                    <TextBlock Text="• 3.2.2 - Power-Up: study-templates, pomodoro-presets e help-center (ciclo iniciado com hotfix de links publicos)." />
-                    <TextBlock Text="• 3.2.3 - Signal Boost: browser-presets, notification-pack e community-feed."/>
+                    <TextBlock Text="• 3.2.4 consolidou no canal stable os hotfixes de links publicos, study-templates e limpeza de Materiais." />
+                    <TextBlock Text="• 3.2.5 segue com pomodoro-presets, help-center, browser-presets, notification-pack e community-feed."/>
                     <TextBlock Text="• 3.3.0 - Quest Hub: nova leva de recursos que exigem atualizacao completa do core."/>
                     <TextBlock Text="• A linha 3.2.x sera focada em conteudo, presets, branding e comunicacao dentro do app."/>
                     <StackPanel Orientation="Horizontal" Spacing="8">

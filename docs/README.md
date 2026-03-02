@@ -1,10 +1,10 @@
 # Documentacao - DDS StudyOS
 
 ## Estado atual
-- Versao em validacao local/beta: `3.2.3-beta.1`
-- Ultimo release publico consolidado: `3.2.1` (`v3.2.1` no GitHub Releases)
-- Base local fechada: `3.2.2` (hotfix de links publicos, canal de distribuicao consolidado e empacotamento local atualizado)
-- Linha incremental em validacao (DLC): `3.2.3` (`Signal Boost`, com atalhos, notificacoes e feed interno)
+- Versao estavel consolidada: `3.2.4`
+- Ultimo release publico consolidado: `3.2.4` (`v3.2.4` no GitHub Releases)
+- Base local fechada: `3.2.4` (links publicos, `study-templates` e limpeza de `Materiais` promovidos para stable)
+- Linha incremental em validacao (DLC): `3.2.5` (continuidade de `Power-Up` e `Signal Boost`)
 
 ## Guias principais
 - Manual completo de canais e atualizacoes (iniciante -> senior): `docs/MANUAL_CANAIS_E_ATUALIZACOES.md`
@@ -22,7 +22,8 @@
 - Suporte tecnico: `SUPPORT.md`
 
 ## Evidencias recentes de release
-- Beta 3.2.3: build `Release x64`, testes automatizados e pacote `v3.2.3-beta.1` publicado no canal `beta` em 2026-03-02
+- Stable 3.2.4: build `Release x64`, testes automatizados e pacote estavel promovido em 2026-03-02
+- Beta 3.2.3: build `Release x64`, testes automatizados e pacote `v3.2.3-beta.2` publicado no canal `beta` em 2026-03-02
 - Smoke local 3.2.2: build `Release x64`, testes `24/24` e novo pacote local gerado em 2026-03-02
 - Smoke update 3.1.4: `docs/UPDATE_SMOKE_EVIDENCE_2026-02-28_v3_1_4.md`
 - Smoke clean-machine 3.1.4: `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt`
