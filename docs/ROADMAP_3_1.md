@@ -41,7 +41,7 @@ Evidencias atuais do fechamento local: build/testes de 2026-03-02 e artefatos em
 - [x] Publicar os modulos onboarding-content e branding-assets como base de polimento visual e fluxo inicial.
 - [ ] Validar manifestos DLC stable e beta com rollback funcional antes do proximo setup completo.
 
-Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/DDSStudyOS-Updates`, com manifests e assets `3.2.0` publicados para a fase de transicao.
+Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/DDSStudyOS-Updates`, com a bridge publica `3.2.1` mantida no canal `stable`.
 
 ### 3.2.2 - Power-Up (DLC)
 
@@ -49,6 +49,8 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 - [ ] Entregar study-templates com modelos de rotina e trilhas de estudo.
 - [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [ ] Publicar help-center com guias e resumo de changelog dentro do app.
+
+Status atual: prerelease `3.2.2-beta.1` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para validacao controlada, sem alterar o canal `stable`.
 
 ### 3.2.3 - Signal Boost (DLC)
 
