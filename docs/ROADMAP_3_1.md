@@ -46,11 +46,11 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 ### 3.2.2 - Power-Up (DLC)
 
 - [x] Fechar hotfix de links publicos e consolidar a troca para `DDSStudyOS-Updates` no app antes da entrega funcional do pack.
-- [ ] Entregar study-templates com modelos de rotina e trilhas de estudo.
+- [x] Entregar study-templates com modelos de rotina e trilhas de estudo.
 - [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [ ] Publicar help-center com guias e resumo de changelog dentro do app.
 
-Status atual: prerelease `3.2.2-beta.1` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para validacao controlada, sem alterar o canal `stable`.
+Status atual: prerelease `3.2.2-beta.2` publicada no canal `beta` de `Erikalellis/DDSStudyOS-Updates` para validacao controlada, sem alterar o canal `stable`. Checklist operacional: `docs/BETA_3_2_2_TEST_CHECKLIST.md`.
 
 ### 3.2.3 - Signal Boost (DLC)
 

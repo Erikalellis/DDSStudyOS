@@ -11,11 +11,14 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ## [3.2.2] - 2026-03-02
 ### Adicionado
 - Pacote local `3.2.2` gerado com hotfix de links publicos para preparar a linha `Power-Up` sem sobrescrever a bridge `3.2.1`.
+- Modulo `study-templates` criado com modelos iniciais de rotina e exibicao direta no `Dashboard`.
+- Checklist de validacao para testers do beta em `docs/BETA_3_2_2_TEST_CHECKLIST.md`.
 
 ### Alterado
 - Links da pagina `Desenvolvimento`, fallback de feedback e home interna do navegador agora apontam para `Erikalellis/DDSStudyOS-Updates` em vez do repositorio de codigo.
 - `UpdateDistributionConfig` passa a expor URLs publicas de README, changelog e roadmap para reduzir links hardcoded no app.
 - Comunicacao visual da aba `Desenvolvimento` alinhada para o ciclo `3.2.2`, mantendo `3.2.3 - Signal Boost` como proxima meta incremental.
+- Canal `beta` realinhado para o instalador assinado da tag `v3.2.2-beta.2`, corrigindo a falha de validacao de assinatura no fim do download.
 
 ## [3.2.1] - 2026-03-01
 ### Adicionado

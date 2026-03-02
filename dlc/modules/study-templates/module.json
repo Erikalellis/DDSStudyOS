@@ -1,0 +1,7 @@
+{
+  "id": "study-templates",
+  "name": "Power-Up Study Templates",
+  "version": "3.2.2",
+  "description": "Modelos de rotina e trilhas de estudo para o ciclo Power-Up.",
+  "entry": "content/templates.json"
+}

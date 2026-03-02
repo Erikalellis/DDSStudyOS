@@ -1,0 +1,28 @@
+{
+  "templates": [
+    {
+      "id": "starter-week",
+      "title": "Semana de arranque",
+      "summary": "Plano leve para construir consistencia sem sobrecarregar a primeira semana.",
+      "focusArea": "Base",
+      "daysPerWeek": 5,
+      "dailyMinutes": 30
+    },
+    {
+      "id": "focus-ladder",
+      "title": "Escada de foco",
+      "summary": "Comece curto e aumente a duracao dos blocos ao longo da semana.",
+      "focusArea": "Foco",
+      "daysPerWeek": 5,
+      "dailyMinutes": 45
+    },
+    {
+      "id": "review-grid",
+      "title": "Grade de revisao",
+      "summary": "Mistura estudo principal com revisao planejada para fixacao constante.",
+      "focusArea": "Revisao",
+      "daysPerWeek": 4,
+      "dailyMinutes": 40
+    }
+  ]
+}

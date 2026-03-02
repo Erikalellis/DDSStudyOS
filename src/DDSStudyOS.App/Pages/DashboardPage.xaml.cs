@@ -14,6 +14,7 @@ public sealed partial class DashboardPage : Page
     private readonly CourseRepository _courseRepo;
     private readonly ReminderRepository _reminderRepo;
     private readonly WeeklyGoalService _weeklyGoalService;
+    private readonly StudyTemplatesModuleService _studyTemplatesModuleService;
     private Course? _lastCourse;
 
     public DashboardPage()
@@ -26,6 +27,7 @@ public sealed partial class DashboardPage : Page
         _courseRepo = new CourseRepository(_db);
         _reminderRepo = new ReminderRepository(_db);
         _weeklyGoalService = new WeeklyGoalService(_db);
+        _studyTemplatesModuleService = new StudyTemplatesModuleService();
 
         ContinueBtn.Click += Continue_Click;
         QuickActionNewCourseBtn.Click += QuickActionButton_Click;
@@ -44,6 +46,7 @@ public sealed partial class DashboardPage : Page
         await UpdateWeeklyGoal();
         await UpdateContinueCard();
         await UpdateReminders();
+        UpdateStudyTemplates();
         AppLogger.Info("DashboardPage: carregamento concluído.");
     }
 
@@ -120,6 +123,23 @@ public sealed partial class DashboardPage : Page
         catch (Exception ex)
         {
             AppLogger.Error("Falha ao carregar lembretes no dashboard.", ex);
+        }
+    }
+
+    private void UpdateStudyTemplates()
+    {
+        try
+        {
+            if (StudyTemplatesList is null)
+            {
+                return;
+            }
+
+            StudyTemplatesList.ItemsSource = _studyTemplatesModuleService.GetTemplates(3);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Falha ao carregar study-templates no dashboard.", ex);
         }
     }
 
