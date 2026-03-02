@@ -1,10 +1,10 @@
 # Documentacao - DDS StudyOS
 
 ## Estado atual
-- Versao estavel validada localmente: `3.2.0`
-- Ultimo release publico consolidado: `3.2.0` (`v3.2.0` no GitHub Releases)
-- Ciclo atual fechado localmente: `3.2.0` (onboarding em 4 etapas, menu lateral proprio, branding da janela e ajustes de primeiro uso)
-- Proximo ciclo incremental (DLC): `3.2.1` (refino do modulo `web-content`, manifestos incrementais e polimento do onboarding)
+- Versao estavel validada localmente: `3.2.2`
+- Ultimo release publico consolidado: `3.2.1` (`v3.2.1` no GitHub Releases)
+- Ciclo atual fechado localmente: `3.2.2` (hotfix de links publicos, canal de distribuicao consolidado e empacotamento local atualizado)
+- Proximo ciclo incremental (DLC): `3.2.3` (`Signal Boost`, com atalhos, notificacoes e feed interno)
 
 ## Guias principais
 - Manual completo de canais e atualizacoes (iniciante -> senior): `docs/MANUAL_CANAIS_E_ATUALIZACOES.md`
@@ -22,7 +22,7 @@
 - Suporte tecnico: `SUPPORT.md`
 
 ## Evidencias recentes de release
-- Smoke local 3.2.0: build + validacao automatica do shell/menu e titulo da janela concluídos em 2026-02-28
+- Smoke local 3.2.2: build `Release x64`, testes `24/24` e novo pacote local gerado em 2026-03-02
 - Smoke update 3.1.4: `docs/UPDATE_SMOKE_EVIDENCE_2026-02-28_v3_1_4.md`
 - Smoke clean-machine 3.1.4: `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt`
 - Smoke first-use 3.1.4: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`

@@ -3,10 +3,10 @@
 Projeto desktop em WinUI 3 para gestão de cursos, materiais, lembretes, navegação e backup local criptografado.
 
 ## Status do produto
-- Build estável validada localmente: `3.2.0`
-- Próximo ciclo incremental (DLC) em preparação: `3.2.1`
-- Última tag enviada ao repositório: `v3.2.0`
-- Último release GitHub consolidado: `3.2.0`
+- Build estável validada localmente: `3.2.2`
+- Próximo ciclo incremental (DLC) em preparação: `3.2.3`
+- Última tag enviada ao repositório: `v3.2.1`
+- Último release GitHub consolidado: `3.2.1`
 - Página de releases: `https://github.com/Erikalellis/DDSStudyOS/releases`
 
 ## Pré-requisitos

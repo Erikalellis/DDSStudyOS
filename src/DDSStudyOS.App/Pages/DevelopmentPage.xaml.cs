@@ -52,12 +52,12 @@ public sealed partial class DevelopmentPage : Page
 
     private static string GetNextTargetVersion()
     {
-        return "3.2.1";
+        return "3.2.3";
     }
 
     private static string GetNextPackName()
     {
-        return "Checkpoint";
+        return "Signal Boost";
     }
 
     private void ApplyReleaseChannelVisuals(string channel)

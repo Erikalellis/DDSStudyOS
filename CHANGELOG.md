@@ -6,7 +6,16 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Planejado
-- Proxima entrega: `3.2.2` em modelo DLC (`Power-Up`), com templates de estudo, presets extras de Pomodoro e publicacao do `help-center`.
+- Proxima entrega: `3.2.3` em modelo DLC (`Signal Boost`), com browser-presets, notification-pack e `community-feed`.
+
+## [3.2.2] - 2026-03-02
+### Adicionado
+- Pacote local `3.2.2` gerado com hotfix de links publicos para preparar a linha `Power-Up` sem sobrescrever a bridge `3.2.1`.
+
+### Alterado
+- Links da pagina `Desenvolvimento`, fallback de feedback e home interna do navegador agora apontam para `Erikalellis/DDSStudyOS-Updates` em vez do repositorio de codigo.
+- `UpdateDistributionConfig` passa a expor URLs publicas de README, changelog e roadmap para reduzir links hardcoded no app.
+- Comunicacao visual da aba `Desenvolvimento` alinhada para o ciclo `3.2.2`, mantendo `3.2.3 - Signal Boost` como proxima meta incremental.
 
 ## [3.2.1] - 2026-03-01
 ### Adicionado
