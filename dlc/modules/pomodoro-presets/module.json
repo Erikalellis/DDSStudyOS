@@ -1,0 +1,7 @@
+{
+  "id": "pomodoro-presets",
+  "name": "Power-Up Pomodoro Presets",
+  "version": "3.2.4",
+  "description": "Presets extras de Pomodoro por perfil para foco, revisao, pratica e prova.",
+  "entry": "content/presets.json"
+}

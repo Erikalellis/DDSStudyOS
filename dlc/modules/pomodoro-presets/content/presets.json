@@ -1,0 +1,36 @@
+{
+  "presets": [
+    {
+      "id": "foco_profundo",
+      "displayName": "Foco Profundo",
+      "focusMinutes": 50,
+      "breakMinutes": 10,
+      "autoStartBreak": true,
+      "autoStartWork": false
+    },
+    {
+      "id": "revisao",
+      "displayName": "Revisao",
+      "focusMinutes": 30,
+      "breakMinutes": 5,
+      "autoStartBreak": true,
+      "autoStartWork": true
+    },
+    {
+      "id": "pratica",
+      "displayName": "Pratica",
+      "focusMinutes": 40,
+      "breakMinutes": 8,
+      "autoStartBreak": false,
+      "autoStartWork": false
+    },
+    {
+      "id": "prova",
+      "displayName": "Modo Prova",
+      "focusMinutes": 45,
+      "breakMinutes": 15,
+      "autoStartBreak": false,
+      "autoStartWork": false
+    }
+  ]
+}

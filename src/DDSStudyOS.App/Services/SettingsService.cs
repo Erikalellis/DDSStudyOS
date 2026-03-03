@@ -21,10 +21,8 @@ public static class SettingsService
     private const string KeyPomodoroNotifyOnFinish = "PomodoroNotifyOnFinish";
     private const string KeyPomodoroPreset = "PomodoroPreset";
     private const string PomodoroPresetCustom = "custom";
-    private const string PomodoroPresetDeepFocus = "foco_profundo";
-    private const string PomodoroPresetReview = "revisao";
-    private const string PomodoroPresetPractice = "pratica";
     private static readonly object Sync = new();
+    private static readonly PomodoroPresetsModuleService PomodoroPresetsCatalog = new();
     private static bool _localSettingsReadWarningLogged;
     private static bool _localSettingsWriteWarningLogged;
     private static readonly string FallbackSettingsPath = Path.Combine(
@@ -32,13 +30,6 @@ public static class SettingsService
         "DDSStudyOS",
         "config",
         "settings.json");
-
-    private static readonly PomodoroPresetDefinition[] PomodoroPresets =
-    {
-        new(PomodoroPresetDeepFocus, "Foco Profundo", 50, 10, true, false),
-        new(PomodoroPresetReview, "Revisao", 30, 5, true, true),
-        new(PomodoroPresetPractice, "Pratica", 40, 8, false, false)
-    };
 
     public static bool DownloadsOrganizerEnabled
     {
@@ -249,14 +240,8 @@ public static class SettingsService
     }
 
     public static PomodoroPresetDefinition[] GetPomodoroPresets()
-        => PomodoroPresets
-            .Select(p => new PomodoroPresetDefinition(
-                p.Id,
-                p.DisplayName,
-                p.FocusMinutes,
-                p.BreakMinutes,
-                p.AutoStartBreak,
-                p.AutoStartWork))
+        => PomodoroPresetsCatalog
+            .GetPresets()
             .ToArray();
 
     public static string ResolvePomodoroPresetFromValues(int focusMinutes, int breakMinutes, bool autoStartBreak, bool autoStartWork)
@@ -264,7 +249,7 @@ public static class SettingsService
         var focus = Clamp(focusMinutes, 5, 180);
         var pause = Clamp(breakMinutes, 1, 60);
 
-        foreach (var preset in PomodoroPresets)
+        foreach (var preset in PomodoroPresetsCatalog.GetPresets())
         {
             if (preset.FocusMinutes == focus &&
                 preset.BreakMinutes == pause &&
@@ -283,7 +268,7 @@ public static class SettingsService
         var normalized = NormalizePomodoroPreset(presetId);
         preset = default!;
 
-        foreach (var item in PomodoroPresets)
+        foreach (var item in PomodoroPresetsCatalog.GetPresets())
         {
             if (string.Equals(item.Id, normalized, StringComparison.OrdinalIgnoreCase))
             {
@@ -859,13 +844,16 @@ public static class SettingsService
         }
 
         var normalized = presetId.Trim().ToLowerInvariant();
-        return normalized switch
+        if (string.Equals(normalized, PomodoroPresetCustom, StringComparison.OrdinalIgnoreCase))
         {
-            PomodoroPresetDeepFocus => PomodoroPresetDeepFocus,
-            PomodoroPresetReview => PomodoroPresetReview,
-            PomodoroPresetPractice => PomodoroPresetPractice,
-            _ => PomodoroPresetCustom
-        };
+            return PomodoroPresetCustom;
+        }
+
+        var resolved = PomodoroPresetsCatalog
+            .GetPresets()
+            .FirstOrDefault(p => string.Equals(p.Id, normalized, StringComparison.OrdinalIgnoreCase));
+
+        return resolved?.Id ?? PomodoroPresetCustom;
     }
 
     private static int Clamp(int value, int min, int max)

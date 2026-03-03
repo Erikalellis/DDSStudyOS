@@ -48,10 +48,10 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 
 - [x] Fechar hotfix de links publicos e consolidar a troca para `DDSStudyOS-Updates` no app antes da entrega funcional do pack.
 - [x] Entregar study-templates com modelos de rotina e trilhas de estudo.
-- [ ] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
+- [x] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [ ] Publicar help-center com guias e resumo de changelog dentro do app.
 
-Status atual: parte do ciclo foi consolidada no `stable 3.2.4` (hotfix de links publicos + `study-templates`). Restam `pomodoro-presets` e `help-center` antes de considerar o ciclo funcionalmente encerrado.
+Status atual: parte do ciclo foi consolidada no `stable 3.2.4` (hotfix de links publicos + `study-templates`), e `pomodoro-presets` agora ja existe como modulo DLC com fallback no app. Resta `help-center` antes de considerar o ciclo funcionalmente encerrado.
 
 ### 3.2.3 - Signal Boost (DLC)
 

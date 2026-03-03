@@ -5,8 +5,12 @@ Todas as mudanças importantes neste projeto serão documentadas neste arquivo.
 O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
+### Adicionado
+- Modulo `pomodoro-presets` criado como pack do ciclo `Power-Up`, com presets extras por perfil e suporte a carregamento por DLC.
+- `SettingsService` agora resolve presets dinamicamente via modulo, mantendo fallback local com `Foco Profundo`, `Revisao`, `Pratica` e `Modo Prova`.
+
 ### Planejado
-- Fechar a entrega funcional remanescente da linha `3.2.x`, com `pomodoro-presets`, `help-center`, `browser-presets`, `notification-pack` e `community-feed`.
+- Fechar a entrega funcional remanescente da linha `3.2.x`, com `help-center`, `browser-presets`, `notification-pack` e `community-feed`.
 
 ## [3.2.4] - 2026-03-02
 ### Adicionado
