@@ -114,6 +114,33 @@
 
                 <!-- Feedback -->
                 <StackPanel Spacing="12">
+                    <TextBlock Text="Central de Ajuda" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Name="HelpCenterSummaryText"
+                                       Text="Guias publicos, changelog e roadmap em um unico lugar."
+                                       TextWrapping="WrapWholeWords"
+                                       Opacity="0.85"/>
+
+                            <ItemsControl x:Name="HelpCenterHighlightsList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="WrapWholeWords" Margin="0,0,0,6"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Abrir guia publico" Click="OpenPublicGuide_Click" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="Ver changelog publico" Click="OpenPublicChangelog_Click"/>
+                                <Button Content="Ver roadmap publico" Click="OpenPublicRoadmap_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Feedback -->
+                <StackPanel Spacing="12">
                     <TextBlock Text="Feedback (Beta)" Style="{StaticResource SubtitleTextBlockStyle}"/>
                     <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="16">
                         <StackPanel Spacing="12">

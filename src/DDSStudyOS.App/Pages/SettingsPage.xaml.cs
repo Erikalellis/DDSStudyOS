@@ -15,6 +15,7 @@ public sealed partial class SettingsPage : Page
 {
     private readonly DatabaseService _db = new();
     private readonly BackupService _backup;
+    private readonly HelpCenterModuleService _helpCenter = new();
     private bool _isImportingVault;
 
     public SettingsPage()
@@ -38,6 +39,7 @@ public sealed partial class SettingsPage : Page
 
         InitializeBrowserSettings();
         InitializePomodoroSettings();
+        InitializeHelpCenter();
         InitializeFeedbackSettings();
         InitializeVaultSection();
     }
@@ -76,6 +78,13 @@ public sealed partial class SettingsPage : Page
     private void InitializeFeedbackSettings()
     {
         FeedbackUrlBox.Text = SettingsService.FeedbackFormUrl;
+    }
+
+    private void InitializeHelpCenter()
+    {
+        var content = _helpCenter.GetContent();
+        HelpCenterSummaryText.Text = content.Summary;
+        HelpCenterHighlightsList.ItemsSource = content.Highlights;
     }
 
     private void InitializePomodoroSettings()
@@ -119,6 +128,21 @@ public sealed partial class SettingsPage : Page
         {
             MsgText.Text = "Falha ao abrir link: " + ex.Message;
         }
+    }
+
+    private async void OpenPublicGuide_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        await OpenUrlAsync(UpdateDistributionConfig.GetPublicUserGuideUrl(), "Falha ao abrir guia publico");
+    }
+
+    private async void OpenPublicChangelog_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        await OpenUrlAsync(UpdateDistributionConfig.GetPublicChangelogUrl(), "Falha ao abrir changelog publico");
+    }
+
+    private async void OpenPublicRoadmap_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        await OpenUrlAsync(UpdateDistributionConfig.GetPublicRoadmapUrl(), "Falha ao abrir roadmap publico");
     }
 
     private void SavePomodoro_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -521,6 +545,24 @@ public sealed partial class SettingsPage : Page
         CredentialVaultService.Delete(selected.Id);
         RefreshVaultList();
         MsgText.Text = "Credencial removida do cofre.";
+    }
+
+    private async Task OpenUrlAsync(string url, string errorPrefix)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            MsgText.Text = "Link inválido.";
+            return;
+        }
+
+        try
+        {
+            await Launcher.LaunchUriAsync(uri);
+        }
+        catch (Exception ex)
+        {
+            MsgText.Text = $"{errorPrefix}: {ex.Message}";
+        }
     }
 
     private void OpenBrowserWithSelectedCredential_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

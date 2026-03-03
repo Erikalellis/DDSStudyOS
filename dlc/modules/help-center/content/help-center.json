@@ -1,0 +1,8 @@
+{
+  "summary": "Central de ajuda leve para orientar instalacao, atualizacoes e a evolucao publica do DDS StudyOS sem expor detalhes internos.",
+  "highlights": [
+    "Abra o guia publico para ver instalacao, atualizacao e uso basico.",
+    "Consulte o changelog publico antes de testar um novo build.",
+    "Use o roadmap publico para acompanhar o que vem a seguir na linha 3.2.x."
+  ]
+}

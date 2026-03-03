@@ -1,0 +1,7 @@
+{
+  "id": "help-center",
+  "name": "Power-Up Help Center",
+  "version": "3.2.4",
+  "description": "Guias publicos, changelog resumido e roadmap dentro do app.",
+  "entry": "content/help-center.json"
+}
