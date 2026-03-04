@@ -14,6 +14,13 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Planejado
 - Fechar a entrega funcional remanescente da linha `3.2.x`, com `browser-presets`, `notification-pack` e `community-feed`.
 
+## [3.2.5] - 2026-03-03
+### Adicionado
+- Consolidacao do ciclo `Power-Up` no beta com `study-templates`, `pomodoro-presets` e `help-center` prontos para empacotamento incremental.
+
+### Alterado
+- Linha beta promovida para `3.2.5-beta.1` com instalador assinado, pacote portatil e DLCs atualizados para disponibilizar a entrega funcional do `Power-Up` sem alterar o canal estavel `3.2.4`.
+
 ## [3.2.4] - 2026-03-02
 ### Adicionado
 - Promocao do canal `stable` para `3.2.4`, consolidando os hotfixes validados na linha beta sem reescrever a bridge `3.2.1`.

@@ -3,7 +3,7 @@
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
 Status atual: `3.2.4` promovido no canal `stable` em 2026-03-02 como consolidacao dos hotfixes validados no beta.
-Status beta atual: `3.2.3-beta.2` mantido para validacao incremental da linha 3.2.x sem interromper a base estavel.
+Status beta atual: `3.2.5-beta.1` empacotado para validacao do ciclo `Power-Up`, mantendo a base estavel `3.2.4` sem alteracoes.
 Status tecnico 3.2.4 (base fechada): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho, links publicos alinhados com `DDSStudyOS-Updates`, `study-templates` no `Dashboard` e limpeza de `Materiais`.
 Ultimo release publico consolidado: `3.2.4` (estavel para rollout geral, mantendo a bridge publica ativa enquanto o repositorio de codigo segue observacao).
 Evidencias atuais do fechamento local: build/testes de 2026-03-02 e artefatos em `artifacts/installer-output/` (`DDSStudyOS-Setup.exe`, `DDSStudyOS-Beta-Setup.exe`, `DDSStudyOS-Portable.zip`, `DDSStudyOS-SHA256.txt`).
@@ -51,7 +51,7 @@ Status atual: infraestrutura de distribuicao publica preparada em `Erikalellis/D
 - [x] Entregar pomodoro-presets com presets extras por perfil (foco, revisao, pratica e prova).
 - [x] Publicar help-center com guias e resumo de changelog dentro do app.
 
-Status atual: ciclo `Power-Up` fechado no codigo com `study-templates`, `pomodoro-presets` e `help-center`. Falta apenas empacotar/publicar um novo build para refletir tudo em distribuicao.
+Status atual: ciclo `Power-Up` fechado no codigo e empacotado em `3.2.5-beta.1` para validacao incremental no canal beta.
 
 ### 3.2.3 - Signal Boost (DLC)
 

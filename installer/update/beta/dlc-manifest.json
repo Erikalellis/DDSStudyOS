@@ -1,17 +1,17 @@
 {
   "channel": "beta",
   "product": "DDS StudyOS",
-  "appVersion": "3.2.1",
-  "minimumAppVersion": "3.2.1",
+  "appVersion": "3.2.5",
+  "minimumAppVersion": "3.2.5",
   "manifestVersion": 1,
-  "generatedAtUtc": "2026-03-01T22:42:13.4241254Z",
-  "releaseTag": "v3.2.1",
+  "generatedAtUtc": "2026-03-04T00:25:16.6724051Z",
+  "releaseTag": "v3.2.5-beta.1",
   "modules": [
     {
       "id": "branding-assets",
       "version": "3.2.1",
       "assetName": "DDSStudyOS-DLC-branding-assets.zip",
-      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.1/DDSStudyOS-DLC-branding-assets.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases/download/v3.2.5-beta.1/DDSStudyOS-DLC-branding-assets.zip",
       "sha256": "97327c057facc15f5d669e7cf25036db0bc695e23b89cdcf638a2ef51bb9f8bd",
       "sizeBytes": 901,
       "extractSubdirectory": "branding-assets",
@@ -20,10 +20,22 @@
       "enabled": true
     },
     {
+      "id": "help-center",
+      "version": "3.2.4",
+      "assetName": "DDSStudyOS-DLC-help-center.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases/download/v3.2.5-beta.1/DDSStudyOS-DLC-help-center.zip",
+      "sha256": "ab60cc1663c7fc2d19a8bd8d5d33014ad2118e660c7b9958d40e434d1de50a9c",
+      "sizeBytes": 857,
+      "extractSubdirectory": "help-center",
+      "required": false,
+      "description": "Guias publicos, changelog resumido e roadmap dentro do app.",
+      "enabled": true
+    },
+    {
       "id": "onboarding-content",
       "version": "3.2.1",
       "assetName": "DDSStudyOS-DLC-onboarding-content.zip",
-      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.1/DDSStudyOS-DLC-onboarding-content.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases/download/v3.2.5-beta.1/DDSStudyOS-DLC-onboarding-content.zip",
       "sha256": "021e318cb0ad67112539092a10de4d66a94d4772795a10c36b339ac596c5adbd",
       "sizeBytes": 1006,
       "extractSubdirectory": "onboarding-content",
@@ -32,10 +44,34 @@
       "enabled": true
     },
     {
+      "id": "pomodoro-presets",
+      "version": "3.2.4",
+      "assetName": "DDSStudyOS-DLC-pomodoro-presets.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases/download/v3.2.5-beta.1/DDSStudyOS-DLC-pomodoro-presets.zip",
+      "sha256": "91870b4944c81aa4972e82b659358156011456938eb6cb1519d4c5283fa559a4",
+      "sizeBytes": 834,
+      "extractSubdirectory": "pomodoro-presets",
+      "required": false,
+      "description": "Presets extras de Pomodoro por perfil para foco, revisao, pratica e prova.",
+      "enabled": true
+    },
+    {
+      "id": "study-templates",
+      "version": "3.2.2",
+      "assetName": "DDSStudyOS-DLC-study-templates.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases/download/v3.2.5-beta.1/DDSStudyOS-DLC-study-templates.zip",
+      "sha256": "d762d9c7488b96a5f7b4b51a4befd9afbc852c6516d524c0357ff7f6aa57d292",
+      "sizeBytes": 940,
+      "extractSubdirectory": "study-templates",
+      "required": false,
+      "description": "Modelos de rotina e trilhas de estudo para o ciclo Power-Up.",
+      "enabled": true
+    },
+    {
       "id": "web-content",
       "version": "3.2.1",
       "assetName": "DDSStudyOS-DLC-web-content.zip",
-      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS/releases/download/v3.2.1/DDSStudyOS-DLC-web-content.zip",
+      "downloadUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases/download/v3.2.5-beta.1/DDSStudyOS-DLC-web-content.zip",
       "sha256": "576af7f263d68440a69efa05166ec1f82ef34c9569ee4e4036092ae3c396b36f",
       "sizeBytes": 4951,
       "extractSubdirectory": "web-content",
