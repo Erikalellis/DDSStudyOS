@@ -1249,12 +1249,14 @@ public sealed partial class BrowserPage : Page
     {
         var now = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         var feedbackUrl = WebUtility.HtmlEncode(SettingsService.FeedbackFormUrl);
+        var presetLinksHtml = BuildBrowserPresetLinksHtml();
         var moduleHtml = BrowserContentModuleService.TryLoadWebTemplate(
             "home.html",
             new Dictionary<string, string>(StringComparer.Ordinal)
             {
                 ["CURRENT_TIMESTAMP"] = WebUtility.HtmlEncode(now),
-                ["FEEDBACK_URL"] = feedbackUrl
+                ["FEEDBACK_URL"] = feedbackUrl,
+                ["BROWSER_PRESET_LINKS"] = presetLinksHtml
             });
 
         if (!string.IsNullOrWhiteSpace(moduleHtml))
@@ -1382,6 +1384,7 @@ public sealed partial class BrowserPage : Page
       <a href="https://github.com/Erikalellis/DDSStudyOS-Updates">Canal publico no GitHub</a>
       <a href="{{feedbackUrl}}">Google Forms (feedback direto)</a>
       <a href="https://www.google.com/">Busca web</a>
+      {{presetLinksHtml}}
     </div>
 
     <div class="footer">Inicializado em {{now}}</div>
@@ -1389,6 +1392,20 @@ public sealed partial class BrowserPage : Page
 </body>
 </html>
 """;
+    }
+
+    private static string BuildBrowserPresetLinksHtml()
+    {
+        var presets = new BrowserPresetsModuleService().GetLinks();
+        if (presets.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        return string.Join(
+            Environment.NewLine,
+            presets.Select(static preset =>
+                $"""<a href="{WebUtility.HtmlEncode(preset.Url)}"><strong>{WebUtility.HtmlEncode(preset.Label)}</strong><br /><span style="color:#9bb2e0;font-size:.82rem">{WebUtility.HtmlEncode(preset.Summary)}</span></a>"""));
     }
 
     private static string BuildErrorPageHtml(CoreWebView2WebErrorStatus status, string attemptedUrl)

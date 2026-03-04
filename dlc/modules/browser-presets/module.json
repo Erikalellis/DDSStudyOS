@@ -1,0 +1,7 @@
+{
+  "id": "browser-presets",
+  "name": "Browser Presets",
+  "version": "3.2.5",
+  "description": "Atalhos e favoritos iniciais para o navegador integrado.",
+  "entry": "content/links.json"
+}

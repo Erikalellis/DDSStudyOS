@@ -55,11 +55,11 @@ Status atual: ciclo `Power-Up` fechado no codigo e empacotado em `3.2.5-beta.1` 
 
 ### 3.2.3 - Signal Boost (DLC)
 
-- [ ] Publicar browser-presets com atalhos e favoritos iniciais.
+- [x] Publicar browser-presets com atalhos e favoritos iniciais.
 - [ ] Publicar notification-pack com mensagens, presets de lembrete e snooze.
 - [ ] Publicar community-feed para mostrar proximas metas, novidades e comunicados dentro do app.
 
-Status atual: hotfixes da linha foram validados no beta e consolidados no `stable 3.2.4`, mas os modulos de conteudo do ciclo ainda seguem pendentes.
+Status atual: `browser-presets` abriu o ciclo com atalhos publicos integrados na home do navegador, enquanto `notification-pack` e `community-feed` seguem pendentes.
 
 ### 3.3.0 - Quest Hub (release completa)
 

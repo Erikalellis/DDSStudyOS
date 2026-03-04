@@ -1,0 +1,28 @@
+{
+  "links": [
+    {
+      "id": "public-channel",
+      "label": "Canal publico",
+      "url": "https://github.com/Erikalellis/DDSStudyOS-Updates",
+      "summary": "Downloads oficiais, manifests e novidades do DDS StudyOS."
+    },
+    {
+      "id": "user-guide",
+      "label": "Guia do usuario",
+      "url": "https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/USER_GUIDE_PUBLIC.md",
+      "summary": "Instalacao, uso basico e dicas de suporte."
+    },
+    {
+      "id": "tester-guide",
+      "label": "Guia de testers",
+      "url": "https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/TESTER_DOWNLOADS_3.2.1.md",
+      "summary": "Checklist publico para validacao de builds e downloads."
+    },
+    {
+      "id": "public-roadmap",
+      "label": "Roadmap publico",
+      "url": "https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/ROADMAP_PUBLIC.md",
+      "summary": "Resumo do que esta vindo nos proximos ciclos."
+    }
+  ]
+}

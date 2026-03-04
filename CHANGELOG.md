@@ -10,9 +10,10 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - `SettingsService` agora resolve presets dinamicamente via modulo, mantendo fallback local com `Foco Profundo`, `Revisao`, `Pratica` e `Modo Prova`.
 - Modulo `help-center` criado como pack do ciclo `Power-Up`, com resumo de ajuda e atalhos para guia, changelog e roadmap publicos dentro de `Configuracoes`.
 - `SettingsPage` agora exibe uma secao `Central de Ajuda` alimentada por DLC com fallback local.
+- Modulo `browser-presets` criado como primeira entrega do ciclo `Signal Boost`, com atalhos publicos integrados na home do navegador.
 
 ### Planejado
-- Fechar a entrega funcional remanescente da linha `3.2.x`, com `browser-presets`, `notification-pack` e `community-feed`.
+- Fechar a entrega funcional remanescente da linha `3.2.x`, com `notification-pack` e `community-feed`.
 
 ## [3.2.5] - 2026-03-03
 ### Adicionado
