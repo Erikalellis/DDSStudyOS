@@ -15,6 +15,13 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Planejado
 - Fechar a entrega funcional remanescente da linha `3.2.x`, com `notification-pack` e `community-feed`.
 
+## [3.2.6] - 2026-03-04
+### Adicionado
+- Corte beta `3.2.6-beta.1` preparado para levar `browser-presets` ao canal de testers sem depender da mesma numeracao de `3.2.5`.
+
+### Alterado
+- Linha beta promovida para `3.2.6-beta.1` para destravar update in-app acima de `3.2.5-beta.1` e manter o `stable 3.2.4` intacto.
+
 ## [3.2.5] - 2026-03-03
 ### Adicionado
 - Consolidacao do ciclo `Power-Up` no beta com `study-templates`, `pomodoro-presets` e `help-center` prontos para empacotamento incremental.
