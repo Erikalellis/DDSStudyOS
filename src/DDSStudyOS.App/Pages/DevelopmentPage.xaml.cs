@@ -54,7 +54,7 @@ public sealed partial class DevelopmentPage : Page
 
     private static string GetNextTargetVersion()
     {
-        return "3.2.6";
+        return "3.2.7";
     }
 
     private static string GetNextPackName()

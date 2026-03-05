@@ -3,7 +3,7 @@
 Este roadmap organiza as próximas melhorias após o fechamento da versão `3.0.0`.
 
 Status atual: `3.2.4` promovido no canal `stable` em 2026-03-02 como consolidacao dos hotfixes validados no beta.
-Status beta atual: preparacao de `3.2.6-beta.1` para validar `browser-presets` e abrir `Signal Boost` sem alterar a base estavel `3.2.4`.
+Status beta atual: preparacao de `3.2.7-beta.1` para validar o `Signal Boost` completo (browser-presets + notification-pack + community-feed) sem alterar a base estavel `3.2.4`.
 Status tecnico 3.2.4 (base fechada): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho, links publicos alinhados com `DDSStudyOS-Updates`, `study-templates` no `Dashboard` e limpeza de `Materiais`.
 Ultimo release publico consolidado: `3.2.4` (estavel para rollout geral, mantendo a bridge publica ativa enquanto o repositorio de codigo segue observacao).
 Evidencias atuais do fechamento local: build/testes de 2026-03-02 e artefatos em `artifacts/installer-output/` (`DDSStudyOS-Setup.exe`, `DDSStudyOS-Beta-Setup.exe`, `DDSStudyOS-Portable.zip`, `DDSStudyOS-SHA256.txt`).
@@ -59,7 +59,7 @@ Status atual: ciclo `Power-Up` fechado no codigo e empacotado em `3.2.5-beta.1` 
 - [x] Publicar notification-pack com mensagens, presets de lembrete e snooze.
 - [x] Publicar community-feed para mostrar proximas metas, novidades e comunicados dentro do app.
 
-Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notification-pack` e `community-feed`) e em validacao no canal `3.2.6-beta.1`.
+Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notification-pack` e `community-feed`) e em validacao no canal `3.2.7-beta.1`.
 
 ### 3.3.0 - Quest Hub (release completa)
 

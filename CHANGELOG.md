@@ -24,6 +24,14 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Alterado
 - Linha beta promovida para `3.2.6-beta.1` para destravar update in-app acima de `3.2.5-beta.1` e manter o `stable 3.2.4` intacto.
 
+## [3.2.7] - 2026-03-05
+### Adicionado
+- Corte beta `3.2.7-beta.1` preparado para validar o `Signal Boost` completo com `browser-presets`, `notification-pack` e `community-feed`.
+
+### Alterado
+- `Agenda` passa a carregar presets de snooze e mensagem de dica via modulo `notification-pack`, com fallback local.
+- Tela `Desenvolvimento` passa a exibir `community-feed` data-driven para comunicados e links de roadmap/changelog/releases.
+
 ## [3.2.5] - 2026-03-03
 ### Adicionado
 - Consolidacao do ciclo `Power-Up` no beta com `study-templates`, `pomodoro-presets` e `help-center` prontos para empacotamento incremental.
