@@ -61,11 +61,13 @@ Status atual: ciclo `Power-Up` fechado no codigo e empacotado em `3.2.5-beta.1` 
 
 Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notification-pack` e `community-feed`) e promovido para o `stable 3.2.7`.
 
-### 3.3.0 - Quest Hub (release completa)
+### 3.3.0 - Quest Hub (codename: Phoebe)
 
 - [ ] Consolidar nova leva de recursos que exigem mudancas no core.
 - [ ] Avaliar a aba de exploracao/catalogo beta de cursos como expansao de produto.
 - [ ] Fechar um novo setup completo apenas apos estabilizar a linha 3.2.x de DLCs.
+
+Status atual: fase de definicao da linha `3.3.x (Phoebe)` iniciada apos o fechamento estavel de `3.2.7`.
 
 ## Objetivo do ciclo
 

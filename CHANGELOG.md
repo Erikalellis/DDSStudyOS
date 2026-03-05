@@ -13,6 +13,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Modulo `browser-presets` criado como primeira entrega do ciclo `Signal Boost`, com atalhos publicos integrados na home do navegador.
 - Modulo `notification-pack` criado para presets de snooze e mensagens de lembrete com carregamento por DLC na `Agenda`.
 - Modulo `community-feed` criado para exibir comunicados e proximas metas na tela `Desenvolvimento`.
+- Codename oficial `Phoebe` definido para a linha `3.3.x` (`Quest Hub`).
 
 ### Planejado
 - Fechar validacao beta do `Signal Boost` e preparar consolidacao em release estavel.
