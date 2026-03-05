@@ -69,6 +69,32 @@ Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notifi
 
 Status atual: fase de definicao da linha `3.3.x (Phoebe)` iniciada apos o fechamento estavel de `3.2.7`.
 
+## Definicao de cada secao (escopo operacional)
+
+### 3.2.1 - Checkpoint (DLC)
+
+- Funcao da secao: estabelecer base tecnica e visual para a linha de DLCs sem alterar o core.
+- Entregaveis principais: `web-content`, `onboarding-content`, `branding-assets` e validacao de manifestos com rollback.
+- Criterio de pronto: feeds `stable/beta` validos, downloads de modulos funcionais e fallback de rollback testado.
+
+### 3.2.2 - Power-Up (DLC)
+
+- Funcao da secao: adicionar ganho de produtividade sem reinstalacao completa.
+- Entregaveis principais: `study-templates`, `pomodoro-presets` e `help-center`.
+- Criterio de pronto: modulos carregando no app com fallback local, update incremental funcionando no canal beta e sem regressao critica.
+
+### 3.2.3 - Signal Boost (DLC)
+
+- Funcao da secao: ampliar descoberta e comunicacao dentro do app.
+- Entregaveis principais: `browser-presets`, `notification-pack` e `community-feed`.
+- Criterio de pronto: conteudo dinamico exibido em runtime, links validos e promocao para `stable` apos validacao beta.
+
+### 3.3.0 - Quest Hub (codename: Phoebe)
+
+- Funcao da secao: consolidar evolucoes que exigem mudancas no core e preparar a proxima fase de expansao do produto.
+- Entregaveis principais: arquitetura da aba de exploracao/catalogo, integracoes de modulo por dominio e novo setup completo.
+- Criterio de pronto: estabilidade mantida nos fluxos criticos, rollout reproduzivel e pacote oficial `3.3.0` publicado.
+
 ## Objetivo do ciclo
 
 - Consolidar estabilidade do 3.0 em produção.
