@@ -14,6 +14,7 @@ public sealed partial class DevelopmentPage : Page
 {
     private readonly AppUpdateService _updateService = new();
     private readonly DlcUpdateService _dlcUpdateService = new();
+    private readonly CommunityFeedModuleService _communityFeedModuleService = new();
     private AppUpdateCheckResult? _lastUpdateCheck;
     private DlcUpdateCheckResult? _lastDlcCheck;
     private bool _hasAutoChecked;
@@ -24,6 +25,7 @@ public sealed partial class DevelopmentPage : Page
     {
         this.InitializeComponent();
         InitializeRoadmapHeader();
+        InitializeCommunityFeedSection();
         InitializeUpdateSection();
     }
 
@@ -52,12 +54,19 @@ public sealed partial class DevelopmentPage : Page
 
     private static string GetNextTargetVersion()
     {
-        return "3.2.5";
+        return "3.2.6";
     }
 
     private static string GetNextPackName()
     {
-        return "Power-Up / Signal Boost";
+        return "Signal Boost";
+    }
+
+    private void InitializeCommunityFeedSection()
+    {
+        var feed = _communityFeedModuleService.GetContent();
+        CommunityFeedSummaryText.Text = feed.Summary;
+        CommunityFeedItemsControl.ItemsSource = feed.Entries;
     }
 
     private void ApplyReleaseChannelVisuals(string channel)
@@ -139,6 +148,16 @@ public sealed partial class DevelopmentPage : Page
     private void OpenPublicRoadmap_Click(object sender, RoutedEventArgs e)
     {
         OpenExternalUrl(UpdateDistributionConfig.GetPublicRoadmapUrl());
+    }
+
+    private void CommunityFeedItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is HyperlinkButton link &&
+            link.Tag is string target &&
+            !string.IsNullOrWhiteSpace(target))
+        {
+            OpenExternalUrl(target);
+        }
     }
 
     private void UpdateChannelCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

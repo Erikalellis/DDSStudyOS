@@ -1,0 +1,5 @@
+{
+  "summary": "Pacote incremental de mensagens e presets de lembrete para tornar notificacoes de agenda mais previsiveis.",
+  "agendaTipMessage": "Signal Boost ativo: escolha presets de snooze por contexto e mantenha os lembretes no ritmo do seu estudo.",
+  "snoozePresets": [5, 10, 15, 20, 30, 45, 60]
+}

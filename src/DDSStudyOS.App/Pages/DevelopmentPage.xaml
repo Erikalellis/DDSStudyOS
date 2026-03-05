@@ -141,9 +141,8 @@
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
                     <TextBlock x:Name="NextUpdateTitleText" Text="Linha DLC em validacao" FontWeight="SemiBold"/>
-                    <TextBlock Text="• 3.2.5 - continuidade da linha 3.2.x: pomodoro-presets, help-center e browser-presets."/>
-                    <TextBlock Text="• Presets extras de foco, guias internos e atalhos iniciais do navegador."/>
-                    <TextBlock Text="• Notification-pack e community-feed seguem como etapa incremental seguinte."/>
+                    <TextBlock Text="• 3.2.6-beta.1 valida browser-presets e prepara a finalizacao do Signal Boost."/>
+                    <TextBlock Text="• Notification-pack e community-feed entram para completar o ciclo incremental."/>
                     <TextBlock Text="• Entrega incremental sem reinstalar a base estavel 3.2.4."/>
                 </StackPanel>
             </Border>
@@ -152,13 +151,35 @@
                 <StackPanel Spacing="8">
                     <TextBlock Text="Proximos packs" FontWeight="SemiBold"/>
                     <TextBlock Text="• 3.2.4 consolidou no canal stable os hotfixes de links publicos, study-templates e limpeza de Materiais." />
-                    <TextBlock Text="• 3.2.5 segue com pomodoro-presets, help-center, browser-presets, notification-pack e community-feed."/>
+                    <TextBlock Text="• 3.2.6-beta.1 valida browser-presets antes de fechar notification-pack e community-feed."/>
                     <TextBlock Text="• 3.3.0 - Quest Hub: nova leva de recursos que exigem atualizacao completa do core."/>
                     <TextBlock Text="• A linha 3.2.x sera focada em conteudo, presets, branding e comunicacao dentro do app."/>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <HyperlinkButton Content="Ver changelog" Click="OpenPublicChangelog_Click" />
                         <HyperlinkButton Content="Ver roadmap publico" Click="OpenPublicRoadmap_Click" />
                     </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Community feed" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="CommunityFeedSummaryText"
+                               Text="Acompanhe novidades e comunicados do ciclo atual."
+                               TextWrapping="WrapWholeWords"/>
+                    <ItemsControl x:Name="CommunityFeedItemsControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,8" Spacing="4">
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Description}" TextWrapping="WrapWholeWords"/>
+                                    <HyperlinkButton Content="{Binding CtaLabel}"
+                                                     Tag="{Binding CtaUrl}"
+                                                     Click="CommunityFeedItem_Click"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
 

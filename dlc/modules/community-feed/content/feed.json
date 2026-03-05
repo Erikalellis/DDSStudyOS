@@ -1,0 +1,23 @@
+{
+  "summary": "Acompanhe os proximos packs, notas de beta e comunicados oficiais da plataforma.",
+  "items": [
+    {
+      "title": "Signal Boost em validacao",
+      "description": "browser-presets ja publicado. Notification-pack e community-feed entram neste ciclo incremental.",
+      "ctaLabel": "Ver roadmap",
+      "ctaUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/ROADMAP_PUBLIC.md"
+    },
+    {
+      "title": "Changelog publico",
+      "description": "Resumo de mudancas por versao para usuarios do canal stable e beta.",
+      "ctaLabel": "Ver changelog",
+      "ctaUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/CHANGELOG_PUBLIC.md"
+    },
+    {
+      "title": "Releases oficiais",
+      "description": "Downloads atualizados de setup, pacote portatil e hashes.",
+      "ctaLabel": "Abrir releases",
+      "ctaUrl": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases"
+    }
+  ]
+}

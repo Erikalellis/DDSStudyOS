@@ -17,11 +17,14 @@ public sealed partial class AgendaPage : Page
         ("monthly", "Mensal")
     };
 
-    private static readonly int[] SnoozeOptions = { 5, 10, 15, 30, 60 };
-
     private readonly DatabaseService _db = new();
+    private readonly NotificationPackModuleService _notificationPackService = new();
     private CourseRepository? _courses;
     private ReminderRepository? _reminders;
+    private NotificationPackContent _notificationPack = new(
+        "Mensagens e presets de lembrete para manter notificacoes mais consistentes por perfil.",
+        "Agora voce pode definir recorrencia e adiar lembretes com snooze sem perder o historico.",
+        [5, 10, 15, 30, 60]);
 
     private List<Course> _courseCache = new();
     private List<ReminderItem> _reminderCache = new();
@@ -40,9 +43,11 @@ public sealed partial class AgendaPage : Page
             _courses = new CourseRepository(_db);
             _reminders = new ReminderRepository(_db);
 
+            _notificationPack = _notificationPackService.GetContent();
             InitializeReminderOptions();
             DueDatePicker.Date = DateTimeOffset.Now;
             DueTimePicker.Time = DateTimeOffset.Now.AddHours(1).TimeOfDay;
+            TipInfoBar.Message = _notificationPack.AgendaTipMessage;
 
             await LoadCoursesAsync();
             await ReloadAsync();
@@ -286,7 +291,7 @@ public sealed partial class AgendaPage : Page
         }
 
         SnoozeCombo.Items.Clear();
-        foreach (var minutes in SnoozeOptions)
+        foreach (var minutes in _notificationPack.SnoozePresets)
         {
             SnoozeCombo.Items.Add(new ComboBoxItem
             {

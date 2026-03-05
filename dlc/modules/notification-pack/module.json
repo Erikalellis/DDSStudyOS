@@ -1,0 +1,8 @@
+{
+  "id": "notification-pack",
+  "name": "Notification Pack",
+  "description": "Mensagens e presets de lembrete para o ciclo Signal Boost.",
+  "version": "3.2.6",
+  "channel": "beta",
+  "entry": "content/notification-pack.json"
+}

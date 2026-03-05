@@ -85,7 +85,8 @@
             </Border>
         </Grid>
 
-        <InfoBar Grid.Row="2"
+        <InfoBar x:Name="TipInfoBar"
+                 Grid.Row="2"
                  Margin="0,12,0,0"
                  Title="Dica"
                  Message="Agora você pode definir recorrência e adiar lembretes com snooze sem perder o histórico."

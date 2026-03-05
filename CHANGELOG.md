@@ -11,9 +11,11 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Modulo `help-center` criado como pack do ciclo `Power-Up`, com resumo de ajuda e atalhos para guia, changelog e roadmap publicos dentro de `Configuracoes`.
 - `SettingsPage` agora exibe uma secao `Central de Ajuda` alimentada por DLC com fallback local.
 - Modulo `browser-presets` criado como primeira entrega do ciclo `Signal Boost`, com atalhos publicos integrados na home do navegador.
+- Modulo `notification-pack` criado para presets de snooze e mensagens de lembrete com carregamento por DLC na `Agenda`.
+- Modulo `community-feed` criado para exibir comunicados e proximas metas na tela `Desenvolvimento`.
 
 ### Planejado
-- Fechar a entrega funcional remanescente da linha `3.2.x`, com `notification-pack` e `community-feed`.
+- Fechar validacao beta do `Signal Boost` e preparar consolidacao em release estavel.
 
 ## [3.2.6] - 2026-03-04
 ### Adicionado
