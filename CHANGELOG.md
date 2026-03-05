@@ -31,6 +31,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Alterado
 - `Agenda` passa a carregar presets de snooze e mensagem de dica via modulo `notification-pack`, com fallback local.
 - Tela `Desenvolvimento` passa a exibir `community-feed` data-driven para comunicados e links de roadmap/changelog/releases.
+- Canal `stable` promovido para `3.2.7` com setup assinado, pacote portatil e manifestos DLC (`stable`/`beta`) sincronizados no repositório publico `DDSStudyOS-Updates`.
 
 ## [3.2.5] - 2026-03-03
 ### Adicionado
