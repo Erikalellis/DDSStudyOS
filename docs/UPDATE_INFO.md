@@ -3,20 +3,20 @@
 Este documento centraliza as URLs usadas no release do instalador oficial (Inno Setup) e no suporte do produto.
 
 ## Repositorio oficial
-- GitHub: `https://github.com/Erikalellis/DDSStudyOS`
+- GitHub: `https://github.com/Erikalellis/DDSStudyOS-Updates`
 
 ## Canais de update
 - `stable`: producao
 - `beta`: homologacao interna
 
 ## URLs publicas
-- `Update Info URL (stable)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/stable/update-info.json`
-- `Update Info URL (beta)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/beta/update-info.json`
-- `DLC Manifest URL (stable)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/stable/dlc-manifest.json`
-- `DLC Manifest URL (beta)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS/main/installer/update/beta/dlc-manifest.json`
-- `Release Notes URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
-- `Support URL`: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
-- `Releases`: `https://github.com/Erikalellis/DDSStudyOS/releases`
+- `Update Info URL (stable)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS-Updates/main/installer/update/stable/update-info.json`
+- `Update Info URL (beta)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS-Updates/main/installer/update/beta/update-info.json`
+- `DLC Manifest URL (stable)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS-Updates/main/installer/update/stable/dlc-manifest.json`
+- `DLC Manifest URL (beta)`: `https://raw.githubusercontent.com/Erikalellis/DDSStudyOS-Updates/main/installer/update/beta/dlc-manifest.json`
+- `Release Notes URL`: `https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/CHANGELOG_PUBLIC.md`
+- `Support URL`: `https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/USER_GUIDE_PUBLIC.md`
+- `Releases`: `https://github.com/Erikalellis/DDSStudyOS-Updates/releases`
 
 ## Observacao sobre auto-update
 - O arquivo acima e informativo.

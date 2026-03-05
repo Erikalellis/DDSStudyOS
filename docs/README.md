@@ -32,7 +32,7 @@
 
 ## Links publicos (GitHub)
 Depois de publicar o repositorio, use estes links na pagina de release/instalador:
-- Update Info: `https://github.com/Erikalellis/DDSStudyOS/blob/main/docs/UPDATE_INFO.md`
-- Suporte: `https://github.com/Erikalellis/DDSStudyOS/blob/main/SUPPORT.md`
-- Release notes: `https://github.com/Erikalellis/DDSStudyOS/blob/main/CHANGELOG.md`
-- Tag atual: `https://github.com/Erikalellis/DDSStudyOS/tree/v3.2.0`
+- Update Info: `https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/installer/update/stable/update-info.json`
+- Suporte: `https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/USER_GUIDE_PUBLIC.md`
+- Release notes: `https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/CHANGELOG_PUBLIC.md`
+- Tag atual: `https://github.com/Erikalellis/DDSStudyOS-Updates/releases`
