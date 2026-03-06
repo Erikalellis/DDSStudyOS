@@ -96,6 +96,57 @@ Progresso tecnico inicial: aba `Loja` integrada ao shell, rota `store` ativa e p
 - Entregaveis principais: arquitetura da aba de exploracao/catalogo, integracoes de modulo por dominio e novo setup completo.
 - Criterio de pronto: estabilidade mantida nos fluxos criticos, rollout reproduzivel e pacote oficial `3.3.0` publicado.
 
+## Plano de execucao - 3.3.x (Phoebe)
+
+### 3.3.0 - Foundation (core + loja beta)
+
+- [ ] Fechar modelo de dados do catalogo (`CourseCatalogItem`, categoria, nivel, tipo, preco e origem).
+- [ ] Integrar `Loja` com feed remoto configuravel (fallback local quando offline).
+- [ ] Implementar abertura por deep link para contexto de catalogo (`ddsstudyos://store/...`).
+- [ ] Adicionar rastreio de falhas de catalogo no diagnostico local.
+- [ ] Publicar build beta com smoke dedicado de loja/catalogo.
+
+Critério de aceite:
+- App abre sem regressao nos fluxos atuais.
+- Loja renderiza feed remoto e fallback local.
+- Deep link abre rota correta sem crash.
+
+### 3.3.1 - Modules (dominios de estudo)
+
+- [ ] Entregar modulo `Tecnologia` (links, trilhas base e conteudos recomendados).
+- [ ] Entregar modulo `Musica` (links, trilhas base e conteudos recomendados).
+- [ ] Implementar mecanismo de pacotes de modulo no formato DLC para evitar inflar o setup base.
+- [ ] Adicionar controle de versao por modulo no manifest.
+
+Critério de aceite:
+- Instalacao base continua leve.
+- Modulos podem ser baixados/aplicados sem reinstalar o app.
+- Rollback de modulo validado no canal beta.
+
+### 3.3.2 - Commerce Bridge (preparacao servidor)
+
+- [ ] Definir contrato HTTP minimo entre app e servidor (catalogo, detalhe, disponibilidade e link de aquisicao).
+- [ ] Implementar fluxo de ida para web externa e retorno para app por protocolo.
+- [ ] Adicionar validacao de origem para links externos antes da abertura.
+- [ ] Publicar guia tecnico de integracao para o servidor.
+
+Critério de aceite:
+- Fluxo web -> app funciona em ambiente real.
+- Sem redirecionamentos nao autorizados.
+- Logs suficientes para suporte em campo.
+
+### 3.3.3 - Release Candidate (estabilidade)
+
+- [ ] Rodar regressao completa (build, testes, smoke first-use, smoke clean-machine, update stable/beta, DLC).
+- [ ] Congelar schema de manifest para `3.3.x`.
+- [ ] Gerar setup completo e pacote portable da linha `Phoebe`.
+- [ ] Publicar evidencias e checklist final de promocao.
+
+Critério de aceite:
+- Zero bug critico aberto.
+- Suite de testes/smoke 100% verde.
+- Artefatos assinados e publicados nos canais corretos.
+
 ## Objetivo do ciclo
 
 - Consolidar estabilidade do 3.0 em produção.
