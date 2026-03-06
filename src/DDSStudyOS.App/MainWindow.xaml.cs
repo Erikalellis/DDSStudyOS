@@ -37,6 +37,7 @@ public sealed partial class MainWindow : Window
     private string _selectedOnboardingLevel = "Iniciante";
     private string _selectedOnboardingShift = "Flexível";
     private readonly bool _isSmokeFirstUseMode = AppState.IsSmokeFirstUseMode;
+    private string _lastNavigationTag = "dashboard";
 
     private sealed record TourStep(
         FrameworkElement Target,
@@ -87,7 +88,11 @@ public sealed partial class MainWindow : Window
         // Mantém o menu lateral estável desde a primeira execução.
         RefreshNavigationMenuVisualState();
 
-        NavigateToTag("dashboard");
+        var initialTag = string.IsNullOrWhiteSpace(AppState.PendingNavigationTag)
+            ? "dashboard"
+            : AppState.PendingNavigationTag!;
+        AppState.PendingNavigationTag = null;
+        NavigateToTag(initialTag);
 
         // Permite que outras telas peçam navegação (MVP)
         Services.AppState.RequestNavigateTag = NavigateToTag;
@@ -1654,6 +1659,14 @@ public sealed partial class MainWindow : Window
 
     private void NavigateToTag(string tag)
     {
+        if (string.IsNullOrWhiteSpace(tag))
+        {
+            tag = "dashboard";
+        }
+
+        tag = tag.Trim().ToLowerInvariant();
+        _lastNavigationTag = tag;
+
         var currentTag = ResolveTagFromPageType(ContentFrame.CurrentSourcePageType);
         if (string.Equals(tag, "browser", StringComparison.OrdinalIgnoreCase) &&
             !string.IsNullOrWhiteSpace(currentTag) &&
@@ -1669,6 +1682,7 @@ public sealed partial class MainWindow : Window
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
+            "store" => typeof(StorePage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
             _ => typeof(DashboardPage)
@@ -1687,7 +1701,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private static string? ResolveTagFromPageType(Type? pageType)
+    private string? ResolveTagFromPageType(Type? pageType)
     {
         if (pageType == typeof(DashboardPage))
         {
@@ -1711,7 +1725,17 @@ public sealed partial class MainWindow : Window
 
         if (pageType == typeof(BrowserPage))
         {
+            if (string.Equals(_lastNavigationTag, "store", StringComparison.OrdinalIgnoreCase))
+            {
+                return "store";
+            }
+
             return "browser";
+        }
+
+        if (pageType == typeof(StorePage))
+        {
+            return "store";
         }
 
         if (pageType == typeof(SettingsPage))
@@ -1749,6 +1773,7 @@ public sealed partial class MainWindow : Window
             NavItemMaterials,
             NavItemAgenda,
             NavItemBrowser,
+            NavItemStore,
             NavItemSettings,
             NavItemDev
         ];

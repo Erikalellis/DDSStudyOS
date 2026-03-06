@@ -12,6 +12,7 @@ public static class SettingsService
     private const string KeyDownloadsOrganizerEnabled = "DownloadsOrganizerEnabled";
     private const string KeyBrowserSearchProvider = "BrowserSearchProvider";
     private const string KeyFeedbackFormUrl = "FeedbackFormUrl";
+    private const string KeyStoreCatalogUrl = "StoreCatalogUrl";
     private const string KeyUpdateChannel = "UpdateChannel";
     private const string KeyUpdateAutoCheckInDevelopment = "UpdateAutoCheckInDevelopment";
     private const string KeyPomodoroFocusMinutes = "PomodoroFocusMinutes";
@@ -91,6 +92,31 @@ public static class SettingsService
 
             TryWritePackagedString(KeyFeedbackFormUrl, normalized);
             WriteFallbackString(KeyFeedbackFormUrl, normalized);
+        }
+    }
+
+    public static string StoreCatalogUrl
+    {
+        get
+        {
+            if (TryReadPackagedString(KeyStoreCatalogUrl, out var packagedValue) &&
+                !string.IsNullOrWhiteSpace(packagedValue))
+            {
+                return packagedValue.Trim();
+            }
+
+            return ReadFallbackString(
+                KeyStoreCatalogUrl,
+                defaultValue: "http://177.71.165.60/");
+        }
+        set
+        {
+            var normalized = string.IsNullOrWhiteSpace(value)
+                ? "http://177.71.165.60/"
+                : value.Trim();
+
+            TryWritePackagedString(KeyStoreCatalogUrl, normalized);
+            WriteFallbackString(KeyStoreCatalogUrl, normalized);
         }
     }
 

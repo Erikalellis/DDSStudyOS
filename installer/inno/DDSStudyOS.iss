@@ -93,6 +93,12 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; Work
 Name: "{autoprograms}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\app\{#MyAppExeName}"; WorkingDir: "{app}\app"; IconFilename: "{#MyAppIcon}"; Tasks: desktopicon
 
+[Registry]
+Root: HKCR; Subkey: "ddsstudyos"; ValueType: string; ValueData: "URL:DDS StudyOS Protocol"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "ddsstudyos"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "ddsstudyos\DefaultIcon"; ValueType: string; ValueData: "{app}\app\{#MyAppExeName},0"
+Root: HKCR; Subkey: "ddsstudyos\shell\open\command"; ValueType: string; ValueData: """{app}\app\{#MyAppExeName}"" ""%1"""
+
 [Run]
 Filename: "{app}\app\{#MyAppExeName}"; Description: "Abrir {#MyAppName}"; Flags: nowait postinstall skipifsilent skipifdoesntexist
 

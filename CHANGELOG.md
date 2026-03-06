@@ -14,6 +14,9 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Modulo `notification-pack` criado para presets de snooze e mensagens de lembrete com carregamento por DLC na `Agenda`.
 - Modulo `community-feed` criado para exibir comunicados e proximas metas na tela `Desenvolvimento`.
 - Codename oficial `Phoebe` definido para a linha `3.3.x` (`Quest Hub`).
+- Nova aba `Loja` no menu lateral, com `StorePage` dedicada para abrir o catalogo hospedado.
+- Suporte inicial a deep link `ddsstudyos://...` (ex.: `ddsstudyos://loja`, `ddsstudyos://agenda`, `ddsstudyos://browser?url=...`).
+- Instalador Inno atualizado para registrar o protocolo `ddsstudyos://` no Windows.
 
 ### Planejado
 - Fechar validacao beta do `Signal Boost` e preparar consolidacao em release estavel.

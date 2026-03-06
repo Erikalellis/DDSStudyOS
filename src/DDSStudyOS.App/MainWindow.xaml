@@ -73,6 +73,12 @@
                                 <TextBlock Text="Navegador" VerticalAlignment="Center" />
                             </StackPanel>
                         </ListViewItem>
+                        <ListViewItem x:Name="NavItemStore" Tag="store">
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
+                                <SymbolIcon Symbol="Shop" />
+                                <TextBlock Text="Loja" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </ListViewItem>
                         <ListViewItem x:Name="NavItemSettings" Tag="settings">
                             <StackPanel Orientation="Horizontal" Spacing="12" Padding="12,10">
                                 <SymbolIcon Symbol="Setting" />

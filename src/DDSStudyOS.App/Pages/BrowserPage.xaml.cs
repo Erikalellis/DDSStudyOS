@@ -20,6 +20,7 @@ namespace DDSStudyOS.App.Pages;
 public sealed partial class BrowserPage : Page
 {
     private const string HomeAddressAlias = "dds://inicio";
+    private const string StoreAddressAlias = "dds://loja";
     private const string ErrorAddressAlias = "dds://erro";
     private const string AliasNotFoundAddressAlias = "dds://404";
     private static readonly string WebView2UserDataFolder = WebView2RuntimeChecker.EnsureUserDataFolderConfigured();
@@ -468,6 +469,11 @@ public sealed partial class BrowserPage : Page
             return $"http://{normalized["http:/".Length..].TrimStart('/')}";
         }
 
+        if (normalized.StartsWith("ddsstudyos://", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"dds://{normalized["ddsstudyos://".Length..]}";
+        }
+
         return normalized;
     }
 
@@ -522,6 +528,11 @@ public sealed partial class BrowserPage : Page
 
     private bool TryHandleInternalAlias(string raw)
     {
+        if (raw.StartsWith("ddsstudyos://", StringComparison.OrdinalIgnoreCase))
+        {
+            raw = $"dds://{raw["ddsstudyos://".Length..]}";
+        }
+
         if (!raw.StartsWith("dds://", StringComparison.OrdinalIgnoreCase))
         {
             return false;
@@ -538,6 +549,12 @@ public sealed partial class BrowserPage : Page
             case "dds://courses":
             case "dds://cursos":
                 _ = OpenCoursePickerAsync(onlyFavorites: false);
+                return true;
+
+            case StoreAddressAlias:
+            case "dds://store":
+            case "dds://shop":
+                NavigateToTag("store");
                 return true;
 
             case "dds://favorites":
@@ -882,7 +899,8 @@ public sealed partial class BrowserPage : Page
 
         _lastRequestedAddress = e.Uri;
 
-        if (e.Uri.StartsWith("dds://", StringComparison.OrdinalIgnoreCase))
+        if (e.Uri.StartsWith("dds://", StringComparison.OrdinalIgnoreCase) ||
+            e.Uri.StartsWith("ddsstudyos://", StringComparison.OrdinalIgnoreCase))
         {
             e.Cancel = true;
             _ = DispatcherQueue.TryEnqueue(() =>
@@ -1370,11 +1388,12 @@ public sealed partial class BrowserPage : Page
     <p>Página inicial oficial do DDS StudyOS. Use os atalhos abaixo para continuar seus estudos.</p>
 
     <div class="tip">
-      Dica: você pode digitar <strong>dds://cursos</strong>, <strong>dds://favoritos</strong> ou
+      Dica: você pode digitar <strong>dds://loja</strong>, <strong>dds://cursos</strong> ou
       <strong>dds://config</strong> diretamente na barra de endereço.
     </div>
 
     <div class="links">
+      <a href="dds://loja">Abrir Loja DDS</a>
       <a href="dds://cursos">Abrir lista de cursos</a>
       <a href="dds://favoritos">Abrir cursos favoritos</a>
       <a href="dds://agenda">Abrir agenda de estudos</a>
@@ -1564,6 +1583,7 @@ public sealed partial class BrowserPage : Page
     <p>Use um dos atalhos válidos:</p>
     <p>
       <a href="dds://inicio">dds://inicio</a>
+      <a href="dds://loja">dds://loja</a>
       <a href="dds://cursos">dds://cursos</a>
       <a href="dds://favoritos">dds://favoritos</a>
       <a href="dds://config">dds://config</a>

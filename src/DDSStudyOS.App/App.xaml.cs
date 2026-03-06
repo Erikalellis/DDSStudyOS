@@ -32,11 +32,42 @@ public partial class App : Application
                              string.Equals(Environment.GetEnvironmentVariable("DDS_DISABLE_AUTO_DLC"), "1", StringComparison.OrdinalIgnoreCase);
 
         Services.AppState.LaunchArguments = launchArguments;
+        ConfigureLaunchDeepLink(launchArguments);
 
         var window = new MainWindow();
         Services.AppState.MainWindow = window;
         window.Activate();
         StartBackgroundDlcUpdateIfNeeded(disableAutoDlc);
+    }
+
+    private static void ConfigureLaunchDeepLink(string launchArguments)
+    {
+        try
+        {
+            if (!Services.DeepLinkService.TryExtractUriFromLaunchArguments(launchArguments, out var deepLinkUri) ||
+                deepLinkUri is null)
+            {
+                return;
+            }
+
+            if (!Services.DeepLinkService.TryResolveTarget(deepLinkUri, out var targetTag, out var pendingBrowserUrl))
+            {
+                Services.AppLogger.Warn($"DeepLink: URI sem rota conhecida: {deepLinkUri}");
+                return;
+            }
+
+            Services.AppState.PendingNavigationTag = targetTag;
+            if (!string.IsNullOrWhiteSpace(pendingBrowserUrl))
+            {
+                Services.AppState.PendingBrowserUrl = pendingBrowserUrl;
+            }
+
+            Services.AppLogger.Info($"DeepLink: rota inicial definida para '{targetTag}' ({deepLinkUri}).");
+        }
+        catch (Exception ex)
+        {
+            Services.AppLogger.Warn($"DeepLink: falha ao processar argumento de inicializacao. Motivo: {ex.Message}");
+        }
     }
 
     private static void StartBackgroundDlcUpdateIfNeeded(bool disableAutoDlc)
