@@ -24,6 +24,13 @@ public static class DiagnosticsService
             LogPath = AppLogger.CurrentLogPath,
             DownloadsOrganizerEnabled = SettingsService.DownloadsOrganizerEnabled
         };
+        var storeCatalogSnapshot = StoreCatalogService.GetLastSnapshot();
+        report.StoreCatalogLastSource = storeCatalogSnapshot.Source;
+        report.StoreCatalogFeedUrl = storeCatalogSnapshot.FeedUrl;
+        report.StoreCatalogLastMessage = storeCatalogSnapshot.Message;
+        report.StoreCatalogLastError = storeCatalogSnapshot.Error;
+        report.StoreCatalogLastItemCount = storeCatalogSnapshot.ItemCount;
+        report.StoreCatalogLastLoadedAtUtc = storeCatalogSnapshot.LoadedAtUtc;
 
         var integrity = await SafeCheckAsync(
             report,
@@ -94,6 +101,35 @@ public static class DiagnosticsService
                 return Task.FromResult(exists
                     ? (true, "Arquivo de log acessível.")
                     : (false, "Arquivo de log não encontrado."));
+            });
+
+        await SafeCheckAsync(
+            report,
+            "Catalogo da loja (ultimo sync)",
+            () =>
+            {
+                var snapshot = StoreCatalogService.GetLastSnapshot();
+                report.StoreCatalogLastSource = snapshot.Source;
+                report.StoreCatalogFeedUrl = snapshot.FeedUrl;
+                report.StoreCatalogLastMessage = snapshot.Message;
+                report.StoreCatalogLastError = snapshot.Error;
+                report.StoreCatalogLastItemCount = snapshot.ItemCount;
+                report.StoreCatalogLastLoadedAtUtc = snapshot.LoadedAtUtc;
+
+                if (string.Equals(snapshot.Source, "not-started", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Task.FromResult((true, "Catalogo ainda nao carregado nesta sessao."));
+                }
+
+                if (snapshot.IsSuccess)
+                {
+                    return Task.FromResult((true, $"Fonte: {snapshot.Source}. Itens: {snapshot.ItemCount}."));
+                }
+
+                var message = string.IsNullOrWhiteSpace(snapshot.Error)
+                    ? snapshot.Message
+                    : $"{snapshot.Message} | erro: {snapshot.Error}";
+                return Task.FromResult((false, message));
             });
 
         report.AllChecksOk = integrity && report.Checks.TrueForAll(c => c.IsOk);
@@ -194,6 +230,12 @@ public sealed class DiagnosticsReport
     public string LogPath { get; set; } = string.Empty;
     public bool DownloadsOrganizerEnabled { get; set; }
     public string? WebView2Version { get; set; }
+    public string? StoreCatalogLastSource { get; set; }
+    public string? StoreCatalogFeedUrl { get; set; }
+    public string? StoreCatalogLastMessage { get; set; }
+    public string? StoreCatalogLastError { get; set; }
+    public int StoreCatalogLastItemCount { get; set; }
+    public DateTimeOffset StoreCatalogLastLoadedAtUtc { get; set; }
     public bool AllChecksOk { get; set; }
     public List<DiagnosticsCheckResult> Checks { get; set; } = new();
 }

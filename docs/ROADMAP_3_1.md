@@ -69,6 +69,7 @@ Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notifi
 
 Status atual: fase de definicao da linha `3.3.x (Phoebe)` iniciada apos o fechamento estavel de `3.2.7`.
 Progresso tecnico inicial: aba `Loja` integrada ao shell, rota `store` ativa e protocolo externo `ddsstudyos://` habilitado no app e no instalador.
+Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado e baseline pronto para a ligacao futura com servidor proprio.
 
 ## Definicao de cada secao (escopo operacional)
 
@@ -107,6 +108,7 @@ Progresso tecnico inicial: aba `Loja` integrada ao shell, rota `store` ativa e p
 - [ ] Publicar build beta com smoke dedicado de loja/catalogo.
 
 Critério de aceite:
+
 - App abre sem regressao nos fluxos atuais.
 - Loja renderiza feed remoto e fallback local.
 - Deep link abre rota correta sem crash.
@@ -119,6 +121,7 @@ Critério de aceite:
 - [ ] Adicionar controle de versao por modulo no manifest.
 
 Critério de aceite:
+
 - Instalacao base continua leve.
 - Modulos podem ser baixados/aplicados sem reinstalar o app.
 - Rollback de modulo validado no canal beta.
@@ -131,6 +134,7 @@ Critério de aceite:
 - [ ] Publicar guia tecnico de integracao para o servidor.
 
 Critério de aceite:
+
 - Fluxo web -> app funciona em ambiente real.
 - Sem redirecionamentos nao autorizados.
 - Logs suficientes para suporte em campo.
@@ -143,6 +147,7 @@ Critério de aceite:
 - [ ] Publicar evidencias e checklist final de promocao.
 
 Critério de aceite:
+
 - Zero bug critico aberto.
 - Suite de testes/smoke 100% verde.
 - Artefatos assinados e publicados nos canais corretos.

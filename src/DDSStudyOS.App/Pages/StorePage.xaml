@@ -5,6 +5,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="StoreRoot"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -35,13 +36,76 @@
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <Button Content="Abrir Loja" Click="OpenStore_Click" />
                     <Button Content="Recarregar" Click="Reload_Click" />
+                    <Button Content="Sincronizar Catalogo" Click="RefreshCatalog_Click" />
                     <Button Content="Abrir no Navegador Externo"
                             Click="OpenExternal_Click"
                             Style="{StaticResource AccentButtonStyle}" />
                 </StackPanel>
+
+                <TextBlock x:Name="StoreCatalogStatusText"
+                           Text="Catalogo: aguardando sincronizacao."
+                           Opacity="0.8" />
             </StackPanel>
         </Border>
 
-        <controls:WebView2 x:Name="StoreWebView" Grid.Row="1" />
+        <Grid Grid.Row="1" ColumnSpacing="12" Padding="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Padding="10"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                    CornerRadius="8">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Catalogo Phoebe (beta)"
+                               FontSize="14"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="Tecnologia, Musica e novos dominios via feed remoto."
+                               TextWrapping="WrapWholeWords"
+                               Opacity="0.8"
+                               FontSize="12" />
+
+                    <ListView x:Name="CatalogListView"
+                              Height="560"
+                              SelectionChanged="CatalogListView_SelectionChanged"
+                              ItemsSource="{x:Bind CatalogItems, Mode=OneWay}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8"
+                                        Padding="10"
+                                        CornerRadius="8"
+                                        BorderThickness="1"
+                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                        Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="WrapWholeWords" />
+                                        <TextBlock Text="{Binding Summary}" FontSize="12" Opacity="0.85" TextWrapping="WrapWholeWords" />
+                                        <TextBlock Text="{Binding Category}" FontSize="11" Opacity="0.8" />
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock Text="{Binding StudyType}" FontSize="11" />
+                                            <TextBlock Text="•" FontSize="11" Opacity="0.6" />
+                                            <TextBlock Text="{Binding Level}" FontSize="11" />
+                                            <TextBlock Text="•" FontSize="11" Opacity="0.6" />
+                                            <TextBlock Text="{Binding PriceLabel}" FontSize="11" />
+                                        </StackPanel>
+                                        <Button Content="Abrir item"
+                                                HorizontalAlignment="Left"
+                                                Padding="10,4"
+                                                Tag="{Binding Url}"
+                                                Click="OpenCatalogItem_Click" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Border>
+
+            <controls:WebView2 x:Name="StoreWebView" Grid.Column="1" />
+        </Grid>
     </Grid>
 </Page>

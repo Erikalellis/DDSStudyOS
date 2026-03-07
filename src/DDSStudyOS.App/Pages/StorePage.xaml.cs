@@ -1,8 +1,10 @@
+using DDSStudyOS.App.Models;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,7 +17,11 @@ public sealed partial class StorePage : Page
         WebView2RuntimeChecker.EnsureUserDataFolderConfigured(),
         "store");
 
+    private readonly StoreCatalogService _catalogService = new();
     private bool _isPageActive;
+    private bool _isDisposed;
+
+    public ObservableCollection<StoreCatalogItem> CatalogItems { get; } = [];
 
     public StorePage()
     {
@@ -31,17 +37,28 @@ public sealed partial class StorePage : Page
     {
         _isPageActive = true;
         StoreStatusText.Text = "Carregando loja...";
+        StoreCatalogStatusText.Text = "Catalogo: sincronizando...";
+
         if (!await EnsureWebViewReadySafeAsync())
         {
             return;
         }
 
+        await LoadCatalogAsync();
         OpenStoreHome();
     }
 
     private void StorePage_Unloaded(object sender, RoutedEventArgs e)
     {
         _isPageActive = false;
+
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        _catalogService.Dispose();
+        _isDisposed = true;
     }
 
     private async Task<bool> EnsureWebViewReadySafeAsync()
@@ -66,6 +83,43 @@ public sealed partial class StorePage : Page
             AppLogger.Error("StorePage: falha ao inicializar WebView2.", ex);
             StoreStatusText.Text = "Falha ao iniciar navegador da loja.";
             return false;
+        }
+    }
+
+    private async Task LoadCatalogAsync()
+    {
+        try
+        {
+            var result = await _catalogService.LoadAsync(maxItems: 120);
+
+            CatalogItems.Clear();
+            foreach (var item in result.Items)
+            {
+                CatalogItems.Add(item);
+            }
+
+            var sourceText = result.Source switch
+            {
+                "remote" => "remoto",
+                "fallback-file" => "fallback local",
+                "fallback-built-in" => "fallback interno",
+                _ => result.Source
+            };
+
+            StoreCatalogStatusText.Text = $"Catalogo: {CatalogItems.Count} item(ns) via {sourceText}.";
+            if (result.UsedFallback)
+            {
+                AppLogger.Warn($"StorePage: catalogo em fallback ({result.Message})");
+            }
+            else
+            {
+                AppLogger.Info($"StorePage: catalogo remoto carregado com {CatalogItems.Count} item(ns).");
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("StorePage: erro ao sincronizar catalogo.", ex);
+            StoreCatalogStatusText.Text = "Catalogo: erro ao sincronizar.";
         }
     }
 
@@ -146,6 +200,11 @@ public sealed partial class StorePage : Page
         StoreWebView.CoreWebView2.Reload();
     }
 
+    private async void RefreshCatalog_Click(object sender, RoutedEventArgs e)
+    {
+        await LoadCatalogAsync();
+    }
+
     private void OpenExternal_Click(object sender, RoutedEventArgs e)
     {
         var target = ResolveStoreUrl();
@@ -161,6 +220,32 @@ public sealed partial class StorePage : Page
         {
             AppLogger.Warn($"StorePage: falha ao abrir navegador externo. Motivo: {ex.Message}");
         }
+    }
+
+    private void OpenCatalogItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button || button.Tag is not string url || string.IsNullOrWhiteSpace(url))
+        {
+            return;
+        }
+
+        if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri))
+        {
+            return;
+        }
+
+        StoreWebView.Source = uri;
+        StoreStatusText.Text = "Abrindo item do catalogo...";
+    }
+
+    private void CatalogListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (CatalogListView.SelectedItem is not StoreCatalogItem item)
+        {
+            return;
+        }
+
+        StoreCatalogStatusText.Text = $"Selecionado: {item.Title} ({item.Category} / {item.Level}).";
     }
 
     private void OpenStoreHome()

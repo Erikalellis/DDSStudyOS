@@ -13,6 +13,7 @@ public static class SettingsService
     private const string KeyBrowserSearchProvider = "BrowserSearchProvider";
     private const string KeyFeedbackFormUrl = "FeedbackFormUrl";
     private const string KeyStoreCatalogUrl = "StoreCatalogUrl";
+    private const string KeyStoreCatalogFeedUrl = "StoreCatalogFeedUrl";
     private const string KeyUpdateChannel = "UpdateChannel";
     private const string KeyUpdateAutoCheckInDevelopment = "UpdateAutoCheckInDevelopment";
     private const string KeyPomodoroFocusMinutes = "PomodoroFocusMinutes";
@@ -117,6 +118,31 @@ public static class SettingsService
 
             TryWritePackagedString(KeyStoreCatalogUrl, normalized);
             WriteFallbackString(KeyStoreCatalogUrl, normalized);
+        }
+    }
+
+    public static string StoreCatalogFeedUrl
+    {
+        get
+        {
+            if (TryReadPackagedString(KeyStoreCatalogFeedUrl, out var packagedValue) &&
+                !string.IsNullOrWhiteSpace(packagedValue))
+            {
+                return packagedValue.Trim();
+            }
+
+            return ReadFallbackString(
+                KeyStoreCatalogFeedUrl,
+                defaultValue: "http://177.71.165.60/dds/catalog.json");
+        }
+        set
+        {
+            var normalized = string.IsNullOrWhiteSpace(value)
+                ? "http://177.71.165.60/dds/catalog.json"
+                : value.Trim();
+
+            TryWritePackagedString(KeyStoreCatalogFeedUrl, normalized);
+            WriteFallbackString(KeyStoreCatalogFeedUrl, normalized);
         }
     }
 

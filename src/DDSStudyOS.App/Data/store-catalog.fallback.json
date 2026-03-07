@@ -1,0 +1,39 @@
+{
+  "catalogVersion": "1.0",
+  "items": [
+    {
+      "id": "tech-path-essentials",
+      "title": "Tecnologia - Trilha Essentials",
+      "summary": "Roteiro de entrada para desenvolvimento com cursos e materiais selecionados.",
+      "category": "Tecnologia",
+      "level": "Iniciante",
+      "studyType": "Trilha",
+      "price": 0,
+      "priceLabel": "Gratuito",
+      "origin": "DDS Curadoria",
+      "url": "https://github.com/Erikalellis/DDSStudyOS-Updates",
+      "tags": [
+        "tech",
+        "fundamentos",
+        "starter"
+      ]
+    },
+    {
+      "id": "music-practice-lab",
+      "title": "Musica - Practice Lab",
+      "summary": "Colecao de referencias para estudo diario de teoria e pratica musical.",
+      "category": "Musica",
+      "level": "Intermediario",
+      "studyType": "Modulo",
+      "price": 39.9,
+      "priceLabel": "R$ 39.90",
+      "origin": "DDS Curadoria",
+      "url": "https://github.com/Erikalellis/DDSStudyOS-Updates/releases",
+      "tags": [
+        "musica",
+        "pratica",
+        "teoria"
+      ]
+    }
+  ]
+}
