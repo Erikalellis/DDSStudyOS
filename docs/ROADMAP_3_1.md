@@ -69,7 +69,7 @@ Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notifi
 
 Status atual: fase de definicao da linha `3.3.x (Phoebe)` iniciada apos o fechamento estavel de `3.2.7`.
 Progresso tecnico inicial: aba `Loja` integrada ao shell, rota `store` ativa e protocolo externo `ddsstudyos://` habilitado no app e no instalador.
-Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado, portal ASP.NET Core dedicado criado com home publica + `/api/catalog` + `/healthz`, bundle Docker gerado, stack isolada validada em `~/dds-projetos/ddsstudyos-portal/stack` no Ubuntu com bind interno `127.0.0.1:5081` e tunel reverso AWS dedicado validado na porta `5081`.
+Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado, portal ASP.NET Core dedicado criado com home publica + `/api/catalog` + `/healthz`, bundle Docker gerado, stack isolada validada em `~/dds-projetos/ddsstudyos-portal/stack` no Ubuntu com bind interno `127.0.0.1:5081`, tunel reverso AWS dedicado validado na porta `5081` e rota publica `http://177.71.165.60/studyos/` liberada via nginx para o app consumir `/studyos/api/catalog`.
 
 ## Definicao de cada secao (escopo operacional)
 
@@ -105,6 +105,7 @@ Progresso foundation atual: catalogo remoto com fallback local/interno implement
 - [x] Integrar `Loja` com feed remoto configuravel (fallback local quando offline).
 - [x] Implementar abertura por deep link para contexto de catalogo (`ddsstudyos://store/...`).
 - [x] Adicionar rastreio de falhas de catalogo no diagnostico local.
+- [x] Publicar endpoint remoto acessivel externamente para a Loja (`/studyos/api/catalog`).
 - [ ] Publicar build beta com smoke dedicado de loja/catalogo.
 
 Critério de aceite:

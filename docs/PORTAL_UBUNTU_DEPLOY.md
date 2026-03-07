@@ -156,6 +156,20 @@ ssh -i /home/kika/dds-key.pem ubuntu@177.71.165.60 "curl -fsS http://127.0.0.1:5
 - Catalogo: `/api/catalog`
 - Metadata: `/api/meta`
 
+## Exposicao publica recomendada
+
+No host AWS, publique o portal sob path dedicado no `nginx` existente:
+
+- portal: `http://177.71.165.60/studyos/`
+- catalogo: `http://177.71.165.60/studyos/api/catalog`
+- health: `http://177.71.165.60/studyos/healthz`
+
+Motivo:
+
+- evita depender da porta `5081` aberta ao publico
+- preserva `5081` como backend interno do portal
+- mantem o outro portal respondendo na raiz (`/`)
+
 ## Observacao
 
 O portal DDS StudyOS foi desenhado para virar a camada publica do projeto, mas sem depender do site ja existente no Ubuntu. O isolamento faz parte da arquitetura.

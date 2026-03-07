@@ -22,8 +22,15 @@ builder.Services.AddSingleton<CatalogFileService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+var portalOptions = app.Services.GetRequiredService<IOptions<PortalOptions>>().Value;
+var pathBase = NormalizePathBase(portalOptions.PathBase);
 
 app.UseForwardedHeaders();
+
+if (!string.IsNullOrWhiteSpace(pathBase))
+{
+    app.UsePathBase(pathBase);
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -51,6 +58,9 @@ app.MapGet("/api/catalog", async (CatalogFileService catalogService, Cancellatio
 app.MapGet("/api/meta", (IOptions<PortalOptions> options) =>
 {
     var value = options.Value;
+    var normalizedBasePath = NormalizePathBase(value.PathBase);
+    var externalCatalogPath = BuildExternalPath(normalizedBasePath, value.CatalogApiPath);
+    var externalHealthPath = BuildExternalPath(normalizedBasePath, "/healthz");
     return Results.Ok(new
     {
         productName = value.ProductName,
@@ -58,10 +68,44 @@ app.MapGet("/api/meta", (IOptions<PortalOptions> options) =>
         publicUpdatesUrl = value.PublicUpdatesUrl,
         downloadsUrl = value.DownloadsUrl,
         supportUrl = value.SupportUrl,
-        catalogApiPath = value.CatalogApiPath
+        pathBase = normalizedBasePath,
+        catalogApiPath = externalCatalogPath,
+        healthPath = externalHealthPath
     });
 });
 
 app.MapRazorPages();
 
 app.Run();
+
+static string NormalizePathBase(string? value)
+{
+    if (string.IsNullOrWhiteSpace(value))
+    {
+        return string.Empty;
+    }
+
+    var normalized = value.Trim();
+    if (!normalized.StartsWith('/'))
+    {
+        normalized = "/" + normalized;
+    }
+
+    return normalized.TrimEnd('/');
+}
+
+static string BuildExternalPath(string pathBase, string relativePath)
+{
+    var relative = string.IsNullOrWhiteSpace(relativePath)
+        ? string.Empty
+        : relativePath.Trim();
+
+    if (!relative.StartsWith('/'))
+    {
+        relative = "/" + relative;
+    }
+
+    return string.IsNullOrWhiteSpace(pathBase)
+        ? relative
+        : $"{pathBase}{relative}";
+}

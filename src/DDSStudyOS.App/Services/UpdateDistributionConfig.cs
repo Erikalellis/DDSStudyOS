@@ -8,6 +8,8 @@ public static class UpdateDistributionConfig
     public const string PublicRepo = "DDSStudyOS-Updates";
     public const string LegacyOwner = "Erikalellis";
     public const string LegacyRepo = "DDSStudyOS";
+    public const string PublicPortalHost = "http://177.71.165.60";
+    public const string PublicPortalPathBase = "/studyos";
 
     private const string StableUpdatePath = "installer/update/stable/update-info.json";
     private const string BetaUpdatePath = "installer/update/beta/update-info.json";
@@ -46,6 +48,15 @@ public static class UpdateDistributionConfig
 
     public static string GetPublicRoadmapUrl()
         => $"{GetPublicRepositoryUrl()}/blob/main/ROADMAP_PUBLIC.md";
+
+    public static string GetPublicPortalBaseUrl()
+        => $"{PublicPortalHost}{PublicPortalPathBase}/";
+
+    public static string GetPublicPortalCatalogFeedUrl()
+        => $"{PublicPortalHost}{PublicPortalPathBase}/api/catalog";
+
+    public static string GetPublicPortalHealthUrl()
+        => $"{PublicPortalHost}{PublicPortalPathBase}/healthz";
 
     public static string BuildReleaseDownloadUrl(string tag, string assetName)
     {

@@ -7,6 +7,7 @@ services:
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      Portal__PathBase: /studyos
       Portal__ProductName: DDS StudyOS
       Portal__Tagline: Hub oficial de distribuicao, catalogo e suporte do ecossistema Deep Darkness Studios.
       Portal__PublicUpdatesUrl: https://github.com/Erikalellis/DDSStudyOS-Updates/releases

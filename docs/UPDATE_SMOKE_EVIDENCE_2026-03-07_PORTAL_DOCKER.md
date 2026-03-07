@@ -93,3 +93,22 @@ Resultado:
 - bind local `127.0.0.1:5081`
 - tunel reverso AWS dedicado validado na porta `5081`
 - sem dependencia operacional do portal legado
+
+## Exposicao publica via nginx
+
+Para nao depender da porta `5081` aberta externamente no app, foi publicado proxy HTTP no host AWS:
+
+- URL publica do portal: `http://177.71.165.60/studyos/`
+- URL publica do catalogo: `http://177.71.165.60/studyos/api/catalog`
+- URL publica de health: `http://177.71.165.60/studyos/healthz`
+
+Validacoes externas executadas:
+
+- `GET http://177.71.165.60/studyos/` => `200`
+- `GET http://177.71.165.60/studyos/api/catalog` => `200`
+- `GET http://177.71.165.60/studyos/healthz` => `200`
+
+Observacao:
+
+- o app DDS StudyOS deve consumir a rota publica `/studyos/api/catalog`
+- a porta `5081` segue como backend interno do portal no Ubuntu

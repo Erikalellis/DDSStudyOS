@@ -2,6 +2,8 @@
 @model DDSStudyOS.Portal.Pages.IndexModel
 @{
     ViewData["Title"] = "Portal";
+    var catalogApiHref = Url.Content($"~{Model.Options.CatalogApiPath}");
+    var healthHref = Url.Content("~/healthz");
 }
 
 <section class="hero-shell">
@@ -17,7 +19,7 @@
 
         <ul class="hero-meta">
             <li><strong>API catalogo:</strong> <code>@Model.Options.CatalogApiPath</code></li>
-            <li><strong>Status:</strong> <a href="/healthz">/healthz</a></li>
+            <li><strong>Status:</strong> <a href="@healthHref">@healthHref</a></li>
             <li><strong>Deploy:</strong> isolado do portal ja existente no servidor</li>
         </ul>
     </div>
@@ -68,7 +70,7 @@
             <span class="eyebrow">Catalogo inicial</span>
             <h2>Vitrine Phoebe</h2>
         </div>
-        <a class="inline-link" href="@Model.Options.CatalogApiPath" target="_blank" rel="noreferrer">Ver JSON bruto</a>
+        <a class="inline-link" href="@catalogApiHref" target="_blank" rel="noreferrer">Ver JSON bruto</a>
     </div>
 
     <div class="catalog-grid">

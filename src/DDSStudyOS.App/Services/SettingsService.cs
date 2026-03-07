@@ -25,6 +25,15 @@ public static class SettingsService
     private const string PomodoroPresetCustom = "custom";
     private static readonly object Sync = new();
     private static readonly PomodoroPresetsModuleService PomodoroPresetsCatalog = new();
+    private static readonly string[] LegacyStoreCatalogUrls =
+    [
+        "http://177.71.165.60/",
+        "http://177.71.165.60"
+    ];
+    private static readonly string[] LegacyStoreCatalogFeedUrls =
+    [
+        "http://177.71.165.60/dds/catalog.json"
+    ];
     private static bool _localSettingsReadWarningLogged;
     private static bool _localSettingsWriteWarningLogged;
     private static readonly string FallbackSettingsPath = Path.Combine(
@@ -100,20 +109,21 @@ public static class SettingsService
     {
         get
         {
-            if (TryReadPackagedString(KeyStoreCatalogUrl, out var packagedValue) &&
-                !string.IsNullOrWhiteSpace(packagedValue))
+            if (TryReadPackagedString(KeyStoreCatalogUrl, out var packagedValue))
             {
-                return packagedValue.Trim();
+                return NormalizeStoreCatalogUrl(packagedValue, persistIfMigrated: true);
             }
 
-            return ReadFallbackString(
-                KeyStoreCatalogUrl,
-                defaultValue: "http://177.71.165.60/");
+            return NormalizeStoreCatalogUrl(
+                ReadFallbackString(
+                    KeyStoreCatalogUrl,
+                    defaultValue: UpdateDistributionConfig.GetPublicPortalBaseUrl()),
+                persistIfMigrated: true);
         }
         set
         {
             var normalized = string.IsNullOrWhiteSpace(value)
-                ? "http://177.71.165.60/"
+                ? UpdateDistributionConfig.GetPublicPortalBaseUrl()
                 : value.Trim();
 
             TryWritePackagedString(KeyStoreCatalogUrl, normalized);
@@ -125,20 +135,21 @@ public static class SettingsService
     {
         get
         {
-            if (TryReadPackagedString(KeyStoreCatalogFeedUrl, out var packagedValue) &&
-                !string.IsNullOrWhiteSpace(packagedValue))
+            if (TryReadPackagedString(KeyStoreCatalogFeedUrl, out var packagedValue))
             {
-                return packagedValue.Trim();
+                return NormalizeStoreCatalogFeedUrl(packagedValue, persistIfMigrated: true);
             }
 
-            return ReadFallbackString(
-                KeyStoreCatalogFeedUrl,
-                defaultValue: "http://177.71.165.60/dds/catalog.json");
+            return NormalizeStoreCatalogFeedUrl(
+                ReadFallbackString(
+                    KeyStoreCatalogFeedUrl,
+                    defaultValue: UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl()),
+                persistIfMigrated: true);
         }
         set
         {
             var normalized = string.IsNullOrWhiteSpace(value)
-                ? "http://177.71.165.60/dds/catalog.json"
+                ? UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl()
                 : value.Trim();
 
             TryWritePackagedString(KeyStoreCatalogFeedUrl, normalized);
@@ -916,6 +927,44 @@ public static class SettingsService
         return string.Equals(value?.Trim(), "beta", StringComparison.OrdinalIgnoreCase)
             ? "beta"
             : "stable";
+    }
+
+    private static string NormalizeStoreCatalogUrl(string? value, bool persistIfMigrated)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value)
+            ? UpdateDistributionConfig.GetPublicPortalBaseUrl()
+            : value.Trim();
+
+        if (LegacyStoreCatalogUrls.Any(legacy => string.Equals(legacy, normalized, StringComparison.OrdinalIgnoreCase)))
+        {
+            normalized = UpdateDistributionConfig.GetPublicPortalBaseUrl();
+            if (persistIfMigrated)
+            {
+                TryWritePackagedString(KeyStoreCatalogUrl, normalized);
+                WriteFallbackString(KeyStoreCatalogUrl, normalized);
+            }
+        }
+
+        return normalized;
+    }
+
+    private static string NormalizeStoreCatalogFeedUrl(string? value, bool persistIfMigrated)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value)
+            ? UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl()
+            : value.Trim();
+
+        if (LegacyStoreCatalogFeedUrls.Any(legacy => string.Equals(legacy, normalized, StringComparison.OrdinalIgnoreCase)))
+        {
+            normalized = UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl();
+            if (persistIfMigrated)
+            {
+                TryWritePackagedString(KeyStoreCatalogFeedUrl, normalized);
+                WriteFallbackString(KeyStoreCatalogFeedUrl, normalized);
+            }
+        }
+
+        return normalized;
     }
 }
 

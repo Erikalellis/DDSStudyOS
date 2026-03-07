@@ -13,7 +13,7 @@ namespace DDSStudyOS.App.Services;
 
 public sealed class StoreCatalogService : IDisposable
 {
-    private const string DefaultFeedUrl = "http://177.71.165.60/dds/catalog.json";
+    private static readonly string DefaultFeedUrl = UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl();
     private const string FallbackCatalogRelativePath = "Data\\store-catalog.fallback.json";
     private static readonly JsonSerializerOptions JsonOptions = new()
     {

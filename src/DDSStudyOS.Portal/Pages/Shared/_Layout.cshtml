@@ -17,8 +17,8 @@
 
             <nav class="site-nav">
                 <a asp-area="" asp-page="/Index">Home</a>
-                <a href="/api/catalog">Catalogo</a>
-                <a href="/healthz">Status</a>
+                <a href="@Url.Content("~/api/catalog")">Catalogo</a>
+                <a href="@Url.Content("~/healthz")">Status</a>
             </nav>
         </div>
     </header>

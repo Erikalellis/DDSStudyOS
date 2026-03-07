@@ -382,6 +382,6 @@ public sealed partial class StorePage : Page
             return configured!;
         }
 
-        return "http://177.71.165.60/";
+        return UpdateDistributionConfig.GetPublicPortalBaseUrl();
     }
 }
