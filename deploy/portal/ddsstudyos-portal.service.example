@@ -1,0 +1,16 @@
+[Unit]
+Description=DDS StudyOS Portal
+After=network.target
+
+[Service]
+WorkingDirectory=/home/kika/dds-projetos/ddsstudyos-portal/current
+ExecStart=/home/kika/dds-projetos/ddsstudyos-portal/current/DDSStudyOS.Portal --urls http://127.0.0.1:5081
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+SyslogIdentifier=ddsstudyos-portal
+User=kika
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target

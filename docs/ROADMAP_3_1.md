@@ -69,7 +69,7 @@ Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notifi
 
 Status atual: fase de definicao da linha `3.3.x (Phoebe)` iniciada apos o fechamento estavel de `3.2.7`.
 Progresso tecnico inicial: aba `Loja` integrada ao shell, rota `store` ativa e protocolo externo `ddsstudyos://` habilitado no app e no instalador.
-Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado e baseline pronto para a ligacao futura com servidor proprio.
+Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado, portal ASP.NET Core dedicado criado com home publica + `/api/catalog` + `/healthz` e baseline pronto para ligacao futura com servidor proprio isolado do portal ja existente.
 
 ## Definicao de cada secao (escopo operacional)
 

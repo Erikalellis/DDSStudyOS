@@ -8,6 +8,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A90DB79A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDSStudyOS.App.Tests", "tests\DDSStudyOS.App.Tests\DDSStudyOS.App.Tests.csproj", "{291749E4-008F-4E4D-B91D-8538DD067363}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{81252935-B4AE-4DD3-9313-8250BCEF7D22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDSStudyOS.Portal", "src\DDSStudyOS.Portal\DDSStudyOS.Portal.csproj", "{695AA896-27EF-4E15-9E69-B0EE818A95E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -22,8 +26,13 @@ Global
 		{291749E4-008F-4E4D-B91D-8538DD067363}.Debug|x64.Build.0 = Debug|x64
 		{291749E4-008F-4E4D-B91D-8538DD067363}.Release|x64.ActiveCfg = Release|x64
 		{291749E4-008F-4E4D-B91D-8538DD067363}.Release|x64.Build.0 = Release|x64
+		{695AA896-27EF-4E15-9E69-B0EE818A95E2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{695AA896-27EF-4E15-9E69-B0EE818A95E2}.Debug|x64.Build.0 = Debug|Any CPU
+		{695AA896-27EF-4E15-9E69-B0EE818A95E2}.Release|x64.ActiveCfg = Release|Any CPU
+		{695AA896-27EF-4E15-9E69-B0EE818A95E2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{291749E4-008F-4E4D-B91D-8538DD067363} = {A90DB79A-2077-44B4-B78B-C97C0A912C4B}
+		{695AA896-27EF-4E15-9E69-B0EE818A95E2} = {81252935-B4AE-4DD3-9313-8250BCEF7D22}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DDS StudyOS Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DDSStudyOS.Portal.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="brand" asp-area="" asp-page="/Index">
+                <span class="brand-mark">DDS</span>
+                <span class="brand-copy">StudyOS Portal</span>
+            </a>
+
+            <nav class="site-nav">
+                <a asp-area="" asp-page="/Index">Home</a>
+                <a href="/api/catalog">Catalogo</a>
+                <a href="/healthz">Status</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-shell">
+        <main role="main" class="page-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <span>&copy; 2026 Deep Darkness Studios</span>
+            <span>Portal publico separado do ambiente privado de codigo</span>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

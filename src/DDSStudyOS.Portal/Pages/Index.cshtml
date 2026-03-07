@@ -1,0 +1,93 @@
+@page
+@model DDSStudyOS.Portal.Pages.IndexModel
+@{
+    ViewData["Title"] = "Portal";
+}
+
+<section class="hero-shell">
+    <div class="hero-copy">
+        <span class="eyebrow">Deep Darkness Studios</span>
+        <h1>@Model.Options.ProductName</h1>
+        <p class="hero-text">@Model.Options.Tagline</p>
+
+        <div class="hero-actions">
+            <a class="button button-primary" href="@Model.Options.DownloadsUrl" target="_blank" rel="noreferrer">Baixar versoes publicas</a>
+            <a class="button button-secondary" href="@Model.Options.PublicUpdatesUrl" target="_blank" rel="noreferrer">Canal de updates</a>
+        </div>
+
+        <ul class="hero-meta">
+            <li><strong>API catalogo:</strong> <code>@Model.Options.CatalogApiPath</code></li>
+            <li><strong>Status:</strong> <a href="/healthz">/healthz</a></li>
+            <li><strong>Deploy:</strong> isolado do portal ja existente no servidor</li>
+        </ul>
+    </div>
+
+    <div class="hero-card">
+        <div class="status-chip">Phoebe foundation</div>
+        <h2>Base pronta para catalogo remoto</h2>
+        <p>O portal publica catalogo, downloads e links de suporte sem depender do repositorio de codigo.</p>
+        <div class="hero-card-grid">
+            <div>
+                <span class="metric-label">Endpoint</span>
+                <strong>/api/catalog</strong>
+            </div>
+            <div>
+                <span class="metric-label">Health</span>
+                <strong>/healthz</strong>
+            </div>
+            <div>
+                <span class="metric-label">Canal</span>
+                <strong>Publico</strong>
+            </div>
+            <div>
+                <span class="metric-label">Escopo</span>
+                <strong>Loja + suporte</strong>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="info-grid">
+    <article class="info-panel">
+        <h3>Como esse portal entra no projeto</h3>
+        <p>Ele vira a camada publica do DDS StudyOS: homepage, catalogo de modulos, downloads e suporte. O site atual do servidor nao precisa ser substituido.</p>
+    </article>
+    <article class="info-panel">
+        <h3>Fluxo recomendado</h3>
+        <p>GitHub continua servindo releases publicos. O servidor proprio passa a servir catalogo, paginas de compra e integracoes futuras com a loja.</p>
+    </article>
+    <article class="info-panel">
+        <h3>Proximo passo tecnico</h3>
+        <p>Expandir o app para consumir este endpoint e abrir itens especificos com <code>ddsstudyos://store/item/&lt;id&gt;</code>.</p>
+    </article>
+</section>
+
+<section class="catalog-section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Catalogo inicial</span>
+            <h2>Vitrine Phoebe</h2>
+        </div>
+        <a class="inline-link" href="@Model.Options.CatalogApiPath" target="_blank" rel="noreferrer">Ver JSON bruto</a>
+    </div>
+
+    <div class="catalog-grid">
+        @foreach (var item in Model.FeaturedItems)
+        {
+            <article class="catalog-card">
+                <div class="catalog-topline">
+                    <span>@item.Category</span>
+                    <span>@item.PriceLabel</span>
+                </div>
+                <h3>@item.Title</h3>
+                <p>@item.Summary</p>
+                <div class="catalog-meta">
+                    <span>@item.Level</span>
+                    <span>@item.StudyType</span>
+                    <span>@item.Origin</span>
+                </div>
+                <a class="button button-small" href="@item.Url">Abrir no app</a>
+            </article>
+        }
+    </div>
+</section>

@@ -1,0 +1,46 @@
+{
+  "catalogVersion": "1.0",
+  "source": "ddsstudyos-portal",
+  "generatedAtUtc": "2026-03-07T12:00:00Z",
+  "items": [
+    {
+      "id": "phoebe-tech-foundation",
+      "title": "Tecnologia - Foundation Pack",
+      "summary": "Curadoria inicial com trilha de fundamentos, leitura guiada e atalhos para o app.",
+      "category": "Tecnologia",
+      "level": "Iniciante",
+      "studyType": "Modulo",
+      "price": 0,
+      "priceLabel": "Gratuito",
+      "origin": "DDS Curadoria",
+      "url": "ddsstudyos://store/item/phoebe-tech-foundation",
+      "tags": [ "tech", "starter", "phoebe" ]
+    },
+    {
+      "id": "phoebe-music-lab",
+      "title": "Musica - Practice Lab",
+      "summary": "Pacote com rotina guiada, materiais de teoria e fluxo para pratica diaria.",
+      "category": "Musica",
+      "level": "Intermediario",
+      "studyType": "Modulo",
+      "price": 39.90,
+      "priceLabel": "R$ 39,90",
+      "origin": "DDS Curadoria",
+      "url": "ddsstudyos://store/item/phoebe-music-lab",
+      "tags": [ "music", "practice", "phoebe" ]
+    },
+    {
+      "id": "phoebe-design-board",
+      "title": "Design - Visual Board",
+      "summary": "Colecao com referencias, exercicios de interface e bookmarks iniciais para estudo visual.",
+      "category": "Design",
+      "level": "Intermediario",
+      "studyType": "Trilha",
+      "price": 0,
+      "priceLabel": "Gratuito",
+      "origin": "DDS Curadoria",
+      "url": "ddsstudyos://store/item/phoebe-design-board",
+      "tags": [ "design", "ui", "visual" ]
+    }
+  ]
+}
