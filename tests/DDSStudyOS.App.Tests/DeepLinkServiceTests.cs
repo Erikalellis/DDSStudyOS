@@ -49,4 +49,27 @@ public sealed class DeepLinkServiceTests
         Assert.Equal("browser", targetTag);
         Assert.Equal("https://example.com/course", pendingBrowserUrl);
     }
+
+    [Fact]
+    public void TryResolveTarget_MapsStoreItemPathToStoreContext()
+    {
+        var uri = new Uri("ddsstudyos://store/item/phoebe-tech-foundation");
+        var ok = DeepLinkService.TryResolveTarget(uri, out var resolution);
+
+        Assert.True(ok);
+        Assert.Equal("store", resolution.TargetTag);
+        Assert.Equal("phoebe-tech-foundation", resolution.PendingStoreItemId);
+        Assert.Null(resolution.PendingBrowserUrl);
+    }
+
+    [Fact]
+    public void TryResolveTarget_MapsOpenAliasStoreItemPathToStoreContext()
+    {
+        var uri = new Uri("ddsstudyos://open/loja/item/music-lab");
+        var ok = DeepLinkService.TryResolveTarget(uri, out var resolution);
+
+        Assert.True(ok);
+        Assert.Equal("store", resolution.TargetTag);
+        Assert.Equal("music-lab", resolution.PendingStoreItemId);
+    }
 }

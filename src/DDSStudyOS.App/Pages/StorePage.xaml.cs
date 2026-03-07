@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DDSStudyOS.App.Pages;
@@ -45,7 +46,10 @@ public sealed partial class StorePage : Page
         }
 
         await LoadCatalogAsync();
-        OpenStoreHome();
+        if (!TryOpenPendingStoreItem())
+        {
+            OpenStoreHome();
+        }
     }
 
     private void StorePage_Unloaded(object sender, RoutedEventArgs e)
@@ -151,20 +155,39 @@ public sealed partial class StorePage : Page
             return;
         }
 
-        if (!DeepLinkService.TryResolveTarget(uri, out var targetTag, out var pendingBrowserUrl))
+        if (!DeepLinkService.TryResolveTarget(uri, out var resolution))
         {
             return;
         }
 
         e.Cancel = true;
-        if (!string.IsNullOrWhiteSpace(pendingBrowserUrl))
+        if (!string.IsNullOrWhiteSpace(resolution.PendingBrowserUrl))
         {
-            AppState.PendingBrowserUrl = pendingBrowserUrl;
+            AppState.PendingBrowserUrl = resolution.PendingBrowserUrl;
+        }
+
+        if (string.Equals(resolution.TargetTag, "store", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!string.IsNullOrWhiteSpace(resolution.PendingStoreItemId))
+            {
+                AppState.PendingStoreItemId = resolution.PendingStoreItemId;
+                _ = DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (!TryOpenCatalogItemById(resolution.PendingStoreItemId!, "deep link"))
+                    {
+                        OpenStoreHome();
+                    }
+                });
+                return;
+            }
+
+            _ = DispatcherQueue.TryEnqueue(() => OpenStoreHome());
+            return;
         }
 
         if (AppState.RequestNavigateTag is { } navigate)
         {
-            _ = DispatcherQueue.TryEnqueue(() => navigate(targetTag));
+            _ = DispatcherQueue.TryEnqueue(() => navigate(resolution.TargetTag));
         }
     }
 
@@ -224,18 +247,12 @@ public sealed partial class StorePage : Page
 
     private void OpenCatalogItem_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button button || button.Tag is not string url || string.IsNullOrWhiteSpace(url))
+        if (sender is not Button button || button.Tag is not string itemId || string.IsNullOrWhiteSpace(itemId))
         {
             return;
         }
 
-        if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri))
-        {
-            return;
-        }
-
-        StoreWebView.Source = uri;
-        StoreStatusText.Text = "Abrindo item do catalogo...";
+        TryOpenCatalogItemById(itemId.Trim(), "catalogo");
     }
 
     private void CatalogListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -248,7 +265,103 @@ public sealed partial class StorePage : Page
         StoreCatalogStatusText.Text = $"Selecionado: {item.Title} ({item.Category} / {item.Level}).";
     }
 
-    private void OpenStoreHome()
+    private bool TryOpenPendingStoreItem()
+    {
+        var pendingItemId = AppState.PendingStoreItemId;
+        AppState.PendingStoreItemId = null;
+
+        if (string.IsNullOrWhiteSpace(pendingItemId))
+        {
+            return false;
+        }
+
+        return TryOpenCatalogItemById(pendingItemId, "deep link");
+    }
+
+    private bool TryOpenCatalogItemById(string itemId, string source)
+    {
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            return false;
+        }
+
+        var item = CatalogItems.FirstOrDefault(item =>
+            !string.IsNullOrWhiteSpace(item.Id) &&
+            string.Equals(item.Id, itemId, StringComparison.OrdinalIgnoreCase));
+        if (item is null)
+        {
+            StoreCatalogStatusText.Text = $"Catalogo: item '{itemId}' nao encontrado.";
+            AppLogger.Warn($"StorePage: item do catalogo nao encontrado para '{itemId}'.");
+            return false;
+        }
+
+        CatalogListView.SelectedItem = item;
+        CatalogListView.ScrollIntoView(item);
+        OpenCatalogItem(item, source);
+        return true;
+    }
+
+    private void OpenCatalogItem(StoreCatalogItem item, string source)
+    {
+        StoreCatalogStatusText.Text = $"Selecionado via {source}: {item.Title} ({item.Category} / {item.Level}).";
+
+        if (Uri.TryCreate(item.Url.Trim(), UriKind.Absolute, out var uri))
+        {
+            if (DeepLinkService.IsSupportedUri(uri))
+            {
+                if (TryHandleItemDeepLink(uri, item))
+                {
+                    return;
+                }
+
+                OpenStoreHome($"Item selecionado: {item.Title}");
+                return;
+            }
+
+            StoreWebView.Source = uri;
+            StoreStatusText.Text = $"Abrindo item: {item.Title}";
+            AppLogger.Info($"StorePage: abrindo item '{item.Id}' via URL externa.");
+            return;
+        }
+
+        OpenStoreHome($"Item selecionado: {item.Title}");
+    }
+
+    private bool TryHandleItemDeepLink(Uri uri, StoreCatalogItem currentItem)
+    {
+        if (!DeepLinkService.TryResolveTarget(uri, out var resolution))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(resolution.PendingBrowserUrl))
+        {
+            AppState.PendingBrowserUrl = resolution.PendingBrowserUrl;
+        }
+
+        if (string.Equals(resolution.TargetTag, "store", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!string.IsNullOrWhiteSpace(resolution.PendingStoreItemId) &&
+                !string.Equals(resolution.PendingStoreItemId, currentItem.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                AppState.PendingStoreItemId = resolution.PendingStoreItemId;
+                return TryOpenCatalogItemById(resolution.PendingStoreItemId, "catalogo");
+            }
+
+            return false;
+        }
+
+        if (AppState.RequestNavigateTag is { } navigate)
+        {
+            navigate(resolution.TargetTag);
+            AppLogger.Info($"StorePage: deep link do catalogo redirecionado para '{resolution.TargetTag}'.");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void OpenStoreHome(string statusText = "Conectando...")
     {
         var target = ResolveStoreUrl();
         if (!Uri.TryCreate(target, UriKind.Absolute, out var uri))
@@ -257,7 +370,7 @@ public sealed partial class StorePage : Page
         }
 
         StoreWebView.Source = uri;
-        StoreStatusText.Text = "Conectando...";
+        StoreStatusText.Text = statusText;
         AppLogger.Info($"StorePage: abrindo loja em {uri}");
     }
 

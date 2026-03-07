@@ -528,6 +528,8 @@ public sealed partial class BrowserPage : Page
 
     private bool TryHandleInternalAlias(string raw)
     {
+        var originalRaw = raw.Trim();
+
         if (raw.StartsWith("ddsstudyos://", StringComparison.OrdinalIgnoreCase))
         {
             raw = $"dds://{raw["ddsstudyos://".Length..]}";
@@ -539,6 +541,22 @@ public sealed partial class BrowserPage : Page
         }
 
         var alias = raw.Trim().ToLowerInvariant();
+        if ((alias.StartsWith("dds://store/", StringComparison.OrdinalIgnoreCase) ||
+             alias.StartsWith("dds://loja/", StringComparison.OrdinalIgnoreCase) ||
+             alias.StartsWith("dds://shop/", StringComparison.OrdinalIgnoreCase)) &&
+            DeepLinkService.TryExtractUriFromLaunchArguments(originalRaw, out var deepLinkUri) &&
+            deepLinkUri is not null &&
+            DeepLinkService.TryResolveTarget(deepLinkUri, out var resolution))
+        {
+            if (!string.IsNullOrWhiteSpace(resolution.PendingStoreItemId))
+            {
+                AppState.PendingStoreItemId = resolution.PendingStoreItemId;
+            }
+
+            NavigateToTag(resolution.TargetTag);
+            return true;
+        }
+
         switch (alias)
         {
             case HomeAddressAlias:

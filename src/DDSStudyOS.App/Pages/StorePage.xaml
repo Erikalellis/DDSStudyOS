@@ -95,7 +95,7 @@
                                         <Button Content="Abrir item"
                                                 HorizontalAlignment="Left"
                                                 Padding="10,4"
-                                                Tag="{Binding Url}"
+                                                Tag="{Binding Id}"
                                                 Click="OpenCatalogItem_Click" />
                                     </StackPanel>
                                 </Border>

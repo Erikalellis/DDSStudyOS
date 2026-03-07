@@ -102,9 +102,9 @@ Progresso foundation atual: catalogo remoto com fallback local/interno implement
 ### 3.3.0 - Foundation (core + loja beta)
 
 - [ ] Fechar modelo de dados do catalogo (`CourseCatalogItem`, categoria, nivel, tipo, preco e origem).
-- [ ] Integrar `Loja` com feed remoto configuravel (fallback local quando offline).
-- [ ] Implementar abertura por deep link para contexto de catalogo (`ddsstudyos://store/...`).
-- [ ] Adicionar rastreio de falhas de catalogo no diagnostico local.
+- [x] Integrar `Loja` com feed remoto configuravel (fallback local quando offline).
+- [x] Implementar abertura por deep link para contexto de catalogo (`ddsstudyos://store/...`).
+- [x] Adicionar rastreio de falhas de catalogo no diagnostico local.
 - [ ] Publicar build beta com smoke dedicado de loja/catalogo.
 
 Critério de aceite:

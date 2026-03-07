@@ -50,19 +50,26 @@ public partial class App : Application
                 return;
             }
 
-            if (!Services.DeepLinkService.TryResolveTarget(deepLinkUri, out var targetTag, out var pendingBrowserUrl))
+            if (!Services.DeepLinkService.TryResolveTarget(deepLinkUri, out var resolution))
             {
                 Services.AppLogger.Warn($"DeepLink: URI sem rota conhecida: {deepLinkUri}");
                 return;
             }
 
-            Services.AppState.PendingNavigationTag = targetTag;
-            if (!string.IsNullOrWhiteSpace(pendingBrowserUrl))
+            Services.AppState.PendingNavigationTag = resolution.TargetTag;
+            Services.AppState.PendingStoreItemId = string.IsNullOrWhiteSpace(resolution.PendingStoreItemId)
+                ? null
+                : resolution.PendingStoreItemId;
+            if (!string.IsNullOrWhiteSpace(resolution.PendingBrowserUrl))
             {
-                Services.AppState.PendingBrowserUrl = pendingBrowserUrl;
+                Services.AppState.PendingBrowserUrl = resolution.PendingBrowserUrl;
             }
 
-            Services.AppLogger.Info($"DeepLink: rota inicial definida para '{targetTag}' ({deepLinkUri}).");
+            Services.AppLogger.Info(
+                $"DeepLink: rota inicial definida para '{resolution.TargetTag}' ({deepLinkUri})." +
+                (string.IsNullOrWhiteSpace(resolution.PendingStoreItemId)
+                    ? string.Empty
+                    : $" Item: '{resolution.PendingStoreItemId}'."));
         }
         catch (Exception ex)
         {
