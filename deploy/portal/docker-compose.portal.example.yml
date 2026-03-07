@@ -1,0 +1,32 @@
+services:
+  ddsstudyos-portal:
+    container_name: ddsstudyos-portal
+    build:
+      context: ../../src/DDSStudyOS.Portal
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Portal__ProductName: DDS StudyOS
+      Portal__Tagline: Hub oficial de distribuicao, catalogo e suporte do ecossistema Deep Darkness Studios.
+      Portal__PublicUpdatesUrl: https://github.com/Erikalellis/DDSStudyOS-Updates/releases
+      Portal__DownloadsUrl: https://github.com/Erikalellis/DDSStudyOS-Updates/releases
+      Portal__SupportUrl: https://github.com/Erikalellis/DDSStudyOS-Updates/releases
+      Portal__CatalogApiPath: /api/catalog
+    volumes:
+      - ./data-protection:/root/.aspnet/DataProtection-Keys
+    networks:
+      - dds-internal
+    # Use bind local se quiser inspecionar sem expor publicamente.
+    ports:
+      - "127.0.0.1:5081:8080"
+
+networks:
+  dds-internal:
+    driver: bridge
+
+# Para tunel reverso AWS:
+# - mantenha o portal so na rede interna
+# - aponte o container/servico do tunel para http://ddsstudyos-portal:8080
+# - se ja existir uma rede Docker compartilhada com os outros containers,
+#   troque 'dds-internal' por essa rede ou marque-a como external

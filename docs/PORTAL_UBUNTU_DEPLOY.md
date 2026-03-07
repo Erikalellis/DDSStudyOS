@@ -19,6 +19,15 @@ Este portal deve ser publicado como site separado do portal ja existente no serv
   shared/
 ```
 
+## Modo recomendado hoje
+
+Use container separado para o portal DDS StudyOS.
+
+- portal atual do servidor: permanece intocado
+- portal DDS: container proprio
+- tunel reverso AWS: aponta para o container DDS, nao para o outro site
+- rede: interna entre containers sempre que possivel
+
 ## Publish local
 
 No Windows:
@@ -33,6 +42,51 @@ Saida padrao:
 artifacts/portal/linux-x64/publish
 ```
 
+## Alternativa com Docker
+
+Arquivos adicionados:
+
+- `src/DDSStudyOS.Portal/Dockerfile`
+- `src/DDSStudyOS.Portal/.dockerignore`
+- `deploy/portal/docker-compose.portal.example.yml`
+- `scripts/export-portal-docker-bundle.ps1`
+
+Fluxo sugerido:
+
+1. copiar o exemplo de compose para o host
+2. ajustar URLs publicas e rede Docker
+3. subir o container do portal
+4. apontar o tunel reverso AWS para `http://ddsstudyos-portal:8080`
+
+Exemplo:
+
+```bash
+docker compose -f deploy/portal/docker-compose.portal.example.yml up -d --build
+```
+
+## Bundle pronto para servidor
+
+No Windows, gere um pacote minimo do portal para copiar ao Ubuntu:
+
+```powershell
+.\scripts\export-portal-docker-bundle.ps1
+```
+
+Saida:
+
+```text
+artifacts/portal/docker-bundle/
+  docker-compose.yml
+  data-protection/
+  portal/
+```
+
+Esse bundle ja fica pronto para ser copiado como uma stack isolada em:
+
+```text
+~/dds-projetos/ddsstudyos-portal/
+```
+
 ## Arquivos de referencia
 
 - `deploy/portal/ddsstudyos-portal.service.example`
@@ -45,6 +99,19 @@ artifacts/portal/linux-x64/publish
 3. Ajustar o arquivo de service do `systemd`.
 4. Criar bloco nginx separado para o portal DDS.
 5. Reiniciar `systemd` e nginx.
+
+## Passos de deploy com Docker
+
+1. Garantir Docker e Docker Compose no Ubuntu.
+2. Copiar o repositorio ou ao menos a pasta do portal para `~/dds-projetos/ddsstudyos-portal/`.
+3. Ajustar `deploy/portal/docker-compose.portal.example.yml`.
+4. Subir o portal em container.
+5. Conectar o tunel reverso AWS ao hostname interno do container.
+
+Observacao operacional:
+
+- se o seu tunel AWS ja roda em Docker com os outros servicos, coloque o portal na mesma rede Docker
+- se o tunel roda fora do Docker, mantenha o bind em `127.0.0.1:5081` e aponte o tunel para essa porta
 
 ## Endpoints base
 
