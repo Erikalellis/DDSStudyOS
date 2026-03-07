@@ -69,7 +69,7 @@ Status atual: ciclo `Signal Boost` fechado no codigo (`browser-presets`, `notifi
 
 Status atual: fase de definicao da linha `3.3.x (Phoebe)` iniciada apos o fechamento estavel de `3.2.7`.
 Progresso tecnico inicial: aba `Loja` integrada ao shell, rota `store` ativa e protocolo externo `ddsstudyos://` habilitado no app e no instalador.
-Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado, portal ASP.NET Core dedicado criado com home publica + `/api/catalog` + `/healthz`, bundle Docker gerado e stack isolada validada em `~/dds-projetos/ddsstudyos-portal/stack` no Ubuntu com bind interno `127.0.0.1:5081`.
+Progresso foundation atual: catalogo remoto com fallback local/interno implementado na `Loja`, snapshot de diagnostico adicionado, portal ASP.NET Core dedicado criado com home publica + `/api/catalog` + `/healthz`, bundle Docker gerado, stack isolada validada em `~/dds-projetos/ddsstudyos-portal/stack` no Ubuntu com bind interno `127.0.0.1:5081` e tunel reverso AWS dedicado validado na porta `5081`.
 
 ## Definicao de cada secao (escopo operacional)
 

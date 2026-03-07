@@ -50,6 +50,7 @@ Arquivos adicionados:
 - `src/DDSStudyOS.Portal/.dockerignore`
 - `deploy/portal/docker-compose.portal.example.yml`
 - `scripts/export-portal-docker-bundle.ps1`
+- `deploy/portal/ddsstudyos-portal-autossh.example.sh`
 
 Fluxo sugerido:
 
@@ -112,6 +113,41 @@ Observacao operacional:
 
 - se o seu tunel AWS ja roda em Docker com os outros servicos, coloque o portal na mesma rede Docker
 - se o tunel roda fora do Docker, mantenha o bind em `127.0.0.1:5081` e aponte o tunel para essa porta
+
+## Tunel reverso AWS dedicado
+
+Nao reutilize o `dds-portal-manager.sh` legado para o portal DDS StudyOS.
+
+Motivo:
+
+- o manager legado aponta `8080` para outro portal
+- o portal DDS roda isolado em `127.0.0.1:5081`
+- misturar os dois fluxos aumenta risco operacional
+
+Use um autossh dedicado para o DDS:
+
+```bash
+AUTOSSH_GATETIME=0 autossh \
+  -M 0 \
+  -N \
+  -f \
+  -T \
+  -o ServerAliveInterval=30 \
+  -o ServerAliveCountMax=3 \
+  -o ExitOnForwardFailure=yes \
+  -o StrictHostKeyChecking=accept-new \
+  -o ConnectTimeout=30 \
+  -o TCPKeepAlive=yes \
+  -i /home/kika/dds-key.pem \
+  -R 5081:localhost:5081 \
+  ubuntu@177.71.165.60
+```
+
+Validacao minima:
+
+```bash
+ssh -i /home/kika/dds-key.pem ubuntu@177.71.165.60 "curl -fsS http://127.0.0.1:5081/healthz"
+```
 
 ## Endpoints base
 

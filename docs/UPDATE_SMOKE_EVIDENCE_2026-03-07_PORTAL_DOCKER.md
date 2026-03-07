@@ -54,15 +54,42 @@ Resultados observados:
 - bind apenas em localhost no Ubuntu
 - pronta para consumo por tunel reverso AWS apontando para `127.0.0.1:5081`
 
-## Pendencia aberta
+## Revalidacao final
 
-Durante a reaplicacao final do bundle atualizado, a conexao SSH com `192.168.1.10` caiu por timeout de rede. O portal permaneceu no ar no deploy inicial validado, mas a reaplicacao do ultimo ajuste fino de log ficou pendente de nova conexao SSH.
+Depois da recuperacao da conectividade SSH, o bundle foi reenviado e o rebuild final foi reaplicado com:
 
-## Proximo passo
+```bash
+docker compose up -d --build
+```
 
-Quando a conectividade SSH voltar:
+Validacoes finais:
 
-1. reenviar o bundle Docker atualizado
-2. rodar `docker compose up -d --build` em `~/dds-projetos/ddsstudyos-portal/stack`
-3. validar novamente `/healthz`
-4. apontar o tunel reverso AWS para `127.0.0.1:5081`
+- `curl http://127.0.0.1:5081/healthz` => OK
+- `curl http://127.0.0.1:5081/api/meta` => OK
+- `docker logs ddsstudyos-portal` => sem erro critico
+
+## Tunel reverso AWS
+
+Foi validado um `autossh` dedicado, separado do manager legado:
+
+```bash
+autossh -R 5081:localhost:5081 ubuntu@177.71.165.60
+```
+
+Verificacao executada do lado AWS:
+
+```bash
+curl http://127.0.0.1:5081/healthz
+```
+
+Resultado:
+
+- retorno `status=ok`
+- porta `5081` em escuta no host AWS
+
+## Estado final
+
+- portal DDS em Docker isolado
+- bind local `127.0.0.1:5081`
+- tunel reverso AWS dedicado validado na porta `5081`
+- sem dependencia operacional do portal legado
