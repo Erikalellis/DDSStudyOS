@@ -1417,7 +1417,7 @@ public sealed partial class BrowserPage : Page
       <a href="dds://agenda">Abrir agenda de estudos</a>
       <a href="dds://config">Abrir configurações</a>
       <a href="dds://feedback">Enviar feedback beta</a>
-      <a href="http://177.71.165.60/studyos/">Site oficial DDS StudyOS</a>
+      <a href="https://deepdarkness.com.br/studyos/">Site oficial DDS StudyOS</a>
       <a href="https://github.com/Erikalellis/DDSStudyOS-Updates">Canal publico no GitHub</a>
       <a href="{{feedbackUrl}}">Google Forms (feedback direto)</a>
       <a href="https://www.google.com/">Busca web</a>

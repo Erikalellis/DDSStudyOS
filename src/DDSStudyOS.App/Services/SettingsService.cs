@@ -28,11 +28,14 @@ public static class SettingsService
     private static readonly string[] LegacyStoreCatalogUrls =
     [
         "http://177.71.165.60/",
-        "http://177.71.165.60"
+        "http://177.71.165.60",
+        "http://177.71.165.60/studyos/",
+        "http://177.71.165.60/studyos"
     ];
     private static readonly string[] LegacyStoreCatalogFeedUrls =
     [
-        "http://177.71.165.60/dds/catalog.json"
+        "http://177.71.165.60/dds/catalog.json",
+        "http://177.71.165.60/studyos/api/catalog"
     ];
     private static bool _localSettingsReadWarningLogged;
     private static bool _localSettingsWriteWarningLogged;

@@ -8,8 +8,8 @@ public sealed class UpdateDistributionConfigTests
     [Fact]
     public void PublicPortalUrls_AreAlignedWithStudyosPathBase()
     {
-        Assert.Equal("http://177.71.165.60/studyos/", UpdateDistributionConfig.GetPublicPortalBaseUrl());
-        Assert.Equal("http://177.71.165.60/studyos/api/catalog", UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl());
-        Assert.Equal("http://177.71.165.60/studyos/healthz", UpdateDistributionConfig.GetPublicPortalHealthUrl());
+        Assert.Equal("https://deepdarkness.com.br/studyos/", UpdateDistributionConfig.GetPublicPortalBaseUrl());
+        Assert.Equal("https://deepdarkness.com.br/studyos/api/catalog", UpdateDistributionConfig.GetPublicPortalCatalogFeedUrl());
+        Assert.Equal("https://deepdarkness.com.br/studyos/healthz", UpdateDistributionConfig.GetPublicPortalHealthUrl());
     }
 }

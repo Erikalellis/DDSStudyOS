@@ -16,7 +16,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 ### Adicionado
 - Identidade publica `DDS Study Pass` aplicada na experiencia da `Loja`, mantendo `Phoebe` como codinome interno da linha `3.3.x`.
 - Atalho rapido para `DDS Study Pass` no `Dashboard` e na `Home`.
-- Portal publico `studyos` integrado como origem oficial do catalogo remoto em `http://177.71.165.60/studyos/`.
+- Portal publico `studyos` integrado como origem oficial do catalogo remoto em `https://deepdarkness.com.br/studyos/`.
 
 ### Alterado
 - `StorePage` recebeu CTA mais forte (`Explorar o Pass`) e copy alinhada para modulos, trilhas e conteudos extras.

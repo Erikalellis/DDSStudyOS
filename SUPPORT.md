@@ -4,7 +4,7 @@ Obrigado por usar o DDS StudyOS.
 
 ## Canais de suporte
 - E-mail: `erikalellis.dev@gmail.com`
-- Site: `http://177.71.165.60/`
+- Site: `https://deepdarkness.com.br/`
 - Issues: `https://github.com/Erikalellis/DDSStudyOS/issues`
 
 ## Antes de abrir chamado

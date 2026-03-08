@@ -9,7 +9,7 @@ param(
     [string]$AdvancedInstallerPath = "",
     [string]$ProductName = "DDS StudyOS",
     [string]$CompanyName = "Deep Darkness Studios",
-    [string]$HomepageUrl = "http://177.71.165.60/",
+    [string]$HomepageUrl = "https://deepdarkness.com.br/studyos/",
     [string]$SupportUrl = "",
     [string]$UpdateInfoUrl = "",
     [string]$ReleaseNotesUrl = "",

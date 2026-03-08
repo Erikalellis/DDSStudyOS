@@ -17,12 +17,11 @@
 
 ### Host publico AWS (`177.71.165.60`)
 
-- `nginx` ativo na porta `80`
+- `nginx` ativo nas portas `80` e `443`
 - `certbot` instalado
-- `443` ainda nao esta publicado
 - o host publico hoje responde:
-  - raiz `http://deepdarkness.com.br/`
-  - rota `http://deepdarkness.com.br/studyos/`
+  - raiz `https://deepdarkness.com.br/`
+  - rota `https://deepdarkness.com.br/studyos/`
 
 ### Risco estrutural atual
 
@@ -94,7 +93,7 @@ Esses dominios ainda existem no Hestia e devem ser tratados como legado. Nao dev
 |---|---|---|---|
 | `deepdarkness.com.br` | `localhost:8080` | site principal DDS | manter |
 | `www.deepdarkness.com.br` | redirecionar para raiz | site principal DDS | manter |
-| `studyos.deepdarkness.com.br` | `localhost:5081` | DDS StudyOS Portal | criar agora |
+| `studyos.deepdarkness.com.br` | `localhost:5081` | DDS StudyOS Portal | pendente de DNS Route 53 |
 
 ### Publicos por produto
 

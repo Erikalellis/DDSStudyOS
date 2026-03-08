@@ -4,7 +4,7 @@ param(
     [string]$Visibility = "public",
     [string]$Owner = "",
     [string]$Description = "DDS StudyOS - WinUI 3 (.NET 8)",
-    [string]$Homepage = "http://177.71.165.60/"
+    [string]$Homepage = "https://deepdarkness.com.br/studyos/"
 )
 
 $ErrorActionPreference = "Stop"

@@ -8,7 +8,7 @@ public static class UpdateDistributionConfig
     public const string PublicRepo = "DDSStudyOS-Updates";
     public const string LegacyOwner = "Erikalellis";
     public const string LegacyRepo = "DDSStudyOS";
-    public const string PublicPortalHost = "http://177.71.165.60";
+    public const string PublicPortalHost = "https://deepdarkness.com.br";
     public const string PublicPortalPathBase = "/studyos";
 
     private const string StableUpdatePath = "installer/update/stable/update-info.json";

@@ -160,9 +160,9 @@ ssh -i /home/kika/dds-key.pem ubuntu@177.71.165.60 "curl -fsS http://127.0.0.1:5
 
 No host AWS, publique o portal sob path dedicado no `nginx` existente:
 
-- portal: `http://177.71.165.60/studyos/`
-- catalogo: `http://177.71.165.60/studyos/api/catalog`
-- health: `http://177.71.165.60/studyos/healthz`
+- portal: `https://deepdarkness.com.br/studyos/`
+- catalogo: `https://deepdarkness.com.br/studyos/api/catalog`
+- health: `https://deepdarkness.com.br/studyos/healthz`
 
 Motivo:
 
