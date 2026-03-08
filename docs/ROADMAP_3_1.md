@@ -7,6 +7,7 @@ Status beta atual: `3.2.8-beta.1` publicado no feed `beta` para manter validacao
 Status tecnico 3.2.8 (base fechada): onboarding em 4 etapas, menu lateral em `ListView`, titulo fixo `Deep Darkness Studios : StudyOS`, Pomodoro sem sobrescrever cabecalho, links publicos alinhados com `DDSStudyOS-Updates`, `study-templates`, `browser-presets`, `notification-pack`, `community-feed`, limpeza de `Materiais`, `DDS Study Pass` aplicado na loja e portal publico `studyos` como origem oficial do catalogo.
 Ultimo release publico consolidado: `3.2.8` (estavel para rollout geral no canal publico `DDSStudyOS-Updates`).
 Evidencias atuais do fechamento local: build/testes de 2026-03-05 e artefatos em `artifacts/installer-output/` (`DDSStudyOS-Setup.exe`, `DDSStudyOS-Beta-Setup.exe`, `DDSStudyOS-Portable.zip`, `DDSStudyOS-SHA256.txt`).
+Status operacional do dia: baseline inicial do `DDS StudyOS` fechada para rollout. A trilha de e-mail foi explicitamente separada do escopo do app; o `mailcow` parcial do Ubuntu foi limpo em 2026-03-08 e o futuro servidor de e-mail sera tratado como projeto proprio.
 
 ## Patch fechado (3.1.2)
 
