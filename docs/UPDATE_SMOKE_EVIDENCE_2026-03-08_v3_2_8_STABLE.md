@@ -74,3 +74,37 @@
   - instalador estável `DDSStudyOS-Setup.exe`
   - instalador beta `DDSStudyOS-Beta-Setup.exe`
   - pacote portátil `DDSStudyOS-Portable.zip`
+
+## Hotfix de assinatura executado no mesmo dia
+
+- Problema encontrado apos a primeira publicacao:
+  - os instaladores publicados na release `v3.2.8` estavam sem assinatura Authenticode, mesmo com `signerThumbprint` presente no manifesto.
+- Causa raiz confirmada:
+  - o perfil local de release estava com `SignArtifacts = $false` e `SignAppExecutable = $false` em `scripts/release-profile.local.ps1`.
+- Correcao aplicada:
+  - `scripts/build-release-package.ps1` reexecutado para `3.2.8` com assinatura habilitada.
+  - assets da tag publica `v3.2.8` republicados por cima no repositório `Erikalellis/DDSStudyOS-Updates`.
+  - manifests `stable` e `beta` sincronizados novamente com os hashes assinados.
+
+## Validacao do hotfix de assinatura
+
+- Validacao local dos instaladores regenerados:
+  - `DDSStudyOS-Setup.exe`
+    - `Status = Valid`
+    - `SignerThumbprint = 6780CE530A33615B591727F5334B3DD075B76422`
+    - `installerSha256 = 19f3166a3247109883bd9491224bdeef481fd2101569e4d35e936977899429ae`
+  - `DDSStudyOS-Beta-Setup.exe`
+    - `Status = Valid`
+    - `SignerThumbprint = 6780CE530A33615B591727F5334B3DD075B76422`
+    - `installerSha256 = 2869d275e8f8233411dba9ce895de4dfa05cdc4692fbe4ecbf381ed7429ac513`
+- Validacao remota apos republicacao:
+  - download direto da release publica `v3.2.8` retornou ambos os instaladores com `Status = Valid`
+  - os hashes dos arquivos baixados bateram com:
+    - `stable update-info -> 19f3166a3247109883bd9491224bdeef481fd2101569e4d35e936977899429ae`
+    - `beta update-info -> 2869d275e8f8233411dba9ce895de4dfa05cdc4692fbe4ecbf381ed7429ac513`
+
+## Nota de confianca publica
+
+- O arquivo agora esta assinado corretamente.
+- Como o certificado atual e privado/autogerido da DDS, outras maquinas ainda podem exibir aviso de editor nao confiavel.
+- Para eliminar esse aviso em larga escala, o proximo passo e usar um certificado de code signing emitido por uma autoridade certificadora publica.
