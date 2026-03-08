@@ -1,10 +1,10 @@
 # Documentacao - DDS StudyOS
 
 ## Estado atual
-- Versao estavel consolidada: `3.2.4`
-- Ultimo release publico consolidado: `3.2.4` (`v3.2.4` no GitHub Releases)
-- Base local fechada: `3.2.4` (links publicos, `study-templates` e limpeza de `Materiais` promovidos para stable)
-- Linha incremental em validacao (DLC): `3.2.5` (continuidade de `Power-Up` e `Signal Boost`)
+- Versao estavel consolidada: `3.2.8`
+- Ultimo release publico consolidado: `3.2.8` (`v3.2.8` no GitHub Releases)
+- Base local fechada: `3.2.8` (DDS Study Pass, atalhos de loja e portal publico `studyos` alinhados para rollout)
+- Linha principal em definicao: `3.3.0` (`Quest Hub` / codename `Phoebe`)
 
 ## Guias principais
 - Manual completo de canais e atualizacoes (iniciante -> senior): `docs/MANUAL_CANAIS_E_ATUALIZACOES.md`
@@ -22,9 +22,9 @@
 - Suporte tecnico: `SUPPORT.md`
 
 ## Evidencias recentes de release
-- Stable 3.2.4: build `Release x64`, testes automatizados e pacote estavel promovido em 2026-03-02
-- Beta 3.2.3: build `Release x64`, testes automatizados e pacote `v3.2.3-beta.2` publicado no canal `beta` em 2026-03-02
-- Smoke local 3.2.2: build `Release x64`, testes `24/24` e novo pacote local gerado em 2026-03-02
+- Stable 3.2.8: build `Release x64`, testes automatizados, setup/portable gerados e canal publico atualizado em 2026-03-08
+- Stable 3.2.7: build `Release x64`, testes automatizados e pacote estavel promovido em 2026-03-05
+- Beta 3.2.7: build `Release x64`, testes automatizados e pacote `v3.2.7-beta.1` publicado no canal `beta` em 2026-03-05
 - Smoke update 3.1.4: `docs/UPDATE_SMOKE_EVIDENCE_2026-02-28_v3_1_4.md`
 - Smoke clean-machine 3.1.4: `artifacts/installer-logs/clean-machine-smoke-20260228-100341.txt`
 - Smoke first-use 3.1.4: `artifacts/installer-logs/first-use-smoke-20260228-091627.txt`

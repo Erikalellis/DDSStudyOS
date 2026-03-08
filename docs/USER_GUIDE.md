@@ -54,5 +54,5 @@ Este guia resume os fluxos principais para uso diario do aplicativo.
 ## 8) Suporte
 
 - E-mail: `erikalellis.dev@gmail.com`
-- Site: `http://177.71.165.60/`
+- Site: `http://177.71.165.60/studyos/`
 - Canal publico: `https://github.com/Erikalellis/DDSStudyOS-Updates`

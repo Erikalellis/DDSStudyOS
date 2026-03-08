@@ -6,20 +6,22 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
 ### Adicionado
-- Modulo `pomodoro-presets` criado como pack do ciclo `Power-Up`, com presets extras por perfil e suporte a carregamento por DLC.
-- `SettingsService` agora resolve presets dinamicamente via modulo, mantendo fallback local com `Foco Profundo`, `Revisao`, `Pratica` e `Modo Prova`.
-- Modulo `help-center` criado como pack do ciclo `Power-Up`, com resumo de ajuda e atalhos para guia, changelog e roadmap publicos dentro de `Configuracoes`.
-- `SettingsPage` agora exibe uma secao `Central de Ajuda` alimentada por DLC com fallback local.
-- Modulo `browser-presets` criado como primeira entrega do ciclo `Signal Boost`, com atalhos publicos integrados na home do navegador.
-- Modulo `notification-pack` criado para presets de snooze e mensagens de lembrete com carregamento por DLC na `Agenda`.
-- Modulo `community-feed` criado para exibir comunicados e proximas metas na tela `Desenvolvimento`.
-- Codename oficial `Phoebe` definido para a linha `3.3.x` (`Quest Hub`).
-- Nova aba `Loja` no menu lateral, com `StorePage` dedicada para abrir o catalogo hospedado.
-- Suporte inicial a deep link `ddsstudyos://...` (ex.: `ddsstudyos://loja`, `ddsstudyos://agenda`, `ddsstudyos://browser?url=...`).
-- Instalador Inno atualizado para registrar o protocolo `ddsstudyos://` no Windows.
+- Definicao do contrato de modulos por dominio da linha `3.3.x (Phoebe)`.
+- Planejamento da integracao catalogo web -> app para dominios como `Tecnologia` e `Musica`.
 
 ### Planejado
-- Fechar validacao beta do `Signal Boost` e preparar consolidacao em release estavel.
+- Fechar a fase `3.3.0 - Foundation` com smoke dedicado de loja/catalogo.
+
+## [3.2.8] - 2026-03-08
+### Adicionado
+- Identidade publica `DDS Study Pass` aplicada na experiencia da `Loja`, mantendo `Phoebe` como codinome interno da linha `3.3.x`.
+- Atalho rapido para `DDS Study Pass` no `Dashboard` e na `Home`.
+- Portal publico `studyos` integrado como origem oficial do catalogo remoto em `http://177.71.165.60/studyos/`.
+
+### Alterado
+- `StorePage` recebeu CTA mais forte (`Explorar o Pass`) e copy alinhada para modulos, trilhas e conteudos extras.
+- Links do app para o portal oficial foram atualizados para a rota publica `/studyos/`, evitando redirecionamento para a raiz do servidor.
+- `DeepLinkService`, feed remoto e rota `store` permanecem compativeis com fallback local para uso offline.
 
 ## [3.2.6] - 2026-03-04
 ### Adicionado

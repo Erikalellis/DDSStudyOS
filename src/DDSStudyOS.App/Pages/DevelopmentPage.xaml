@@ -120,7 +120,7 @@
 
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock Text="Site:" VerticalAlignment="Center" />
-                <HyperlinkButton Content="http://177.71.165.60/" Click="Site_Click" />
+                <HyperlinkButton Content="http://177.71.165.60/studyos/" Click="Site_Click" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="12">
@@ -130,30 +130,30 @@
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Base estavel 3.2.4" FontWeight="SemiBold"/>
-                    <TextBlock Text="• Novo onboarding em 4 etapas com validacao por passo."/>
-                    <TextBlock Text="• Shell lateral proprio para substituir o NavigationView."/>
-                    <TextBlock Text="• Branding fixo da janela e Pomodoro sem sobrescrever o cabecalho."/>
-                    <TextBlock Text="• Links publicos do app agora apontam para o canal DDSStudyOS-Updates."/>
+                    <TextBlock Text="Base estavel 3.2.8" FontWeight="SemiBold"/>
+                    <TextBlock Text="• DDS Study Pass entra como nome publico da experiencia de loja/catalogo."/>
+                    <TextBlock Text="• Atalhos rapidos para a Loja foram promovidos para Dashboard e Home."/>
+                    <TextBlock Text="• Portal publico /studyos agora serve como origem oficial do catalogo remoto."/>
+                    <TextBlock Text="• Links de portal dentro do app foram alinhados para a rota publica correta."/>
                 </StackPanel>
             </Border>
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
                     <TextBlock x:Name="NextUpdateTitleText" Text="Linha DLC em validacao" FontWeight="SemiBold"/>
-                    <TextBlock Text="• 3.2.7-beta.1 valida o Signal Boost completo no canal de testers."/>
-                    <TextBlock Text="• Notification-pack e community-feed entram para completar o ciclo incremental."/>
-                    <TextBlock Text="• Entrega incremental sem reinstalar a base estavel 3.2.4."/>
+                    <TextBlock Text="• 3.3.0 prepara a linha Quest Hub com catalogo, modulos e integracoes por dominio."/>
+                    <TextBlock Text="• DDS Study Pass sera a camada publica para cursos, trilhas e conteudos extras."/>
+                    <TextBlock Text="• O codinome interno desta linha permanece Phoebe."/>
                 </StackPanel>
             </Border>
 
             <Border Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="8" Padding="14">
                 <StackPanel Spacing="8">
                     <TextBlock Text="Proximos packs" FontWeight="SemiBold"/>
-                    <TextBlock Text="• 3.2.4 consolidou no canal stable os hotfixes de links publicos, study-templates e limpeza de Materiais." />
-                    <TextBlock Text="• 3.2.7-beta.1 cobre browser-presets, notification-pack e community-feed."/>
-                    <TextBlock Text="• 3.3.0 - Quest Hub: nova leva de recursos que exigem atualizacao completa do core."/>
-                    <TextBlock Text="• A linha 3.2.x sera focada em conteudo, presets, branding e comunicacao dentro do app."/>
+                    <TextBlock Text="• 3.2.8 fecha o corte estavel com DDS Study Pass e portal publico studyos." />
+                    <TextBlock Text="• 3.3.0 - Quest Hub: catalogo remoto, modulos por dominio e ponte web -&gt; app."/>
+                    <TextBlock Text="• Tecnologia e Musica seguem como primeiros dominios para empacotamento modular."/>
+                    <TextBlock Text="• A linha 3.3.x vai focar em loja, catalogo, integracao externa e expansao do core."/>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <HyperlinkButton Content="Ver changelog" Click="OpenPublicChangelog_Click" />
                         <HyperlinkButton Content="Ver roadmap publico" Click="OpenPublicRoadmap_Click" />

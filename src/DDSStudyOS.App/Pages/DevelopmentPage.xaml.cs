@@ -54,12 +54,12 @@ public sealed partial class DevelopmentPage : Page
 
     private static string GetNextTargetVersion()
     {
-        return "3.2.7";
+        return "3.3.0";
     }
 
     private static string GetNextPackName()
     {
-        return "Signal Boost";
+        return "Quest Hub (Phoebe)";
     }
 
     private void InitializeCommunityFeedSection()
@@ -120,7 +120,7 @@ public sealed partial class DevelopmentPage : Page
 
     private void Site_Click(object sender, RoutedEventArgs e)
     {
-        var url = "http://177.71.165.60/";
+        var url = UpdateDistributionConfig.GetPublicPortalBaseUrl();
         Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
 
