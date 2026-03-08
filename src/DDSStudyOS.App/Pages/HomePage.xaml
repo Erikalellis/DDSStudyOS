@@ -61,6 +61,7 @@
                     <Button Content="Ver Agenda" Tag="agenda" Click="QuickActionButton_Click" />
                     <Button Content="Navegador" Tag="browser" Click="QuickActionButton_Click" />
                     <Button Content="Favoritos" Tag="browser_favorites" Click="QuickActionButton_Click" />
+                    <Button Content="DDS Study Pass" Tag="store" Click="QuickActionButton_Click" />
                 </StackPanel>
             </StackPanel>
 

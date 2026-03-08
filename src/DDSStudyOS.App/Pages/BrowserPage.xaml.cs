@@ -1411,7 +1411,7 @@ public sealed partial class BrowserPage : Page
     </div>
 
     <div class="links">
-      <a href="dds://loja">Abrir Loja DDS</a>
+      <a href="dds://loja">Abrir DDS Study Pass</a>
       <a href="dds://cursos">Abrir lista de cursos</a>
       <a href="dds://favoritos">Abrir cursos favoritos</a>
       <a href="dds://agenda">Abrir agenda de estudos</a>

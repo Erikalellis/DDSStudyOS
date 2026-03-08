@@ -37,8 +37,8 @@ public sealed partial class StorePage : Page
     private async void StorePage_Loaded(object sender, RoutedEventArgs e)
     {
         _isPageActive = true;
-        StoreStatusText.Text = "Carregando loja...";
-        StoreCatalogStatusText.Text = "Catalogo: sincronizando...";
+        StoreStatusText.Text = "Carregando DDS Study Pass...";
+        StoreCatalogStatusText.Text = "Catalogo do Pass: sincronizando...";
 
         if (!await EnsureWebViewReadySafeAsync())
         {
@@ -85,7 +85,7 @@ public sealed partial class StorePage : Page
         catch (Exception ex)
         {
             AppLogger.Error("StorePage: falha ao inicializar WebView2.", ex);
-            StoreStatusText.Text = "Falha ao iniciar navegador da loja.";
+            StoreStatusText.Text = "Falha ao iniciar navegador do DDS Study Pass.";
             return false;
         }
     }
@@ -110,7 +110,7 @@ public sealed partial class StorePage : Page
                 _ => result.Source
             };
 
-            StoreCatalogStatusText.Text = $"Catalogo: {CatalogItems.Count} item(ns) via {sourceText}.";
+            StoreCatalogStatusText.Text = $"Catalogo do Pass: {CatalogItems.Count} item(ns) via {sourceText}.";
             if (result.UsedFallback)
             {
                 AppLogger.Warn($"StorePage: catalogo em fallback ({result.Message})");
@@ -123,7 +123,7 @@ public sealed partial class StorePage : Page
         catch (Exception ex)
         {
             AppLogger.Error("StorePage: erro ao sincronizar catalogo.", ex);
-            StoreCatalogStatusText.Text = "Catalogo: erro ao sincronizar.";
+            StoreCatalogStatusText.Text = "Catalogo do Pass: erro ao sincronizar.";
         }
     }
 
@@ -200,11 +200,11 @@ public sealed partial class StorePage : Page
 
         if (!args.IsSuccess)
         {
-            StoreStatusText.Text = "Loja indisponível no momento.";
+            StoreStatusText.Text = "DDS Study Pass indisponivel no momento.";
             return;
         }
 
-        StoreStatusText.Text = "Loja conectada";
+        StoreStatusText.Text = "DDS Study Pass conectado";
     }
 
     private void OpenStore_Click(object sender, RoutedEventArgs e)
@@ -262,7 +262,7 @@ public sealed partial class StorePage : Page
             return;
         }
 
-        StoreCatalogStatusText.Text = $"Selecionado: {item.Title} ({item.Category} / {item.Level}).";
+        StoreCatalogStatusText.Text = $"Selecionado no Pass: {item.Title} ({item.Category} / {item.Level}).";
     }
 
     private bool TryOpenPendingStoreItem()
@@ -290,7 +290,7 @@ public sealed partial class StorePage : Page
             string.Equals(item.Id, itemId, StringComparison.OrdinalIgnoreCase));
         if (item is null)
         {
-            StoreCatalogStatusText.Text = $"Catalogo: item '{itemId}' nao encontrado.";
+            StoreCatalogStatusText.Text = $"Catalogo do Pass: item '{itemId}' nao encontrado.";
             AppLogger.Warn($"StorePage: item do catalogo nao encontrado para '{itemId}'.");
             return false;
         }
@@ -314,17 +314,17 @@ public sealed partial class StorePage : Page
                     return;
                 }
 
-                OpenStoreHome($"Item selecionado: {item.Title}");
+                OpenStoreHome($"Item do Pass selecionado: {item.Title}");
                 return;
             }
 
             StoreWebView.Source = uri;
-            StoreStatusText.Text = $"Abrindo item: {item.Title}";
+            StoreStatusText.Text = $"Abrindo item do Pass: {item.Title}";
             AppLogger.Info($"StorePage: abrindo item '{item.Id}' via URL externa.");
             return;
         }
 
-        OpenStoreHome($"Item selecionado: {item.Title}");
+        OpenStoreHome($"Item do Pass selecionado: {item.Title}");
     }
 
     private bool TryHandleItemDeepLink(Uri uri, StoreCatalogItem currentItem)
@@ -361,7 +361,7 @@ public sealed partial class StorePage : Page
         return false;
     }
 
-    private void OpenStoreHome(string statusText = "Conectando...")
+    private void OpenStoreHome(string statusText = "Conectando ao DDS Study Pass...")
     {
         var target = ResolveStoreUrl();
         if (!Uri.TryCreate(target, UriKind.Absolute, out var uri))

@@ -34,6 +34,7 @@ public sealed partial class DashboardPage : Page
         QuickActionAgendaBtn.Click += QuickActionButton_Click;
         QuickActionBrowserBtn.Click += QuickActionButton_Click;
         QuickActionFavoritesBtn.Click += QuickActionButton_Click;
+        QuickActionStudyPassBtn.Click += QuickActionButton_Click;
 
         Loaded += DashboardPage_Loaded;
     }
@@ -203,6 +204,7 @@ public sealed partial class DashboardPage : Page
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
+            "store" => typeof(StorePage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
             _ => typeof(DashboardPage)

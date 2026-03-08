@@ -16,17 +16,29 @@
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
-                Padding="12,10"
+                Padding="16,14"
                 Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                 BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                 BorderThickness="0,0,0,1">
             <StackPanel Spacing="8">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <SymbolIcon Symbol="Shop" />
-                    <TextBlock Text="Loja DDS"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Border Background="{ThemeResource SystemAccentColorDark1}"
+                            CornerRadius="999"
+                            Padding="10,4">
+                        <TextBlock Text="LOJA"
+                                   FontSize="11"
+                                   FontWeight="SemiBold" />
+                    </Border>
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="DDS Study Pass"
+                                   FontSize="24"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Text="Modulos, trilhas e conteudos extras do DDS StudyOS."
+                                   Opacity="0.8"
+                                   FontSize="12"
+                                   TextWrapping="WrapWholeWords" />
+                    </StackPanel>
                     <TextBlock x:Name="StoreStatusText"
                                Text="Conectando..."
                                Opacity="0.75"
@@ -34,16 +46,16 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button Content="Abrir Loja" Click="OpenStore_Click" />
+                    <Button Content="Explorar o Pass" Click="OpenStore_Click" />
                     <Button Content="Recarregar" Click="Reload_Click" />
                     <Button Content="Sincronizar Catalogo" Click="RefreshCatalog_Click" />
-                    <Button Content="Abrir no Navegador Externo"
+                    <Button Content="Abrir portal externo"
                             Click="OpenExternal_Click"
                             Style="{StaticResource AccentButtonStyle}" />
                 </StackPanel>
 
                 <TextBlock x:Name="StoreCatalogStatusText"
-                           Text="Catalogo: aguardando sincronizacao."
+                           Text="Catalogo do Pass: aguardando sincronizacao."
                            Opacity="0.8" />
             </StackPanel>
         </Border>
@@ -61,10 +73,10 @@
                     Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                     CornerRadius="8">
                 <StackPanel Spacing="8">
-                    <TextBlock Text="Catalogo Phoebe (beta)"
+                    <TextBlock Text="Catalogo do Pass"
                                FontSize="14"
                                FontWeight="SemiBold" />
-                    <TextBlock Text="Tecnologia, Musica e novos dominios via feed remoto."
+                    <TextBlock Text="Cursos, modulos e trilhas sincronizados pelo portal publico do DDS Study Pass."
                                TextWrapping="WrapWholeWords"
                                Opacity="0.8"
                                FontSize="12" />

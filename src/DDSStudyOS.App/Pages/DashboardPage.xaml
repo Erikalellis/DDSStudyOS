@@ -72,6 +72,13 @@
                             <TextBlock Text="Favoritos" TextWrapping="Wrap" />
                         </StackPanel>
                     </Button>
+
+                    <Button x:Name="QuickActionStudyPassBtn" Tag="store">
+                        <StackPanel Width="120" Height="88" Spacing="8">
+                            <SymbolIcon Symbol="Shop" />
+                            <TextBlock Text="DDS Study Pass" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </StackPanel>
 
