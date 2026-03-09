@@ -4,36 +4,37 @@
 }
 
 @section Head {
-    <meta name="description" content="Portal publico oficial do DDS StudyOS com downloads, atualizacoes, screenshots, roadmap e Study Pass em modo preview." />
+    <meta name="description" content="DDS StudyOS: hub pessoal para estudar, organizar conhecimento e evoluir sem perder foco." />
     <meta property="og:title" content="DDS StudyOS - Portal Publico" />
-    <meta property="og:description" content="Informacoes oficiais, releases e progresso do DDS StudyOS." />
+    <meta property="og:description" content="Projeto oficial do DDS StudyOS com downloads, updates, roadmap e visao de produto." />
 }
 
 <section class="landing-hero">
     <div class="landing-left">
-        <span class="landing-eyebrow">Deep Darkness Studios</span>
+        <span class="landing-eyebrow">Portal oficial do DDS StudyOS</span>
         <h1>DDS StudyOS</h1>
         <p class="landing-lead">
-            Portal oficial com cara de produto real: downloads, updates, screenshots e roadmap.
-            O Study Pass ja existe como vitrine de direcao, sem cursos publicos ativos nesta etapa.
+            Seu hub pessoal para estudar, organizar conhecimento e evoluir sem perder o foco.
+            Uma aplicacao desktop criada pela Deep Darkness Studios para centralizar cursos,
+            materiais, lembretes e ferramentas de estudo em um unico lugar.
         </p>
         <div class="landing-actions">
-            <a class="button button-primary" asp-page="/Downloads">Baixar versao atual</a>
-            <a class="button button-secondary" asp-page="/Updates">Ver atualizacoes</a>
-            <a class="button button-secondary" asp-page="/StudyPass">Abrir Study Pass</a>
+            <a class="button button-primary" asp-page="/Roadmap">Explorar o projeto</a>
+            <a class="button button-secondary" asp-page="/Downloads">Baixar versao publica</a>
+            <a class="button button-secondary" href="https://github.com/Erikalellis/DDSStudyOS" target="_blank" rel="noopener">Ver no GitHub</a>
         </div>
         <div class="landing-stats">
             <article class="landing-stat">
                 <strong>3.2.8 Stable</strong>
-                <span>Canal estavel em producao.</span>
+                <span>Canal estavel em producao e validado em campo.</span>
             </article>
             <article class="landing-stat">
-                <strong>Portal Info-First</strong>
-                <span>Sem catalogo de cursos publico por enquanto.</span>
+                <strong>Arquitetura viva</strong>
+                <span>App desktop, portal publico e canal de updates.</span>
             </article>
             <article class="landing-stat">
                 <strong>Phoebe</strong>
-                <span>Fase de preparacao da proxima linha.</span>
+                <span>Codinome interno da proxima linha evolutiva.</span>
             </article>
         </div>
     </div>
@@ -41,78 +42,169 @@
     <aside class="landing-right">
         <article class="landing-panel">
             <span class="status-chip">LIVE</span>
-            <h2>Painel oficial</h2>
-            <ul>
-                <li>Downloads e verificacao de canal</li>
-                <li>Notas de versao e historico tecnico</li>
-                <li>Roadmap publico consolidado</li>
-                <li>Study Pass em modo preview</li>
-            </ul>
+            <h2>Preview do app</h2>
+            <p class="landing-mockup-sub">
+                Visual de referencia para mostrar o produto antes da pessoa baixar.
+            </p>
+            <div class="landing-mockup-box">
+                <strong>DDS StudyOS Desktop</strong>
+                <span>Dashboard, cursos, materiais, agenda, navegador e updates.</span>
+                <a class="inline-link" asp-page="/Screenshots">Ver screenshots oficiais</a>
+            </div>
         </article>
         <article class="landing-panel">
-            <h3>Diretriz atual</h3>
-            <p>
-                Portal publico agora, course engine depois e integracao completa app + cursos no ciclo seguinte.
-            </p>
-            <a class="inline-link" asp-page="/Roadmap">Ver roadmap consolidado</a>
+            <h3>Estado atual</h3>
+            <ul>
+                <li>Portal publico agora</li>
+                <li>Course engine depois</li>
+                <li>Integracao app + cursos no proximo ciclo</li>
+            </ul>
         </article>
     </aside>
 </section>
 
-<section class="landing-grid">
-    <article class="landing-card">
-        <h3>Downloads</h3>
-        <p>Instalador stable, beta e portable centralizados no canal oficial.</p>
-        <a asp-page="/Downloads">Abrir downloads</a>
-    </article>
-    <article class="landing-card">
-        <h3>Updates</h3>
-        <p>Historico de releases, hotfixes e estado de validacao em campo.</p>
-        <a asp-page="/Updates">Abrir updates</a>
-    </article>
-    <article class="landing-card">
-        <h3>Screenshots</h3>
-        <p>Galeria oficial da interface e da identidade visual do produto.</p>
-        <a asp-page="/Screenshots">Abrir screenshots</a>
-    </article>
-    <article class="landing-card">
-        <h3>Support</h3>
-        <p>Ajuda oficial, evidencias tecnicas e orientacoes de teste.</p>
-        <a asp-page="/Support">Abrir suporte</a>
-    </article>
-    <article class="landing-card">
-        <h3>DDS Study Pass</h3>
-        <p>Preview da expansao futura com modulos, trilhas e integracoes.</p>
-        <a asp-page="/StudyPass">Abrir preview</a>
-    </article>
-    <article class="landing-card">
-        <h3>Roadmap</h3>
-        <p>Status dos ciclos fechados e definicao da proxima onda.</p>
-        <a asp-page="/Roadmap">Abrir roadmap</a>
+<section class="landing-section">
+    <div class="section-title">
+        <h2>A origem do StudyOS</h2>
+        <p>
+            O projeto nasceu de um problema real: estudar usando muitas abas, aplicativos e arquivos desconectados.
+            O objetivo foi criar um fluxo unico para manter foco e continuidade.
+        </p>
+    </div>
+    <article class="landing-card landing-card-wide">
+        <p>
+            O que era uma ferramenta pessoal evoluiu para um sistema com arquitetura propria, diagnosticos,
+            backups, canal de updates e portal publico. A filosofia continua a mesma:
+            estudar, organizar conhecimento e evoluir sem perder foco.
+        </p>
     </article>
 </section>
 
-<section class="landing-status">
+<section class="landing-section landing-section-split">
     <div>
-        <span class="landing-eyebrow">Status de produto</span>
-        <h2>Sem loja de cursos ativa nesta fase</h2>
+        <div class="section-title">
+            <h2>O que e o DDS StudyOS</h2>
+            <p>
+                Um hub pessoal de estudo e organizacao digital. Em vez de depender de varias ferramentas
+                separadas, ele centraliza cursos, materiais e rotinas em um unico ambiente.
+            </p>
+        </div>
+    </div>
+    <article class="landing-card">
+        <h3>Para quem e</h3>
+        <ul class="landing-list">
+            <li>estudantes autodidatas</li>
+            <li>pessoas em multiplos cursos</li>
+            <li>criadores de conteudo</li>
+            <li>desenvolvedores e pesquisadores</li>
+        </ul>
+    </article>
+</section>
+
+<section class="landing-section">
+    <div class="section-title">
+        <h2>Recursos atuais</h2>
+        <p>Base funcional ja entregue no aplicativo.</p>
+    </div>
+    <div class="landing-grid">
+        <article class="landing-card">
+            <h3>Organizacao</h3>
+            <ul class="landing-list">
+                <li>materiais locais e online</li>
+                <li>agenda e lembretes</li>
+                <li>acompanhamento de tarefas</li>
+            </ul>
+        </article>
+        <article class="landing-card">
+            <h3>Confiabilidade</h3>
+            <ul class="landing-list">
+                <li>logs e diagnosticos</li>
+                <li>backup criptografado</li>
+                <li>validacao de backup sem importacao</li>
+            </ul>
+        </article>
+        <article class="landing-card">
+            <h3>Operacao</h3>
+            <ul class="landing-list">
+                <li>canal stable e beta</li>
+                <li>updates incrementais</li>
+                <li>recuperacao de lembretes pendentes</li>
+            </ul>
+        </article>
+    </div>
+</section>
+
+<section class="landing-section">
+    <div class="section-title">
+        <h2>Ecossistema do projeto</h2>
         <p>
-            O portal foi intencionalmente desenhado para comunicar produto, distribuir versoes e sustentar
-            operacao publica. A entrega de cursos entra depois com manifestos proprios, player e ownership.
+            Desenvolvimento e distribuicao publica seguem separados para manter evolucao consistente.
         </p>
     </div>
-    <div class="landing-status-list">
-        <article>
-            <strong>Agora</strong>
-            <span>Portal publico, comunicacao, download e suporte.</span>
+    <div class="landing-grid">
+        <article class="landing-card">
+            <h3>Aplicacao principal</h3>
+            <p>Codigo-fonte, arquitetura, scripts e documentacao tecnica.</p>
+            <a href="https://github.com/Erikalellis/DDSStudyOS" target="_blank" rel="noopener">Abrir DDSStudyOS</a>
         </article>
-        <article>
-            <strong>Depois</strong>
-            <span>Course engine, modelos de curso e distribuicao modular.</span>
+        <article class="landing-card">
+            <h3>Canal publico de updates</h3>
+            <p>Instaladores, releases, manifests e changelog.</p>
+            <a href="https://github.com/Erikalellis/DDSStudyOS-Updates" target="_blank" rel="noopener">Abrir DDSStudyOS-Updates</a>
         </article>
-        <article>
-            <strong>Futuro</strong>
-            <span>Integracao app + cursos com fluxo completo.</span>
+        <article class="landing-card">
+            <h3>DDS Study Pass</h3>
+            <p>Camada de preview para expansao futura de modulos.</p>
+            <a asp-page="/StudyPass">Abrir Study Pass</a>
         </article>
+    </div>
+</section>
+
+<section class="landing-section">
+    <div class="section-title">
+        <h2>Roadmap visual</h2>
+        <p>Estado atual e direcao da proxima fase.</p>
+    </div>
+    <div class="landing-roadmap">
+        <article class="landing-card">
+            <h3>Fechado</h3>
+            <ul class="landing-list landing-list-done">
+                <li>nucleo do aplicativo</li>
+                <li>sistema de lembretes</li>
+                <li>backups criptografados</li>
+                <li>canal de updates</li>
+            </ul>
+        </article>
+        <article class="landing-card">
+            <h3>Em andamento</h3>
+            <ul class="landing-list landing-list-progress">
+                <li>catalogo remoto</li>
+                <li>modulos de estudo</li>
+                <li>integracao com portal</li>
+            </ul>
+        </article>
+        <article class="landing-card">
+            <h3>Futuro</h3>
+            <ul class="landing-list landing-list-future">
+                <li>ecossistema DDS completo</li>
+                <li>distribuicao de conteudo</li>
+                <li>novos modulos por trilha</li>
+            </ul>
+        </article>
+    </div>
+</section>
+
+<section class="landing-download">
+    <div>
+        <h2>Downloads e atualizacoes</h2>
+        <p>
+            O portal publico continua sem cursos para baixar. Nesta fase, o foco e distribuicao do app,
+            comunicacao de progresso e consolidacao da base de produto.
+        </p>
+    </div>
+    <div class="landing-actions">
+        <a class="button button-primary" asp-page="/Downloads">Baixar versao estavel</a>
+        <a class="button button-secondary" asp-page="/Updates">Acompanhar updates</a>
+        <a class="button button-secondary" href="https://github.com/Erikalellis/DDSStudyOS-Updates/releases" target="_blank" rel="noopener">Ver releases</a>
     </div>
 </section>

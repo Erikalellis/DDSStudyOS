@@ -423,11 +423,39 @@ h1 {
   line-height: 1.7;
 }
 
+.landing-mockup-sub {
+  margin-bottom: 10px;
+}
+
+.landing-mockup-box {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 16px;
+  background: rgba(7, 13, 32, 0.78);
+  padding: 14px;
+}
+
+.landing-mockup-box strong,
+.landing-mockup-box span {
+  display: block;
+}
+
+.landing-mockup-box span {
+  margin-top: 6px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  line-height: 1.66;
+}
+
 .landing-grid {
   margin-top: 22px;
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-grid .landing-card,
+.landing-roadmap .landing-card {
+  min-height: 210px;
 }
 
 .landing-card a {
@@ -447,9 +475,80 @@ h1 {
   gap: 14px;
 }
 
+.landing-section {
+  margin-top: 24px;
+  width: min(1180px, calc(100% - 32px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.landing-section-split {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+}
+
+.section-title h2 {
+  margin-bottom: 10px;
+}
+
+.section-title p {
+  color: var(--muted);
+  line-height: 1.72;
+  margin-bottom: 0;
+}
+
+.landing-card-wide p {
+  margin-bottom: 0;
+}
+
+.landing-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #d3ddf3;
+  line-height: 1.75;
+}
+
+.landing-roadmap {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-list-done li::marker {
+  color: #55d69d;
+}
+
+.landing-list-progress li::marker {
+  color: #f6c25f;
+}
+
+.landing-list-future li::marker {
+  color: #9fb3d8;
+}
+
+.landing-download {
+  width: min(1180px, calc(100% - 32px));
+  margin: 24px auto 0;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(28, 202, 216, 0.12), rgba(124, 92, 255, 0.12));
+  padding: 22px;
+}
+
+.landing-download h2 {
+  margin-bottom: 10px;
+}
+
+.landing-download p {
+  color: var(--muted);
+  line-height: 1.72;
+}
+
 @media (max-width: 1080px) {
   .landing-stats,
-  .landing-grid {
+  .landing-grid,
+  .landing-roadmap {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -458,7 +557,9 @@ h1 {
   .landing-hero,
   .landing-status,
   .landing-grid,
-  .landing-stats {
+  .landing-stats,
+  .landing-roadmap,
+  .landing-section-split {
     grid-template-columns: 1fr;
   }
 
