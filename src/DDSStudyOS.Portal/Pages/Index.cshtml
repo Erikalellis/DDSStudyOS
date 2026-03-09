@@ -1,95 +1,118 @@
 @page
-@model DDSStudyOS.Portal.Pages.IndexModel
 @{
-    ViewData["Title"] = "Portal";
-    var catalogApiHref = Url.Content($"~{Model.Options.CatalogApiPath}");
-    var healthHref = Url.Content("~/healthz");
+    ViewData["Title"] = "DDS StudyOS";
 }
 
-<section class="hero-shell">
-    <div class="hero-copy">
-        <span class="eyebrow">Deep Darkness Studios</span>
-        <h1>@Model.Options.ProductName</h1>
-        <p class="hero-text">@Model.Options.Tagline</p>
+@section Head {
+    <meta name="description" content="Portal publico oficial do DDS StudyOS com downloads, atualizacoes, screenshots, roadmap e Study Pass em modo preview." />
+    <meta property="og:title" content="DDS StudyOS - Portal Publico" />
+    <meta property="og:description" content="Informacoes oficiais, releases e progresso do DDS StudyOS." />
+}
 
-        <div class="hero-actions">
-            <a class="button button-primary" href="@Model.Options.DownloadsUrl" target="_blank" rel="noreferrer">Baixar versoes publicas</a>
-            <a class="button button-secondary" href="@Model.Options.PublicUpdatesUrl" target="_blank" rel="noreferrer">Canal de updates</a>
+<section class="landing-hero">
+    <div class="landing-left">
+        <span class="landing-eyebrow">Deep Darkness Studios</span>
+        <h1>DDS StudyOS</h1>
+        <p class="landing-lead">
+            Portal oficial com cara de produto real: downloads, updates, screenshots e roadmap.
+            O Study Pass ja existe como vitrine de direcao, sem cursos publicos ativos nesta etapa.
+        </p>
+        <div class="landing-actions">
+            <a class="button button-primary" asp-page="/Downloads">Baixar versao atual</a>
+            <a class="button button-secondary" asp-page="/Updates">Ver atualizacoes</a>
+            <a class="button button-secondary" asp-page="/StudyPass">Abrir Study Pass</a>
         </div>
-
-        <ul class="hero-meta">
-            <li><strong>API catalogo:</strong> <code>@Model.Options.CatalogApiPath</code></li>
-            <li><strong>Status:</strong> <a href="@healthHref">@healthHref</a></li>
-            <li><strong>Deploy:</strong> isolado do portal ja existente no servidor</li>
-        </ul>
-    </div>
-
-    <div class="hero-card">
-        <div class="status-chip">Phoebe foundation</div>
-        <h2>Base pronta para catalogo remoto</h2>
-        <p>O portal publica catalogo, downloads e links de suporte sem depender do repositorio de codigo.</p>
-        <div class="hero-card-grid">
-            <div>
-                <span class="metric-label">Endpoint</span>
-                <strong>/api/catalog</strong>
-            </div>
-            <div>
-                <span class="metric-label">Health</span>
-                <strong>/healthz</strong>
-            </div>
-            <div>
-                <span class="metric-label">Canal</span>
-                <strong>Publico</strong>
-            </div>
-            <div>
-                <span class="metric-label">Escopo</span>
-                <strong>Loja + suporte</strong>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="info-grid">
-    <article class="info-panel">
-        <h3>Como esse portal entra no projeto</h3>
-        <p>Ele vira a camada publica do DDS StudyOS: homepage, catalogo de modulos, downloads e suporte. O site atual do servidor nao precisa ser substituido.</p>
-    </article>
-    <article class="info-panel">
-        <h3>Fluxo recomendado</h3>
-        <p>GitHub continua servindo releases publicos. O servidor proprio passa a servir catalogo, paginas de compra e integracoes futuras com a loja.</p>
-    </article>
-    <article class="info-panel">
-        <h3>Proximo passo tecnico</h3>
-        <p>Expandir o app para consumir este endpoint e abrir itens especificos com <code>ddsstudyos://store/item/&lt;id&gt;</code>.</p>
-    </article>
-</section>
-
-<section class="catalog-section">
-    <div class="section-heading">
-        <div>
-            <span class="eyebrow">Catalogo inicial</span>
-            <h2>Vitrine Phoebe</h2>
-        </div>
-        <a class="inline-link" href="@catalogApiHref" target="_blank" rel="noreferrer">Ver JSON bruto</a>
-    </div>
-
-    <div class="catalog-grid">
-        @foreach (var item in Model.FeaturedItems)
-        {
-            <article class="catalog-card">
-                <div class="catalog-topline">
-                    <span>@item.Category</span>
-                    <span>@item.PriceLabel</span>
-                </div>
-                <h3>@item.Title</h3>
-                <p>@item.Summary</p>
-                <div class="catalog-meta">
-                    <span>@item.Level</span>
-                    <span>@item.StudyType</span>
-                    <span>@item.Origin</span>
-                </div>
-                <a class="button button-small" href="@item.Url">Abrir no app</a>
+        <div class="landing-stats">
+            <article class="landing-stat">
+                <strong>3.2.8 Stable</strong>
+                <span>Canal estavel em producao.</span>
             </article>
-        }
+            <article class="landing-stat">
+                <strong>Portal Info-First</strong>
+                <span>Sem catalogo de cursos publico por enquanto.</span>
+            </article>
+            <article class="landing-stat">
+                <strong>Phoebe</strong>
+                <span>Fase de preparacao da proxima linha.</span>
+            </article>
+        </div>
+    </div>
+
+    <aside class="landing-right">
+        <article class="landing-panel">
+            <span class="status-chip">LIVE</span>
+            <h2>Painel oficial</h2>
+            <ul>
+                <li>Downloads e verificacao de canal</li>
+                <li>Notas de versao e historico tecnico</li>
+                <li>Roadmap publico consolidado</li>
+                <li>Study Pass em modo preview</li>
+            </ul>
+        </article>
+        <article class="landing-panel">
+            <h3>Diretriz atual</h3>
+            <p>
+                Portal publico agora, course engine depois e integracao completa app + cursos no ciclo seguinte.
+            </p>
+            <a class="inline-link" asp-page="/Roadmap">Ver roadmap consolidado</a>
+        </article>
+    </aside>
+</section>
+
+<section class="landing-grid">
+    <article class="landing-card">
+        <h3>Downloads</h3>
+        <p>Instalador stable, beta e portable centralizados no canal oficial.</p>
+        <a asp-page="/Downloads">Abrir downloads</a>
+    </article>
+    <article class="landing-card">
+        <h3>Updates</h3>
+        <p>Historico de releases, hotfixes e estado de validacao em campo.</p>
+        <a asp-page="/Updates">Abrir updates</a>
+    </article>
+    <article class="landing-card">
+        <h3>Screenshots</h3>
+        <p>Galeria oficial da interface e da identidade visual do produto.</p>
+        <a asp-page="/Screenshots">Abrir screenshots</a>
+    </article>
+    <article class="landing-card">
+        <h3>Support</h3>
+        <p>Ajuda oficial, evidencias tecnicas e orientacoes de teste.</p>
+        <a asp-page="/Support">Abrir suporte</a>
+    </article>
+    <article class="landing-card">
+        <h3>DDS Study Pass</h3>
+        <p>Preview da expansao futura com modulos, trilhas e integracoes.</p>
+        <a asp-page="/StudyPass">Abrir preview</a>
+    </article>
+    <article class="landing-card">
+        <h3>Roadmap</h3>
+        <p>Status dos ciclos fechados e definicao da proxima onda.</p>
+        <a asp-page="/Roadmap">Abrir roadmap</a>
+    </article>
+</section>
+
+<section class="landing-status">
+    <div>
+        <span class="landing-eyebrow">Status de produto</span>
+        <h2>Sem loja de cursos ativa nesta fase</h2>
+        <p>
+            O portal foi intencionalmente desenhado para comunicar produto, distribuir versoes e sustentar
+            operacao publica. A entrega de cursos entra depois com manifestos proprios, player e ownership.
+        </p>
+    </div>
+    <div class="landing-status-list">
+        <article>
+            <strong>Agora</strong>
+            <span>Portal publico, comunicacao, download e suporte.</span>
+        </article>
+        <article>
+            <strong>Depois</strong>
+            <span>Course engine, modelos de curso e distribuicao modular.</span>
+        </article>
+        <article>
+            <strong>Futuro</strong>
+            <span>Integracao app + cursos com fluxo completo.</span>
+        </article>
     </div>
 </section>

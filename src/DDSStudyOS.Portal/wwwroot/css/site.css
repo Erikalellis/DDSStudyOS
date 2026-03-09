@@ -329,3 +329,140 @@ h1 {
     flex-direction: column;
   }
 }
+
+.landing-hero,
+.landing-grid,
+.landing-status {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: 22px;
+  margin-top: 6px;
+}
+
+.landing-left,
+.landing-right {
+  display: grid;
+  gap: 16px;
+}
+
+.landing-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  width: fit-content;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd8ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.landing-left h1,
+.landing-status h2 {
+  margin-bottom: 12px;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 0.94;
+}
+
+.landing-lead,
+.landing-panel p,
+.landing-stat span,
+.landing-card p,
+.landing-status p,
+.landing-status-list span {
+  color: var(--muted);
+  line-height: 1.72;
+}
+
+.landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.landing-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.landing-stat,
+.landing-panel,
+.landing-card,
+.landing-status-list article {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(10, 18, 41, 0.88);
+  padding: 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+}
+
+.landing-stat strong,
+.landing-panel h2,
+.landing-panel h3,
+.landing-card h3,
+.landing-status-list strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #f6f8ff;
+}
+
+.landing-panel ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #d3ddf3;
+  line-height: 1.7;
+}
+
+.landing-grid {
+  margin-top: 22px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-card a {
+  color: #a9beff;
+  font-weight: 700;
+}
+
+.landing-status {
+  margin-top: 22px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+}
+
+.landing-status-list {
+  display: grid;
+  gap: 14px;
+}
+
+@media (max-width: 1080px) {
+  .landing-stats,
+  .landing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .landing-hero,
+  .landing-status,
+  .landing-grid,
+  .landing-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-actions .button {
+    width: 100%;
+  }
+}

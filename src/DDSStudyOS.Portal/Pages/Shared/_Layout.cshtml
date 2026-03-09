@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - DDS StudyOS Portal</title>
+    @await RenderSectionAsync("Head", required: false)
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DDSStudyOS.Portal.styles.css" asp-append-version="true" />
 </head>
@@ -17,8 +18,12 @@
 
             <nav class="site-nav">
                 <a asp-area="" asp-page="/Index">Home</a>
-                <a href="@Url.Content("~/api/catalog")">Catalogo</a>
-                <a href="@Url.Content("~/healthz")">Status</a>
+                <a asp-area="" asp-page="/Downloads">Downloads</a>
+                <a asp-area="" asp-page="/Updates">Updates</a>
+                <a asp-area="" asp-page="/Screenshots">Screenshots</a>
+                <a asp-area="" asp-page="/Roadmap">Roadmap</a>
+                <a asp-area="" asp-page="/StudyPass">Study Pass</a>
+                <a asp-area="" asp-page="/Support">Support</a>
             </nav>
         </div>
     </header>
