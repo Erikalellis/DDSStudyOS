@@ -5,30 +5,40 @@
 
 <section class="page-shell">
     <span class="eyebrow">Support</span>
-    <h1>Ajuda, evidencias e canais publicos</h1>
+    <h1>Suporte oficial do DDS StudyOS</h1>
     <p class="lead">
-        Esta area centraliza os pontos publicos de orientacao do app. O objetivo e facilitar
-        validacao em campo e reduzir dependencia de links soltos.
+        Aqui estao os canais para falar com o time. Se o app apresentar erro, bug visual,
+        falha de update ou duvida de uso, abra chamado pelos meios abaixo.
     </p>
 
     <div class="info-grid">
         <article class="panel">
-            <h2>Hub publico</h2>
-            <p>Repositorio publico de distribuicao, releases e arquivos visiveis para usuarios.</p>
-            <a class="primary-link" href="https://github.com/Erikalellis/DDSStudyOS-Updates">Abrir DDSStudyOS-Updates</a>
+            <h2>Abrir chamado (GitHub)</h2>
+            <p>Canal publico para bug report, melhoria e acompanhamento do status.</p>
+            <a class="primary-link" href="https://github.com/Erikalellis/DDSStudyOS-Updates/issues/new/choose" target="_blank" rel="noopener">Criar issue de suporte</a>
         </article>
 
         <article class="panel">
-            <h2>Roadmap</h2>
-            <p>Estado da base atual, trilha Phoebe e diretriz do DDS Study Pass.</p>
-            <a class="primary-link" href="https://github.com/Erikalellis/DDSStudyOS-Updates/blob/main/ROADMAP_PUBLIC.md">Abrir roadmap publico</a>
+            <h2>Contato por e-mail</h2>
+            <p>Canal direto para suporte, duvidas de uso e envio de evidencias tecnicas.</p>
+            <a class="primary-link" href="mailto:erikalellis.dev@gmail.com?subject=DDS%20StudyOS%20-%20Suporte">erikalellis.dev@gmail.com</a>
         </article>
 
         <article class="panel">
-            <h2>Evidencias tecnicas</h2>
-            <p>Smoke tests, rollout e comprovacoes tecnicas da linha publicada.</p>
-            <a class="primary-link" href="https://github.com/Erikalellis/DDSStudyOS-Updates/releases">Abrir evidencias e releases</a>
+            <h2>Releases e evidencias</h2>
+            <p>Historico de versoes, changelog tecnico e comprovacao publica dos pacotes.</p>
+            <a class="primary-link" href="https://github.com/Erikalellis/DDSStudyOS-Updates/releases" target="_blank" rel="noopener">Abrir releases publicos</a>
         </article>
+    </div>
+
+    <div class="panel checklist-panel">
+        <h2>O que enviar no chamado</h2>
+        <ul>
+            <li>versao do app (Config. &gt; Sobre/Desenvolvimento)</li>
+            <li>passo a passo para reproduzir o problema</li>
+            <li>print ou video curto da falha</li>
+            <li>bundle de diagnostico (.zip), quando possivel</li>
+        </ul>
     </div>
 
     <a class="back-link" href="/">Voltar para a home publica</a>
@@ -76,6 +86,15 @@
         margin: 0 0 10px;
         color: #f6f8ff;
         font-size: 1.08rem;
+    }
+    .panel ul {
+        margin: 0;
+        padding-left: 18px;
+        color: #c9d4ea;
+        line-height: 1.7;
+    }
+    .checklist-panel {
+        margin-top: 18px;
     }
     .primary-link, .back-link {
         color: #8ea6ff;
