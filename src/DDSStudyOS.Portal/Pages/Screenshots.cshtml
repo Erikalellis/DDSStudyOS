@@ -17,30 +17,33 @@
     <span class="eyebrow">Screenshots</span>
     <h1>Visao publica do DDS StudyOS</h1>
     <p class="lead">
-        Esta area organiza a referencia visual do app e do posicionamento atual do produto.
-        Por enquanto, funciona como galeria institucional e nao como vitrine de cursos.
+        Esta area concentra telas e artes oficiais do aplicativo para referencia publica.
+        O foco atual do site e institucional: produto, releases, changelog e suporte.
     </p>
 
     <div class="gallery">
         <article class="shot-card">
-            <strong>Shell principal</strong>
-            <p>Menu lateral proprio, dashboard, fluxo de configuracao e identidade visual fixa.</p>
+            <img src="~/images/SplashBackdrop.png" alt="Splash oficial do DDS StudyOS" />
+            <strong>Splash oficial</strong>
+            <p>Tela de abertura usada na camada visual do app.</p>
         </article>
         <article class="shot-card">
-            <strong>DDS Study Pass</strong>
-            <p>Preview da area futura de modulos, ainda sem catalogo real de conteudo.</p>
+            <img src="~/images/SplashBackground.png" alt="Background oficial do DDS StudyOS" />
+            <strong>Background institucional</strong>
+            <p>Arte base para onboarding, paines e comunicacao visual.</p>
         </article>
         <article class="shot-card">
-            <strong>Portal publico</strong>
-            <p>Camada web voltada a downloads, updates, screenshots e comunicacao do produto.</p>
+            <img src="~/images/DDSStudyOS-Icon-Source.png" alt="Icone oficial do DDS StudyOS" />
+            <strong>Icone da aplicacao</strong>
+            <p>Marca principal usada nos instaladores e na identidade publica.</p>
         </article>
     </div>
 
     <div class="secondary-panel">
-        <strong>Observacao</strong>
+        <strong>Uso desta pagina</strong>
         <p>
-            Quando fecharmos a engine de cursos, esta pagina podera ganhar imagens reais dos modulos e da experiencia
-            de estudo. Hoje ela documenta apenas o produto base e sua direcao visual.
+            Esta galeria e dedicada a visao do produto.
+            Novas telas do app serao adicionadas aqui conforme a interface evoluir.
         </p>
     </div>
 </section>
@@ -97,6 +100,15 @@
         background: rgba(8, 14, 30, 0.84);
         padding: 22px;
         box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+    }
+    .shot-card img {
+        width: 100%;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(164, 180, 215, 0.18);
+        background: rgba(8, 14, 30, 0.6);
+        object-fit: cover;
+        max-height: 220px;
     }
     .shot-card strong, .secondary-panel strong {
         display: block;
