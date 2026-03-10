@@ -691,9 +691,55 @@ img[data-expandable="true"]:hover {
   cursor: pointer;
 }
 
+.image-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(8, 16, 38, 0.88);
+  color: #f3f8ff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.image-lightbox-nav.is-prev {
+  left: -54px;
+}
+
+.image-lightbox-nav.is-next {
+  right: -54px;
+}
+
+.image-lightbox-nav:hover,
+.image-lightbox-close:hover {
+  border-color: rgba(35, 213, 255, 0.6);
+  box-shadow: 0 10px 28px rgba(35, 213, 255, 0.24);
+}
+
 .image-lightbox-caption {
   margin-top: 10px;
   color: #dbe7ff;
   text-align: center;
   font-size: 0.95rem;
+}
+
+.image-lightbox-hint {
+  margin-top: 8px;
+  color: #a7bfeb;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 860px) {
+  .image-lightbox-nav.is-prev {
+    left: 10px;
+  }
+
+  .image-lightbox-nav.is-next {
+    right: 10px;
+  }
 }
