@@ -1,0 +1,18 @@
+# Copiar para /etc/dds/dds-backup.conf e ajustar conforme ambiente.
+# Este arquivo e opcional: o script funciona com defaults sem ele.
+
+BACKUP_DIR="/mnt/dds-backup"
+DAILY_DIR="/mnt/dds-backup/backups-diarios"
+WEEKLY_DIR="/mnt/dds-backup/backups-semanais"
+DB_DIR="/mnt/dds-backup/databases"
+VOLUMES_DIR="/mnt/dds-backup/volumes"
+RESTORE_DIR="/mnt/dds-backup/restore-test"
+DDS_DIR="/home/kika/dds-projetos"
+LOG_FILE="/mnt/dds-backup/backup.log"
+MOUNT_DEVICE="/dev/sdb1"
+
+MIN_SPACE_KB="5242880"
+DAILY_KEEP="14"
+WEEKLY_KEEP="8"
+VOLUMES_KEEP="8"
+DB_KEEP_DAYS="14"

@@ -10,7 +10,7 @@
 
 - `autobackup`: **ativo e corrigido**
 - `destino`: **/mnt/dds-backup** montado e com espaco livre (~402G)
-- `script`: **atualizado para v1.1.1**
+- `script`: **atualizado para v1.2.0**
 - `status geral`: **saudavel para operacao**, com proximos passos definidos para ambiente multi-projeto
 
 ## Mudancas aplicadas nesta rodada
@@ -76,10 +76,11 @@ Status da ultima execucao manual:
 ### Script em uso
 
 - Arquivo: `/home/kika/dds-projetos/dds-backup.sh`
-- Versao: `1.1.1`
+- Versao: `1.2.0`
 - Copia versionada no repositorio:
   - `scripts/server/dds-backup.sh`
   - `scripts/server/dds-backup-restore-smoke.sh`
+  - `scripts/server/dds-backup.conf.example`
 - Retencao:
   - diarios: `14`
   - semanais: `8`
@@ -143,3 +144,10 @@ A rodada de hardening foi concluida com sucesso e removeu os riscos principais a
 - ausencia de rotina de restore periodico
 
 O sistema de backup agora esta mais consistente para operacao diaria e pronto para evolucao multi-projeto com tierizacao e offsite.
+
+## Melhorias adicionais incorporadas no script principal (v1.2.0)
+
+- `verify <arquivo>` para validar integridade de arquivo e manifesto SHA256.
+- `restore <arquivo> [destino]` para restauracao controlada em pasta alvo.
+- `cleanup` para limpeza de artefatos auxiliares antigos.
+- suporte opcional a `/etc/dds/dds-backup.conf` para parametrizacao sem editar script.
