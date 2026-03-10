@@ -88,6 +88,19 @@ Esse bundle ja fica pronto para ser copiado como uma stack isolada em:
 ~/dds-projetos/ddsstudyos-portal/
 ```
 
+## Auditoria de links antes do deploy
+
+Rode a auditoria automatica para validar:
+
+- rotas internas do portal
+- imagens referenciadas
+- links externos publicos
+- fontes do tracker (`update-info`, `dlc-manifest` e releases)
+
+```powershell
+.\scripts\audit-portal-links.ps1
+```
+
 ## Arquivos de referencia
 
 - `deploy/portal/ddsstudyos-portal.service.example`
