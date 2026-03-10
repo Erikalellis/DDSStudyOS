@@ -1,106 +1,145 @@
-# Auditoria do Autobackup do Servidor (2026-03-10)
+# Auditoria e Hardening do Autobackup do Servidor (2026-03-10)
 
 ## Escopo
 
-- Verificar se o autobackup do servidor geral esta ativo.
-- Validar agenda (cron/systemd), destino dos backups, status recente e riscos.
-- Sem alterar a configuracao de backup nesta rodada.
+- Validar o estado do backup geral do servidor.
+- Aplicar correcoes de agenda/logging/cobertura.
+- Executar validacao operacional com restore smoke test.
 
-## Resultado resumido
+## Resultado executivo
 
-- `autobackup`: **ativo e executando**
-- `destino`: **/mnt/dds-backup** montado e com espaco
-- `ultima execucao DB`: **2026-03-10 06:00**
-- `ultimo backup diario`: **2026-03-10 00:01**
-- `ultimo backup semanal`: **2026-03-08 03:01**
-- `status geral`: **funcionando, com ajustes recomendados**
+- `autobackup`: **ativo e corrigido**
+- `destino`: **/mnt/dds-backup** montado e com espaco livre (~402G)
+- `script`: **atualizado para v1.1.1**
+- `status geral`: **saudavel para operacao**, com proximos passos definidos para ambiente multi-projeto
 
-## Evidencias coletadas
+## Mudancas aplicadas nesta rodada
 
-### 1) Agendamento ativo (crontab de `kika`)
+### 1) Agenda de backup corrigida (remove sobreposicao de DB)
+
+Foi aplicada a **Opcao B**:
+
+- `daily` agora nao executa DB.
+- `databases` segue em `*/6h`.
+
+Crontab ativo de `kika`:
 
 ```cron
-0 */12 * * * /home/kika/dds-projetos/dds-backup.sh daily >> /mnt/dds-backup/backup.log 2>&1
-0 3 * * 0 /home/kika/dds-projetos/dds-backup.sh weekly >> /mnt/dds-backup/backup.log 2>&1
-0 */6 * * * /home/kika/dds-projetos/dds-backup.sh databases >> /mnt/dds-backup/backup.log 2>&1
+0 */12 * * * flock -n /tmp/dds-backup-daily.lock /home/kika/dds-projetos/dds-backup.sh daily >/dev/null 2>&1
+0 3 * * 0 flock -n /tmp/dds-backup-weekly.lock /home/kika/dds-projetos/dds-backup.sh weekly >/dev/null 2>&1
+0 */6 * * * flock -n /tmp/dds-backup-db.lock /home/kika/dds-projetos/dds-backup.sh databases >/dev/null 2>&1
+30 4 1 * * flock -n /tmp/dds-restore-smoke.lock /home/kika/dds-projetos/dds-backup-restore-smoke.sh >/dev/null 2>&1
 ```
 
-### 2) Script de backup em uso
+### 2) Logging padronizado
+
+- Estrategia aplicada: **script registra no arquivo** (`/mnt/dds-backup/backup.log`).
+- `cron` executa com `>/dev/null 2>&1` para evitar duplicidade/poluicao de log.
+
+### 3) Cobertura de persistencia Docker expandida
+
+`backup_volumes` reforcado para cobrir dados criticos e executar `tar` com `sudo` (necessario para `/var/lib/docker/volumes/*`).
+
+Cobertura atual (conforme mounts em execucao):
+
+- `open-webui` (`/var/lib/docker/volumes/open-webui/_data`)
+- `taskingai` (`postgres` e `redis`)
+- `filebrowser` (`filebrowser.db`, `settings.json`)
+- `ddsstudyos-portal` (`data-protection`)
+- `ad-app-backend` bind relevante sob `dds-projetos`
+
+Evidencia do novo snapshot de persistencia:
+
+- arquivo: `/mnt/dds-backup/volumes/docker_persistencia_20260310_095551.tar.gz`
+- tamanho: **6.8M**
+- entradas: **1361**
+
+### 4) Restore test automatizado
+
+Script criado e instalado:
+
+- `/home/kika/dds-projetos/dds-backup-restore-smoke.sh`
+
+Valida:
+
+- integridade `tar` do diario e semanal
+- integridade SQLite (`PRAGMA integrity_check`)
+- cabecalho de dump PostgreSQL
+- legibilidade do ultimo snapshot de persistencia Docker
+
+Status da ultima execucao manual:
+
+- `RESTORE SMOKE RESULT: SUCCESS` em `2026-03-10 09:56:58`
+
+## Evidencias operacionais
+
+### Script em uso
 
 - Arquivo: `/home/kika/dds-projetos/dds-backup.sh`
-- Versao no script: `1.0.0`
-- Retencao configurada:
+- Versao: `1.1.1`
+- Copia versionada no repositorio:
+  - `scripts/server/dds-backup.sh`
+  - `scripts/server/dds-backup-restore-smoke.sh`
+- Retencao:
   - diarios: `14`
   - semanais: `8`
+  - persistencia docker: `8`
 
-### 3) Destino e uso de disco
+### Artefatos recentes
 
-- Pasta: `/mnt/dds-backup`
-- Espaco livre reportado: **~402G**
-- Tamanho atual:
-  - `backups-diarios`: **7.8G**
-  - `backups-semanais`: **1.7G**
-  - `databases`: **5.9M**
-
-### 4) Ultimos artefatos
-
-- Diario mais recente:
+- Diario:
   - `/mnt/dds-backup/backups-diarios/dds_diario_20260310_000001.tar.gz`
-- Semanal mais recente:
+- Semanal:
   - `/mnt/dds-backup/backups-semanais/dds_semanal_20260308_030001.tar.gz`
-- DB mais recente:
+- DB:
   - `/mnt/dds-backup/databases/taskingai_20260310_060001.sql`
   - `/mnt/dds-backup/databases/academiavirtual_20260310_060001.db`
+- Volumes:
+  - `/mnt/dds-backup/volumes/docker_persistencia_20260310_095551.tar.gz`
 
-### 5) Logs
+### Logs
 
-- `backup.log` confirma execucoes regulares.
-- Erros encontrados no historico recente: apenas tentativas iniciais antigas em `2026-03-01`.
+- backup: `/mnt/dds-backup/backup.log`
+- restore smoke: `/mnt/dds-backup/restore-test.log`
 
-## Pontos de atencao
+## Recomendacoes extras (ambiente com varios projetos)
 
-1. Sobreposicao de agenda
+1. Tier de criticidade por projeto
 
-- `daily` roda em `00:00` e `12:00`.
-- `databases` roda de 6 em 6 horas, incluindo `00:00` e `12:00`.
-- Isso gera execucoes duplicadas de backup de DB nesses horarios.
+- Definir `Tier-0` (dados de negocio), `Tier-1` (servicos de apoio), `Tier-2` (cache/derivados).
+- Aplicar RPO/RTO diferentes por tier para evitar overbackup.
 
-2. Log duplicado/poluido
+2. Catalogo de backup por servico
 
-- O script grava no `backup.log` internamente e o cron tambem redireciona para o mesmo arquivo.
-- Resultado: entradas duplicadas e sequencias ANSI no log.
+- Manter um inventario versionado com:
+  - servico
+  - caminho persistente
+  - frequencia
+  - ultimo restore validado
 
-3. Cobertura de backup incompleta para Docker
+3. Copia offsite
 
-- O script cobre SQLite do `ad-app-backend` e dump do Postgres `taskingai-db`.
-- Nao ha rotina dedicada para backup de volumes de outros servicos (ex.: `open-webui`, volumes `mailcow-*`, etc.).
+- Replicar `/mnt/dds-backup` para destino externo (S3/Backblaze/segundo host) com criptografia.
+- Sem offsite, risco permanece alto para perda fisica do host.
 
-4. Sem rotina formal de teste de restauracao
+4. Restore drill trimestral completo
 
-- Existe backup e retencao, mas nao ha evidência de restore test automatizado/periodico.
+- Alem do smoke mensal, executar restore real de amostra de cada Tier em ambiente isolado.
 
-## Recomendacoes (proxima rodada)
+5. Alertas operacionais
 
-1. Remover sobreposicao de DB
+- Adicionar alerta (Telegram/Discord/email) para:
+  - falha de cron
+  - backup sem novo arquivo dentro da janela esperada
+  - restore smoke com erro
 
-- Opcao A: manter `daily` com DB e mudar `databases` para `6,18`.
-- Opacao B: manter `databases` 6/6h e remover DB de `daily`.
+## Conclusao
 
-2. Padronizar logging
+A rodada de hardening foi concluida com sucesso e removeu os riscos principais apontados na auditoria inicial:
 
-- Escolher uma unica estrategia:
-  - script loga no arquivo e cron sem redirecionamento, ou
-  - cron redireciona e script nao grava no mesmo arquivo.
+- sobreposicao de agenda
+- log duplicado
+- cobertura fraca de persistencia Docker
+- ausencia de rotina de restore periodico
 
-3. Cobertura de volumes
-
-- Definir backup para volumes criticos de containers fora do fluxo atual.
-
-4. Restore test
-
-- Agendar teste mensal de restauracao (amostra) e registrar evidência.
-
-## Observacao operacional
-
-Nesta auditoria nao foi aplicada nenhuma mudanca em cron/script de backup.
-Foram apenas analise e registro de estado para acao controlada na proxima janela.
+O sistema de backup agora esta mais consistente para operacao diaria e pronto para evolucao multi-projeto com tierizacao e offsite.
