@@ -19,6 +19,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 builder.Services.AddSingleton<CatalogFileService>();
+builder.Services.AddHttpClient<UpdateTrackerService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -52,6 +56,12 @@ app.MapGet("/healthz", () => Results.Ok(new
 app.MapGet("/api/catalog", async (CatalogFileService catalogService, CancellationToken cancellationToken) =>
 {
     var document = await catalogService.LoadAsync(cancellationToken);
+    return Results.Ok(document);
+});
+
+app.MapGet("/api/updates/tracker", async (UpdateTrackerService trackerService, CancellationToken cancellationToken) =>
+{
+    var document = await trackerService.GetDocumentAsync(cancellationToken);
     return Results.Ok(document);
 });
 
