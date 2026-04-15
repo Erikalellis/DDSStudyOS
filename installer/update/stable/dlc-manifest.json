@@ -1,10 +1,10 @@
 {
   "channel": "stable",
   "product": "DDS StudyOS",
-  "appVersion": "3.2.9",
-  "minimumAppVersion": "3.2.9",
+  "appVersion": "3.3.1",
+  "minimumAppVersion": "3.3.1",
   "manifestVersion": 1,
-  "generatedAtUtc": "2026-04-15T16:41:45.0573771Z",
+  "generatedAtUtc": "2026-04-15T19:15:46.1248614Z",
   "releaseTag": "",
   "modules": [
     {
