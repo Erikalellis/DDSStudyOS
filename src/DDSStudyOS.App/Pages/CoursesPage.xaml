@@ -40,6 +40,8 @@
                             <MenuFlyoutItem Text="Importar favoritos para este perfil" Click="ImportFavorites_Click"/>
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Text="Limpar histórico de estudo do perfil" Click="ClearProfileHistory_Click"/>
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Text="🌐 Buscar no catálogo DDS" Click="FetchDdsCatalog_Click"/>
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>

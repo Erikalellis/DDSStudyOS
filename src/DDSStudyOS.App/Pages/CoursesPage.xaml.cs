@@ -348,6 +348,29 @@ public sealed partial class CoursesPage : Page
         }
     }
 
+    private async void FetchDdsCatalog_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            using var svc = new DdsCatalogService();
+            var items = await svc.FetchCatalogAsync();
+
+            if (items.Count == 0)
+            {
+                await ShowInfoDialogAsync("Catálogo DDS", "Nenhum item encontrado no catálogo.");
+                return;
+            }
+
+            var list = string.Join("\n", items.Take(20).Select(i => i.Title));
+            await ShowInfoDialogAsync("Catálogo DDS", $"{items.Count} curso(s) encontrado(s):\n\n{list}");
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("Falha ao buscar catálogo DDS.", ex);
+            await ShowInfoDialogAsync("Catálogo DDS", "Não foi possível buscar o catálogo. Verifique sua conexão.");
+        }
+    }
+
     private void CoursesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (CoursesList.SelectedItem is Course c)
@@ -735,6 +758,8 @@ public sealed partial class CoursesPage : Page
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
+            "offline" => typeof(OfflinePage),
+            "store" => typeof(StorePage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
             _ => typeof(DashboardPage)

@@ -230,6 +230,45 @@ public static class OfflineCourseCache
         }
     }
 
+    // ── Listagem de cache ─────────────────────────────────────────────────────
+
+    public static IReadOnlyList<OfflineCourseMeta> GetAllCached()
+    {
+        var result = new List<OfflineCourseMeta>();
+        if (!Directory.Exists(CacheRoot)) return result;
+
+        foreach (var dir in Directory.EnumerateDirectories(CacheRoot, "*", SearchOption.AllDirectories))
+        {
+            var metaPath = Path.Combine(dir, "meta.json");
+            if (!File.Exists(metaPath)) continue;
+            try
+            {
+                var json = File.ReadAllText(metaPath);
+                var meta = JsonSerializer.Deserialize<OfflineCourseMeta>(json);
+                if (meta is not null) result.Add(meta);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warn($"OfflineCache: falha ao ler meta em {metaPath}. {ex.Message}");
+            }
+        }
+
+        result.Sort((a, b) => b.CachedAt.CompareTo(a.CachedAt));
+        return result;
+    }
+
+    public static long GetTotalCacheSizeBytes()
+    {
+        if (!Directory.Exists(CacheRoot)) return 0L;
+        long total = 0;
+        foreach (var file in Directory.EnumerateFiles(CacheRoot, "*", SearchOption.AllDirectories))
+        {
+            try { total += new FileInfo(file).Length; }
+            catch { /* ignora */ }
+        }
+        return total;
+    }
+
     // ── Download helper ───────────────────────────────────────────────────────
 
     private static async Task DownloadFileAsync(

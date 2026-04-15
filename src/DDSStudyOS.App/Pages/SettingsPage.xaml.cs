@@ -601,6 +601,8 @@ public sealed partial class SettingsPage : Page
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
+            "offline" => typeof(OfflinePage),
+            "store" => typeof(StorePage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
             _ => typeof(DashboardPage)

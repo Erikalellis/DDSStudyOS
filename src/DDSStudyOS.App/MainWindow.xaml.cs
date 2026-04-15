@@ -95,8 +95,6 @@ public sealed partial class MainWindow : Window
         var initialTag = string.IsNullOrWhiteSpace(AppState.PendingNavigationTag)
             ? "dashboard"
             : AppState.PendingNavigationTag!;
-        AppState.PendingNavigationTag = null;
-        NavigateToTag(initialTag);
 
         // Permite que outras telas peçam navegação (MVP)
         Services.AppState.RequestNavigateTag = NavigateToTag;
@@ -233,7 +231,6 @@ public sealed partial class MainWindow : Window
 
         _ = BootstrapWithSplashAsync();
     }
-
     private void NavView_Loaded(object sender, RoutedEventArgs e)
     {
         RefreshNavigationMenuVisualState(hardReset: true);
@@ -249,8 +246,6 @@ public sealed partial class MainWindow : Window
             var startedAt = DateTimeOffset.Now;
             var isFirstRun = !UserProfileService.IsRegistered();
             var minimumSplashDuration = isFirstRun ? TimeSpan.FromSeconds(10) : TimeSpan.FromSeconds(7);
-
-            await SetSplashStepAsync(8, "Carregando seu perfil e preferencias...");
             await Task.Delay(220);
 
             await SetSplashStepAsync(24, "Organizando banco local e progresso...");
@@ -1726,6 +1721,7 @@ public sealed partial class MainWindow : Window
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
+            "offline" => typeof(OfflinePage),
             "store" => typeof(StorePage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
@@ -1777,6 +1773,11 @@ public sealed partial class MainWindow : Window
             return "browser";
         }
 
+        if (pageType == typeof(OfflinePage))
+        {
+            return "offline";
+        }
+
         if (pageType == typeof(StorePage))
         {
             return "store";
@@ -1817,6 +1818,7 @@ public sealed partial class MainWindow : Window
             NavItemMaterials,
             NavItemAgenda,
             NavItemBrowser,
+            NavItemOffline,
             NavItemStore,
             NavItemSettings,
             NavItemDev

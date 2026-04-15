@@ -155,6 +155,24 @@ Critério de aceite:
 - Suite de testes/smoke 100% verde.
 - Artefatos assinados e publicados nos canais corretos.
 
+## Diretriz DDS Study Pass (2026-03-09)
+
+Decisao de produto para a linha `Phoebe`:
+
+- Portal publico agora: informacoes do app, downloads, atualizacoes, screenshots, roadmap e suporte.
+- Course engine depois: formato tecnico de curso, empacotamento, player, progresso e pipeline de criacao.
+- Integracao futura app + cursos: catalogo real, deep links por item, entrega de pacote/modulo e conta/ownership em fase posterior.
+
+Regra operacional atual:
+
+- nao publicar cursos reais no portal ainda
+- nao abrir fluxo publico de compra/liberacao ainda
+- manter `DDS Study Pass` como superficie informativa e de preview ate a engine de cursos existir
+
+Documento base desta decisao:
+
+- `docs/STUDY_PASS_PRODUCT_STRATEGY_2026-03-09.md`
+
 ## Objetivo do ciclo
 
 - Consolidar estabilidade do 3.0 em produção.

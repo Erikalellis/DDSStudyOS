@@ -110,7 +110,7 @@ Status da ultima execucao manual:
 - Definir `Tier-0` (dados de negocio), `Tier-1` (servicos de apoio), `Tier-2` (cache/derivados).
 - Aplicar RPO/RTO diferentes por tier para evitar overbackup.
 
-2. Catalogo de backup por servico
+1. Catalogo de backup por servico
 
 - Manter um inventario versionado com:
   - servico
@@ -118,16 +118,16 @@ Status da ultima execucao manual:
   - frequencia
   - ultimo restore validado
 
-3. Copia offsite
+1. Copia offsite
 
 - Replicar `/mnt/dds-backup` para destino externo (S3/Backblaze/segundo host) com criptografia.
 - Sem offsite, risco permanece alto para perda fisica do host.
 
-4. Restore drill trimestral completo
+1. Restore drill trimestral completo
 
 - Alem do smoke mensal, executar restore real de amostra de cada Tier em ambiente isolado.
 
-5. Alertas operacionais
+1. Alertas operacionais
 
 - Adicionar alerta (Telegram/Discord/email) para:
   - falha de cron

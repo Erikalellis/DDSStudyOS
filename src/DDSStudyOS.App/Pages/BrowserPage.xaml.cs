@@ -1,4 +1,4 @@
-﻿using DDSStudyOS.App.Models;
+using DDSStudyOS.App.Models;
 using DDSStudyOS.App.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -300,6 +300,8 @@ public sealed partial class BrowserPage : Page
             "materials" => typeof(MaterialsPage),
             "agenda" => typeof(AgendaPage),
             "browser" => typeof(BrowserPage),
+            "offline" => typeof(OfflinePage),
+            "store" => typeof(StorePage),
             "settings" => typeof(SettingsPage),
             "dev" => typeof(DevelopmentPage),
             _ => null
