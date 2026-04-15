@@ -37,6 +37,52 @@ function Ensure-GhAuth {
     }
 }
 
+function Normalize-Thumbprint {
+    param([string]$Thumbprint)
+
+    return (($Thumbprint -replace "[^A-Fa-f0-9]", "").ToUpperInvariant())
+}
+
+function Get-ExpectedSignerThumbprint {
+    param(
+        [string]$RepoRoot,
+        [ValidateSet('stable', 'beta')]
+        [string]$Channel
+    )
+
+    $manifestPath = Join-Path $RepoRoot "installer\update\$Channel\update-info.json"
+    if (-not (Test-Path $manifestPath)) {
+        return ""
+    }
+
+    try {
+        $manifest = Get-Content $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        return (Normalize-Thumbprint ([string]$manifest.signerThumbprint))
+    }
+    catch {
+        throw "Falha ao ler signerThumbprint em ${manifestPath}: $($_.Exception.Message)"
+    }
+}
+
+function Assert-ValidSignature {
+    param(
+        [string]$AssetPath,
+        [string]$ExpectedThumbprint
+    )
+
+    $signature = Get-AuthenticodeSignature -FilePath $AssetPath
+    if ($signature.Status -ne 'Valid' -or -not $signature.SignerCertificate) {
+        throw "Asset sem assinatura valida: $AssetPath (status: $($signature.Status))"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedThumbprint)) {
+        $actualThumbprint = Normalize-Thumbprint $signature.SignerCertificate.Thumbprint
+        if ($actualThumbprint -ne $ExpectedThumbprint) {
+            throw "Thumbprint invalido em $AssetPath. Esperado: $ExpectedThumbprint | Atual: $actualThumbprint"
+        }
+    }
+}
+
 function Resolve-AppVersion {
     param([string]$RepoRoot)
 
@@ -79,6 +125,11 @@ $missing = @($assets | Where-Object { -not (Test-Path $_) })
 if ($missing.Count -gt 0) {
     throw "Artefatos ausentes para publicar: $($missing -join ', ')"
 }
+
+$stableSetupPath = Join-Path $resolvedOutputPath "$StableSetupBaseName.exe"
+$betaSetupPath = Join-Path $resolvedOutputPath "$BetaSetupBaseName.exe"
+Assert-ValidSignature -AssetPath $stableSetupPath -ExpectedThumbprint (Get-ExpectedSignerThumbprint -RepoRoot $repoRoot -Channel stable)
+Assert-ValidSignature -AssetPath $betaSetupPath -ExpectedThumbprint (Get-ExpectedSignerThumbprint -RepoRoot $repoRoot -Channel beta)
 
 cmd /c "`"$gh`" release view $resolvedTag --repo $fullRepo >nul 2>nul"
 if ($LASTEXITCODE -ne 0) {
