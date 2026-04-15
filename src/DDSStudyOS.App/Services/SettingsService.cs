@@ -30,12 +30,18 @@ public static class SettingsService
         "http://177.71.165.60/",
         "http://177.71.165.60",
         "http://177.71.165.60/studyos/",
-        "http://177.71.165.60/studyos"
+        "http://177.71.165.60/studyos",
+        "https://deepdarkness.com.br/studyos/",
+        "https://deepdarkness.com.br/studyos",
+        "http://deepdarkness.com.br/studyos/",
+        "http://deepdarkness.com.br/studyos"
     ];
     private static readonly string[] LegacyStoreCatalogFeedUrls =
     [
         "http://177.71.165.60/dds/catalog.json",
-        "http://177.71.165.60/studyos/api/catalog"
+        "http://177.71.165.60/studyos/api/catalog",
+        "https://deepdarkness.com.br/studyos/api/catalog",
+        "http://deepdarkness.com.br/studyos/api/catalog"
     ];
     private static bool _localSettingsReadWarningLogged;
     private static bool _localSettingsWriteWarningLogged;

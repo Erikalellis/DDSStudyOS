@@ -120,7 +120,7 @@
 
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock Text="Site:" VerticalAlignment="Center" />
-                <HyperlinkButton Content="https://deepdarkness.com.br/studyos/" Click="Site_Click" />
+                <HyperlinkButton Content="https://studyos.deepdarkness.com.br/" Click="Site_Click" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="12">
