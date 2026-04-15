@@ -997,6 +997,19 @@ public sealed partial class BrowserPage : Page
             }
 
             UpdateNavigationButtons();
+
+            // Atualiza indicador de cache offline para a página atual
+            if (!_isInternalHomePage && Web.Source is not null)
+            {
+                var currentUrl = Web.Source.ToString();
+                OfflineSaveToggle.IsChecked = Services.OfflineCourseCache.IsCached(currentUrl);
+                OfflineSaveToggle.IsEnabled = Services.OfflineCourseCache.IsAllowedDomain(currentUrl);
+            }
+            else
+            {
+                OfflineSaveToggle.IsChecked = false;
+                OfflineSaveToggle.IsEnabled = false;
+            }
         }
         catch (Exception ex)
         {
@@ -1688,28 +1701,166 @@ public sealed partial class BrowserPage : Page
         }
     }
 
-    // --- Cinema Mode Logic ---
+    // --- Cinema Mode / Focus Mode Logic ---
+
+    private bool _cinemaMsgHandlerAttached;
+    private CancellationTokenSource? _cinemaHintCts;
 
     private void CinemaMode_Click(object sender, RoutedEventArgs e)
     {
         bool isCinema = CinemaModeToggle.IsChecked == true;
+        ApplyCinemaMode(isCinema);
+    }
 
-        if (isCinema)
+    private void ApplyCinemaMode(bool enable)
+    {
+        CinemaModeToggle.IsChecked = enable;
+
+        if (enable)
         {
-            // Collapse Top Bar
             TopBarRow.Height = new GridLength(0);
-            
-            // Force Notes Closed visually (but remember state? simplify: just close)
             NotesPanel.Visibility = Visibility.Collapsed;
+            CinemaHintBorder.Visibility = Visibility.Visible;
+
+            // Solicita ao MainWindow ocultar o painel lateral e entrar em tela cheia
+            MainWindow.Instance?.SetFocusShell(true);
+
+            // Injeta listener ESC no WebView (para sair do foco mesmo com o browser ativo)
+            AttachCinemaEscListenerAsync();
+
+            // Auto-oculta o hint após 3 s
+            _cinemaHintCts?.Cancel();
+            _cinemaHintCts = new CancellationTokenSource();
+            var cts = _cinemaHintCts;
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(3000, cts.Token).ContinueWith(_ => { });
+                if (!cts.IsCancellationRequested)
+                    DispatcherQueue.TryEnqueue(() => CinemaHintBorder.Visibility = Visibility.Collapsed);
+            });
         }
         else
         {
-            // Restore Top Bar
+            _cinemaHintCts?.Cancel();
+            CinemaHintBorder.Visibility = Visibility.Collapsed;
             TopBarRow.Height = GridLength.Auto;
-            
-            // Restore Notes if toggle is checked
             NotesPanel.Visibility = (NotesToggle.IsChecked == true) ? Visibility.Visible : Visibility.Collapsed;
+
+            // Restaura layout normal na janela
+            MainWindow.Instance?.SetFocusShell(false);
         }
+    }
+
+    private void AttachCinemaEscListenerAsync()
+    {
+        if (Web?.CoreWebView2 is null) return;
+
+        // Injeta listener de ESC — evita duplicata usando flag
+        if (!_cinemaMsgHandlerAttached)
+        {
+            _cinemaMsgHandlerAttached = true;
+            Web.CoreWebView2.WebMessageReceived += WebView_CinemaMessageReceived;
+        }
+
+        _ = Web.CoreWebView2.ExecuteScriptAsync(@"
+(function() {
+    if (window.__dds_esc_attached) return;
+    window.__dds_esc_attached = true;
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { window.chrome.webview.postMessage('exit_cinema'); }
+    }, true);
+})();");
+    }
+
+    private void WebView_CinemaMessageReceived(CoreWebView2 sender, CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        if (e.TryGetWebMessageAsString() == "exit_cinema")
+            DispatcherQueue.TryEnqueue(() => ApplyCinemaMode(false));
+    }
+
+    // --- Offline Save Logic ---
+
+    private CancellationTokenSource? _offlineCts;
+
+    private async void OfflineSave_Click(object sender, RoutedEventArgs e)
+    {
+        var url = AddressBox.Text?.Trim();
+        if (string.IsNullOrWhiteSpace(url) || Web?.CoreWebView2 is null)
+        {
+            OfflineSaveToggle.IsChecked = false;
+            return;
+        }
+
+        if (!Services.OfflineCourseCache.IsAllowedDomain(url))
+        {
+            OfflineSaveToggle.IsChecked = false;
+            await ShowInfoDialogAsync("Cache offline disponível apenas para conteúdo hospedado no servidor DDS.");
+            return;
+        }
+
+        // Se já cacheado E o toggle estava desmarcado → remover cache
+        bool wasCached = Services.OfflineCourseCache.IsCached(url);
+        if (wasCached && OfflineSaveToggle.IsChecked == false)
+        {
+            Services.OfflineCourseCache.DeleteCache(url);
+            AppLogger.Info($"OfflineCache: cache removido para {url}");
+            return;
+        }
+
+        if (wasCached)
+        {
+            OfflineSaveToggle.IsChecked = true; // já estava salvo
+            return;
+        }
+
+        // Inicia o download
+        _offlineCts?.Cancel();
+        _offlineCts = new CancellationTokenSource();
+        var ct = _offlineCts.Token;
+
+        OfflineProgressPanel.Visibility = Visibility.Visible;
+        OfflineSaveToggle.IsEnabled = false;
+
+        var progress = new Progress<string>(msg =>
+            DispatcherQueue.TryEnqueue(() => OfflineProgressText.Text = msg));
+
+        try
+        {
+            await Services.OfflineCourseCache.CacheNowAsync(Web.CoreWebView2, url, progress, ct);
+            OfflineSaveToggle.IsChecked = true;
+        }
+        catch (OperationCanceledException)
+        {
+            OfflineSaveToggle.IsChecked = false;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Error("OfflineCache: erro ao salvar.", ex);
+            OfflineSaveToggle.IsChecked = false;
+            DispatcherQueue.TryEnqueue(() =>
+                OfflineProgressText.Text = "Erro ao salvar offline.");
+            await Task.Delay(2000);
+        }
+        finally
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                OfflineProgressPanel.Visibility = Visibility.Collapsed;
+                OfflineSaveToggle.IsEnabled = true;
+            });
+        }
+    }
+
+    private Task ShowInfoDialogAsync(string message)
+    {
+        var dlg = new ContentDialog
+        {
+            Title = "Aviso",
+            Content = message,
+            CloseButtonText = "OK",
+            XamlRoot = this.XamlRoot
+        };
+        return dlg.ShowAsync().AsTask();
     }
 }
 

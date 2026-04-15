@@ -18,6 +18,9 @@ namespace DDSStudyOS.App;
 
 public sealed partial class MainWindow : Window
 {
+    /// <summary>Referência global à janela principal — utilizada pela BrowserPage para Cinema Mode.</summary>
+    public static MainWindow? Instance { get; private set; }
+
     private const string DefaultWindowTitle = AppReleaseInfo.CompanyName + " : StudyOS";
     private readonly DownloadOrganizerService _downloadOrganizer = new();
     private readonly ReminderNotificationService _reminderNotifier = new(new DatabaseService());
@@ -70,6 +73,7 @@ public sealed partial class MainWindow : Window
 
     public MainWindow()
     {
+        Instance = this;
         this.InitializeComponent();
         _brandingContent = LoadBrandingContent();
         _onboardingContent = LoadOnboardingContent();
@@ -130,6 +134,37 @@ public sealed partial class MainWindow : Window
             AppLogger.Warn($"Branding da janela: falha ao aplicar icone. Motivo: {ex.Message}");
         }
     }
+
+    /// <summary>
+    /// Ativa ou desativa o modo foco total (Cinema Mode).
+    /// Oculta o painel lateral e vai para tela cheia via AppWindow presenter.
+    /// </summary>
+    public void SetFocusShell(bool enabled)
+    {
+        try
+        {
+            NavColumn.Width = enabled ? new GridLength(0) : new GridLength(320);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"FocusShell: falha ao redimensionar coluna de nav. {ex.Message}");
+        }
+
+        try
+        {
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+            var appWindow = AppWindow.GetFromWindowId(windowId);
+            appWindow.SetPresenter(enabled
+                ? AppWindowPresenterKind.FullScreen
+                : AppWindowPresenterKind.Default);
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Warn($"FocusShell: falha ao alterar presenter da janela. {ex.Message}");
+        }
+    }
+
     private void ApplySplashTheme()
     {
         var isBeta = AppReleaseInfo.IsBetaChannel;
@@ -178,7 +213,7 @@ public sealed partial class MainWindow : Window
 
             SplashProgressBar.Value = 0;
             SplashStatusText.Text = string.IsNullOrWhiteSpace(_brandingContent.ChannelMessage)
-                ? "Iniciando..."
+                ? "Preparando sua base de estudo..."
                 : _brandingContent.ChannelMessage!.Trim();
         }
         catch (Exception ex)
@@ -215,10 +250,10 @@ public sealed partial class MainWindow : Window
             var isFirstRun = !UserProfileService.IsRegistered();
             var minimumSplashDuration = isFirstRun ? TimeSpan.FromSeconds(10) : TimeSpan.FromSeconds(7);
 
-            await SetSplashStepAsync(8, "Carregando perfil e preferências...");
+            await SetSplashStepAsync(8, "Carregando seu perfil e preferencias...");
             await Task.Delay(220);
 
-            await SetSplashStepAsync(24, "Preparando banco de dados...");
+            await SetSplashStepAsync(24, "Organizando banco local e progresso...");
             try
             {
                 var db = new DatabaseService();
@@ -229,16 +264,16 @@ public sealed partial class MainWindow : Window
                 AppLogger.Warn($"Splash: falha ao preparar banco. Motivo: {ex.Message}");
             }
 
-            await SetSplashStepAsync(42, "Carregando módulos (Cursos, Materiais, Agenda)...");
+            await SetSplashStepAsync(42, "Conectando cursos, materiais e agenda...");
             await Task.Delay(420);
 
-            await SetSplashStepAsync(64, "Preparando navegador interno...");
+            await SetSplashStepAsync(64, "Preparando navegador e recursos online...");
             await Task.Delay(520);
 
-            await SetSplashStepAsync(82, "Checando componentes do sistema...");
+            await SetSplashStepAsync(82, "Validando componentes essenciais...");
             await Task.Delay(420);
 
-            await SetSplashStepAsync(100, "Finalizando...");
+            await SetSplashStepAsync(100, "Seu ambiente esta quase pronto...");
 
             var elapsed = DateTimeOffset.Now - startedAt;
             if (elapsed < minimumSplashDuration)
@@ -342,7 +377,8 @@ public sealed partial class MainWindow : Window
         var compositor = visual.Compositor;
 
         var duration = TimeSpan.FromMilliseconds(show ? 450 : 350);
-        var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.2f, 1.0f));
+        // Easing suave inspirado em design-system moderno (ease-out cubic)
+        var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.16f, 1f), new Vector2(0.3f, 1f));
 
         visual.CenterPoint = new Vector3(
             (float)(SplashContent.ActualWidth / 2.0),
@@ -352,12 +388,14 @@ public sealed partial class MainWindow : Window
         if (show)
         {
             visual.Opacity = 0f;
-            visual.Scale = new Vector3(0.98f, 0.98f, 1f);
+            visual.Scale = new Vector3(0.97f, 0.97f, 1f);
+            visual.Offset = new Vector3(0f, 28f, 0f);  // desce 28px — vai subir ao animar
         }
         else
         {
             visual.Opacity = 1f;
             visual.Scale = new Vector3(1f, 1f, 1f);
+            visual.Offset = new Vector3(0f, 0f, 0f);
         }
 
         var opacityAnim = compositor.CreateScalarKeyFrameAnimation();
@@ -368,8 +406,14 @@ public sealed partial class MainWindow : Window
         scaleAnim.Duration = duration;
         scaleAnim.InsertKeyFrame(1f, show ? new Vector3(1f, 1f, 1f) : new Vector3(0.98f, 0.98f, 1f), easing);
 
+        // Animação de Y-offset: sobe ao aparecer, desce suave ao sair
+        var offsetAnim = compositor.CreateVector3KeyFrameAnimation();
+        offsetAnim.Duration = duration;
+        offsetAnim.InsertKeyFrame(1f, show ? new Vector3(0f, 0f, 0f) : new Vector3(0f, 16f, 0f), easing);
+
         visual.StartAnimation("Opacity", opacityAnim);
         visual.StartAnimation("Scale", scaleAnim);
+        visual.StartAnimation("Offset", offsetAnim);
 
         await Task.Delay(duration);
     }
@@ -676,25 +720,25 @@ public sealed partial class MainWindow : Window
                 OnboardingStepCounterText.Text = "Passo 1 de 4";
                 OnboardingProgressBar.Value = 25;
                 OnboardingHeadlineText.Text = GetOnboardingStepTitle(0, "Bem-vinda(o) ao DDS StudyOS");
-                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(0, "Crie seu perfil para começar.");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(0, "Em menos de 1 minuto, vamos montar sua rotina inicial no app.");
                 break;
             case 1:
                 OnboardingStepCounterText.Text = "Passo 2 de 4";
                 OnboardingProgressBar.Value = 50;
-                OnboardingHeadlineText.Text = GetOnboardingStepTitle(1, "O que você quer estudar?");
-                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(1, "Escolha sua área principal e o seu nível atual.");
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(1, "O que voce quer estudar agora?");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(1, "Defina seu foco principal para personalizar trilhas, materiais e sugestoes.");
                 break;
             case 2:
                 OnboardingStepCounterText.Text = "Passo 3 de 4";
                 OnboardingProgressBar.Value = 75;
-                OnboardingHeadlineText.Text = GetOnboardingStepTitle(2, "Como você prefere estudar?");
-                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(2, "Vamos criar um plano inicial para o seu ritmo.");
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(2, "Como essa rotina deve funcionar?");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(2, "Vamos ajustar meta, turno e lembretes para caber no seu ritmo.");
                 break;
             default:
                 OnboardingStepCounterText.Text = "Passo 4 de 4";
                 OnboardingProgressBar.Value = 100;
-                OnboardingHeadlineText.Text = GetOnboardingStepTitle(3, "Seu plano inicial está pronto");
-                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(3, "Revise os dados e comece sua jornada.");
+                OnboardingHeadlineText.Text = GetOnboardingStepTitle(3, "Seu plano inicial esta pronto");
+                OnboardingSubheadlineText.Text = GetOnboardingStepSummary(3, "Revise tudo e entre no app com uma base pronta para comecar.");
                 break;
         }
 

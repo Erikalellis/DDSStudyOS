@@ -43,7 +43,8 @@
                 <Button x:Name="VaultFillBtn" Content="&#xE13D;" FontFamily="Segoe MDL2 Assets" Click="VaultFill_Click" ToolTipService.ToolTip="Preencher login pelo Cofre DDS"/>
                 <AppBarSeparator />
                 <ToggleButton x:Name="NotesToggle" Content="&#xE70F;" FontFamily="Segoe MDL2 Assets" Click="NotesToggle_Click" ToolTipService.ToolTip="Smart Notes (Anotações)" IsChecked="False"/>
-                <ToggleButton x:Name="CinemaModeToggle" Content="&#xE793;" FontFamily="Segoe MDL2 Assets" Click="CinemaMode_Click" ToolTipService.ToolTip="Modo Cinema (Foco Total)"/>
+                <ToggleButton x:Name="OfflineSaveToggle" Content="&#xE74E;" FontFamily="Segoe MDL2 Assets" Click="OfflineSave_Click" ToolTipService.ToolTip="Salvar para uso offline" IsChecked="False"/>
+                <ToggleButton x:Name="CinemaModeToggle" Content="&#xE793;" FontFamily="Segoe MDL2 Assets" Click="CinemaMode_Click" ToolTipService.ToolTip="Modo Foco Total (ESC para sair)"/>
             </StackPanel>
         </Grid>
 
@@ -56,6 +57,18 @@
 
             <!-- Browser -->
             <controls:WebView2 x:Name="Web" Grid.Column="0" />
+
+            <!-- Offline save progress bar (aparece durante download) -->
+            <StackPanel x:Name="OfflineProgressPanel"
+                        Grid.Column="0"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Stretch"
+                        Visibility="Collapsed"
+                        Background="#DD0B1020"
+                        Padding="16,10">
+                <TextBlock x:Name="OfflineProgressText" Text="Salvando para offline..." Foreground="White" FontSize="13" Margin="0,0,0,6"/>
+                <ProgressBar x:Name="OfflineProgressBar" IsIndeterminate="True" HorizontalAlignment="Stretch" />
+            </StackPanel>
 
             <!-- Smart Notes Panel -->
             <Grid x:Name="NotesPanel" Grid.Column="1" Width="350" Visibility="Collapsed" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="1,0,0,0" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -80,5 +93,24 @@
                 </StackPanel>
             </Grid>
         </Grid>
+        <!-- Cinema Mode — hint flutuante "ESC para sair" -->
+        <Border x:Name="CinemaHintBorder"
+                Visibility="Collapsed"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Center"
+                Margin="0,16,0,0"
+                CornerRadius="999"
+                Padding="14,7"
+                Background="#CC000000"
+                BorderBrush="#44FFFFFF"
+                BorderThickness="1">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <FontIcon Glyph="&#xE793;" FontSize="14" Foreground="#AAFFFFFF" />
+                <TextBlock Text="Modo Foco — pressione ESC para sair"
+                           Foreground="White"
+                           FontSize="13"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>
