@@ -5,76 +5,109 @@ Todas as mudanças importantes neste projeto serão documentadas neste arquivo.
 O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 ## [Unreleased]
+
 ### Adicionado
+
 - Definicao do contrato de modulos por dominio da linha `3.3.x (Phoebe)`.
 - Planejamento da integracao catalogo web -> app para dominios como `Tecnologia` e `Musica`.
 
 ### Planejado
+
 - Fechar a fase `3.3.0 - Foundation` com smoke dedicado de loja/catalogo.
 
+## [3.2.9] - 2026-04-15
+
+### Alterado
+
+- URLs do portal oficial migradas de `https://deepdarkness.com.br/studyos/` para `https://studyos.deepdarkness.com.br/`.
+- Links visiveis no app (`BrowserPage`, `DevelopmentPage`, `SettingsPage`) atualizados para o novo subdominio.
+- `UpdateDistributionConfig`: host e pathBase atualizados para refletir o novo dominio padrao.
+- `SettingsService`: URLs antigas adicionadas ao mapeamento de legado para migracao automatica das configuracoes existentes dos usuarios.
+
 ## [3.2.8] - 2026-03-08
+
 ### Adicionado
+
 - Identidade publica `DDS Study Pass` aplicada na experiencia da `Loja`, mantendo `Phoebe` como codinome interno da linha `3.3.x`.
 - Atalho rapido para `DDS Study Pass` no `Dashboard` e na `Home`.
 - Portal publico `studyos` integrado como origem oficial do catalogo remoto em `https://deepdarkness.com.br/studyos/`.
 
 ### Alterado
+
 - `StorePage` recebeu CTA mais forte (`Explorar o Pass`) e copy alinhada para modulos, trilhas e conteudos extras.
 - Links do app para o portal oficial foram atualizados para a rota publica `/studyos/`, evitando redirecionamento para a raiz do servidor.
 - `DeepLinkService`, feed remoto e rota `store` permanecem compativeis com fallback local para uso offline.
 
 ## [3.2.6] - 2026-03-04
+
 ### Adicionado
+
 - Corte beta `3.2.6-beta.1` preparado para levar `browser-presets` ao canal de testers sem depender da mesma numeracao de `3.2.5`.
 
 ### Alterado
+
 - Linha beta promovida para `3.2.6-beta.1` para destravar update in-app acima de `3.2.5-beta.1` e manter o `stable 3.2.4` intacto.
 
 ## [3.2.7] - 2026-03-05
+
 ### Adicionado
+
 - Corte beta `3.2.7-beta.1` preparado para validar o `Signal Boost` completo com `browser-presets`, `notification-pack` e `community-feed`.
 
 ### Alterado
+
 - `Agenda` passa a carregar presets de snooze e mensagem de dica via modulo `notification-pack`, com fallback local.
 - Tela `Desenvolvimento` passa a exibir `community-feed` data-driven para comunicados e links de roadmap/changelog/releases.
 - Canal `stable` promovido para `3.2.7` com setup assinado, pacote portatil e manifestos DLC (`stable`/`beta`) sincronizados no repositório publico `DDSStudyOS-Updates`.
 
 ## [3.2.5] - 2026-03-03
+
 ### Adicionado
+
 - Consolidacao do ciclo `Power-Up` no beta com `study-templates`, `pomodoro-presets` e `help-center` prontos para empacotamento incremental.
 
 ### Alterado
+
 - Linha beta promovida para `3.2.5-beta.1` com instalador assinado, pacote portatil e DLCs atualizados para disponibilizar a entrega funcional do `Power-Up` sem alterar o canal estavel `3.2.4`.
 
 ## [3.2.4] - 2026-03-02
+
 ### Adicionado
+
 - Promocao do canal `stable` para `3.2.4`, consolidando os hotfixes validados na linha beta sem reescrever a bridge `3.2.1`.
 - Release publico estavel `v3.2.4` publicado nos dois canais de distribuicao (`DDSStudyOS` e `DDSStudyOS-Updates`) com instalador, pacote portatil, checksums e DLCs estaveis.
 
 ### Alterado
+
 - Base estavel agora inclui o hotfix de links publicos apontando para `DDSStudyOS-Updates`.
 - `study-templates` e o card de sugestoes do `Dashboard` entram na linha estavel.
 - Limpeza automatica de `Materiais` passa a remover instaladores antigos em modo `reference`, e novos downloads de `.exe`/scripts deixam de ser cadastrados.
 - Comunicacao interna do app e da documentacao passa a tratar `3.2.4` como release estavel consolidado, mantendo a continuidade da linha incremental em `3.2.5`.
 
 ## [3.2.3] - 2026-03-02
+
 ### Adicionado
+
 - Corte tecnico `3.2.3-beta.1` publicado no canal `beta` para destravar update in-app em clientes que ja estao na linha `3.2.2`.
 - Checklist dedicado de validacao para o beta em `docs/BETA_3_2_3_TEST_CHECKLIST.md`.
 
 ### Alterado
+
 - Versao do app promovida para `3.2.3` para permitir comparacao de versao acima de `3.2.2` no canal `beta`.
 - Cabecalho da aba `Desenvolvimento` ajustado para comunicar a linha DLC em validacao da propria `3.2.3`.
 - Auto-cadastro de downloads agora ignora instaladores e scripts, e a tela `Materiais` remove registros poluidos antigos sem curso em modo `reference`.
 - Canal `beta` realinhado para o instalador assinado da tag `v3.2.3-beta.2`, levando o hotfix de `Materiais` para os testers.
 
 ## [3.2.2] - 2026-03-02
+
 ### Adicionado
+
 - Pacote local `3.2.2` gerado com hotfix de links publicos para preparar a linha `Power-Up` sem sobrescrever a bridge `3.2.1`.
 - Modulo `study-templates` criado com modelos iniciais de rotina e exibicao direta no `Dashboard`.
 - Checklist de validacao para testers do beta em `docs/BETA_3_2_2_TEST_CHECKLIST.md`.
 
 ### Alterado
+
 - Links da pagina `Desenvolvimento`, fallback de feedback e home interna do navegador agora apontam para `Erikalellis/DDSStudyOS-Updates` em vez do repositorio de codigo.
 - `UpdateDistributionConfig` passa a expor URLs publicas de README, changelog e roadmap para reduzir links hardcoded no app.
 - Comunicacao visual da aba `Desenvolvimento` alinhada para o ciclo `3.2.2`, mantendo `3.2.3 - Signal Boost` como proxima meta incremental.
@@ -82,40 +115,51 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Novo pacote `v3.2.2-beta.3` publicado no canal `beta` com `study-templates` visivel no `Dashboard`.
 
 ## [3.2.1] - 2026-03-01
+
 ### Adicionado
+
 - Migracao dos clientes `3.2.1+` para o novo canal publico de distribuicao `Erikalellis/DDSStudyOS-Updates`, mantendo o repositório de código pronto para ser privado apos a janela de transicao.
 - Integracao de `web-content`, `onboarding-content` e `branding-assets` como base do pack `Checkpoint`, com suporte a conteudo carregado por modulos DLC.
 - Scripts de publicacao separados para distribuir manifests e assets em um repositório publico dedicado, com suporte a bridge de transicao.
 
 ### Alterado
+
 - `AppUpdateService` e `DlcUpdateService` agora usam `UpdateDistributionConfig` para centralizar endpoints publicos de update e DLC.
 - Home interna do navegador, paginas `dds://` e pagina 404 passam a priorizar conteudo externo do modulo `web-content`, com fallback local.
 - Roadmap e pagina `Desenvolvimento` atualizados para comunicar a linha oficial de DLCs (`Checkpoint`, `Power-Up`, `Signal Boost` e `Quest Hub`).
 
 ## [3.2.0] - 2026-02-28
+
 ### Adicionado
+
 - Onboarding em 4 etapas com progresso visual, validacao por passo e resumo final para personalizar o perfil no primeiro uso.
 - Shell principal atualizado para menu lateral proprio (`ListView`), eliminando o layout compacto inconsistente do `NavigationView`.
 - Branding da janela reforcado com titulo fixo `Deep Darkness Studios : StudyOS` e aplicacao explicita do icone no `AppWindow`.
 
 ### Alterado
+
 - Tour inicial automatico foi desabilitado temporariamente no fluxo normal; o onboarding 3.2 passa a guiar a primeira execucao.
 - Cabecalho da janela nao exibe mais o timer do Pomodoro; o cronometro continua apenas no painel lateral e na taskbar.
 
 ## [3.1.4] - 2026-02-28
+
 ### Adicionado
+
 - Meta semanal no Home e Dashboard com relatorio de consistencia (dias ativos + minutos da semana).
 - Agenda com recorrencia (`diario`, `semanal`, `mensal`) e acao de snooze configuravel no cadastro.
 - Atualizacao incremental (DLC) em segundo plano no startup, com auto-check e auto-apply silencioso fora do modo smoke.
 - Manual tecnico consolidado do app (iniciante -> intermediario) em `docs/MANUAL_TECNICO_APP.md`.
 
 ### Alterado
+
 - Registro de abertura de curso agora gera atividade diaria em `study_activity` para alimentar metricas semanais por perfil.
 - Documentacao central atualizada (README raiz, `docs/README.md`, `docs/UPDATE_INFO.md`, playbook one-click e suporte) com links oficiais e fluxo completo de release.
 - Exportacao/importacao de backup agora preserva recorrencia e tempo de snooze dos lembretes.
 
 ## [3.1.3] - 2026-02-27
+
 ### Adicionado
+
 - Sincronização de favoritos por perfil na tela de Cursos com exportação/importação em `.json`.
 - Ação de limpeza de histórico de estudo por perfil (baseada em `last_accessed`) sem afetar cursos/favoritos.
 - Filtros avançados em Materiais por curso, tipo e intervalo de data de cadastro.
@@ -123,15 +167,19 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Playbook one-click de release com gate automático (`scripts/release-one-click.ps1`) e documentação em `docs/RELEASE_ONE_CLICK_PLAYBOOK.md`.
 
 ### Alterado
+
 - Repositório de cursos atualizado para persistir histórico por perfil em `course_history` e usar esse escopo na ordenação/listagem.
 
 ## [3.1.2] - 2026-02-27
+
 ### Alterado
+
 - Fluxo de onboarding/tour refinado para escalas 100% e 125%, com foco em texto, posicionamento e navegacao de retorno.
 - Navegacao curso -> navegador interno reforcada para manter contexto e permitir retorno sem perda de estado.
 - Formularios principais (onboarding, agenda, materiais e cursos) ajustados para melhor contraste e legibilidade.
 
 ### Corrigido
+
 - Regressao de primeiro uso validada novamente com marcadores de onboarding/tour/navegador no modo `--smoke-first-use`.
 - Regressao de maquina limpa validada novamente com setup, abertura do app, registro de desinstalacao e uninstall silencioso.
 - Pipeline de release/instalador robustecido para caminhos com espacos (execucao direta dos scripts `build-release`, `prepare-installer-input` e `build-inno-installer`).
@@ -139,7 +187,9 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Uninstall silencioso nao abre mais prompt de feedback no fim da remocao (`UninstallSilent` no Inno), evitando travamento em regressao automatizada.
 
 ## [3.1.1] - 2026-02-26
+
 ### Adicionado
+
 - Base do updater incremental por modulos (`DlcUpdateService`) com download, validacao de hash, aplicacao e rollback local.
 - Manifestos DLC por canal em `installer/update/stable/dlc-manifest.json` e `installer/update/beta/dlc-manifest.json`.
 - Script `scripts/build-dlc-package.ps1` para empacotar modulos em `.zip` e gerar manifesto com SHA256.
@@ -147,7 +197,9 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Bloco de UI de DLC na aba Desenvolvimento (checar, aplicar, progresso e abertura da pasta de modulos).
 
 ## [3.1.0] - 2026-02-26
+
 ### Adicionado
+
 - Roadmap pós-3.0 documentado em `docs/ROADMAP_3_1.md`
 - Painel de atualização na aba Desenvolvimento com verificação por canal (`stable`/`beta`) e atalho para baixar update.
 - Fluxo de atualização automática no app: download do instalador, validação de assinatura/hash (quando disponível), elevação UAC e início silencioso da instalação.
@@ -155,7 +207,9 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Script `scripts/validate-first-use-smoke.ps1` para executar e gerar evidência de regressão do fluxo inicial.
 
 ## [3.0.0] - 2026-02-25
+
 ### Adicionado
+
 - Serviço de diagnóstico técnico com exportação de bundle `.zip`
 - Validação de backup sem importação no painel de Configurações
 - Metadata de release (produto, versão e companhia) no projeto
@@ -166,6 +220,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Script `scripts/build-release-package.ps1` para gerar release completo (setup estavel, setup beta, portatil e SHA256)
 
 ### Alterado
+
 - Criptografia de backup reforçada (formato v2) com compatibilidade para backups legados
 - Logger com rotação automática e leitura de tail
 - Tela de Configurações com versão dinâmica da aplicação
@@ -182,6 +237,7 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Onboarding recebeu reforco de contraste nos campos para melhorar legibilidade no primeiro cadastro
 
 ### Corrigido
+
 - Tratamento de exceções não observadas no ciclo de vida da aplicação
 - Script `run-setup-with-log.ps1` ajustado para fluxo de log com setup Inno por padrão
 - Tratamento de exceção global na UI para não mascarar falhas críticas
@@ -195,11 +251,15 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 - Registro de desinstalação do Windows reforçado para aparecer corretamente em Apps e Painel de Controle
 
 ## [2.1.0] - 2026-02-22
+
 ### Alterado
+
 - Linha de release oficial padronizada para o ciclo 2.1.0 (setup estavel, setup beta, portatil e checksum).
 
 ## [0.1.0] - 2026-02-12
+
 ### Adicionado
+
 - Projeto WinUI 3 (Windows App SDK) com WebView2
 - SQLite com WAL
 - CRUD Cursos, Materiais, Agenda
