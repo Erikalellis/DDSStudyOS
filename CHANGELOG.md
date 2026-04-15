@@ -15,6 +15,14 @@ O formato é baseado em **Keep a Changelog** e o projeto segue **SemVer**.
 
 - Fechar a fase `3.3.0 - Foundation` com smoke dedicado de loja/catalogo.
 
+## [3.3.1] - 2026-04-15
+
+### Alterado
+
+- Splash screen inicial redesenhada com layout centralizado e mais consistente visualmente.
+- Fundo com imagem do splash removido, reduzindo distorcoes visuais em diferentes resolucoes.
+- Hierarquia visual do carregamento refinada (titulo, badge, status e progresso), mantendo compatibilidade com animacoes e tema ja existentes.
+
 ## [3.2.9] - 2026-04-15
 
 ### Alterado

@@ -366,93 +366,114 @@
         <!-- Splash overlay (first launch + initialization). Hidden after bootstrap. -->
         <Grid x:Name="SplashOverlay" IsHitTestVisible="True" Visibility="Visible">
             <Grid.Background>
-                <ImageBrush ImageSource="ms-appx:///Assets/SplashBackdrop.png" Stretch="UniformToFill" />
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#FF050714" Offset="0.0" />
+                    <GradientStop Color="#FF0B1030" Offset="0.45" />
+                    <GradientStop Color="#FF060817" Offset="1.0" />
+                </LinearGradientBrush>
             </Grid.Background>
-            <Rectangle x:Name="SplashTintOverlay" Fill="#C2050612" />
 
-            <StackPanel x:Name="SplashContent"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        Margin="24,0,24,72"
-                        Spacing="14">
-                <Border MaxWidth="700"
-                        Padding="28"
-                        CornerRadius="28"
-                        Background="#240B1020"
-                        BorderBrush="#33FFFFFF"
-                        BorderThickness="1">
-                    <StackPanel Spacing="16">
-                        <StackPanel HorizontalAlignment="Center" Spacing="6">
+            <Rectangle x:Name="SplashTintOverlay" Fill="#99040914" />
+
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Width="900"
+                  MaxWidth="900"
+                  Margin="24">
+                <Border x:Name="SplashContent"
+                        CornerRadius="24"
+                        Background="#B30B1024"
+                        BorderBrush="#66A5B4FF"
+                        BorderThickness="1"
+                        Padding="34">
+                    <Grid RowSpacing="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Spacing="10" HorizontalAlignment="Center">
                             <Border x:Name="SplashChannelBadge"
                                     HorizontalAlignment="Center"
                                     CornerRadius="999"
-                                    Padding="12,4"
-                                    Background="#334AC277"
-                                    BorderBrush="#998CE8B3"
+                                    Padding="14,5"
+                                    Background="#2A4AC277"
+                                    BorderBrush="#99A8E5FF"
                                     BorderThickness="1">
                                 <TextBlock x:Name="SplashChannelBadgeText"
                                            Text="STABLE v0.0.0"
-                                           Foreground="#FFE3FFEF"
+                                           Foreground="#FFF3FBFF"
                                            FontSize="12"
                                            FontWeight="SemiBold"
                                            HorizontalAlignment="Center" />
                             </Border>
+
                             <TextBlock x:Name="SplashTitleText"
                                        Text="Carregando DDS StudyOS"
                                        Foreground="White"
-                                       FontSize="32"
+                                       FontSize="42"
                                        FontWeight="SemiBold"
                                        HorizontalAlignment="Center"
-                                       TextAlignment="Center" />
+                                       TextAlignment="Center"
+                                       TextWrapping="WrapWholeWords" />
+
                             <TextBlock Text="Organize rotina, materiais e foco em um unico espaco."
-                                       Foreground="#E6FFFFFF"
-                                       FontSize="15"
+                                       Foreground="#D6E7F7FF"
+                                       FontSize="20"
                                        TextAlignment="Center"
                                        TextWrapping="WrapWholeWords"
-                                       MaxWidth="560" />
+                                       MaxWidth="760" />
+
                             <TextBlock x:Name="SplashVersionText"
                                        Text="v0.0.0"
-                                       Foreground="#99FFFFFF"
-                                       FontSize="11"
+                                       Foreground="#AFC4DDFF"
+                                       FontSize="14"
                                        HorizontalAlignment="Center" />
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Spacing="10">
-                            <Border Background="#22FFFFFF" BorderBrush="#30FFFFFF" BorderThickness="1" CornerRadius="999" Padding="10,6">
-                                <TextBlock Text="Plano inicial automatico" Foreground="White" FontSize="12" FontWeight="SemiBold" />
-                            </Border>
-                            <Border Background="#22FFFFFF" BorderBrush="#30FFFFFF" BorderThickness="1" CornerRadius="999" Padding="10,6">
-                                <TextBlock Text="Rotina e lembretes" Foreground="White" FontSize="12" FontWeight="SemiBold" />
-                            </Border>
-                            <Border Background="#22FFFFFF" BorderBrush="#30FFFFFF" BorderThickness="1" CornerRadius="999" Padding="10,6">
-                                <TextBlock Text="Materiais e navegador" Foreground="White" FontSize="12" FontWeight="SemiBold" />
-                            </Border>
-                        </StackPanel>
+                        <Grid Grid.Row="1" ColumnSpacing="10" HorizontalAlignment="Center" MaxWidth="760">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel Width="620" MaxWidth="620" Spacing="10">
+                            <Border Grid.Column="0" Background="#1FFFFFFF" BorderBrush="#38FFFFFF" BorderThickness="1" CornerRadius="999" Padding="12,7">
+                                <TextBlock Text="Plano inicial automatico" Foreground="#FFF3FBFF" FontSize="13" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Grid.Column="1" Background="#1FFFFFFF" BorderBrush="#38FFFFFF" BorderThickness="1" CornerRadius="999" Padding="12,7">
+                                <TextBlock Text="Rotina e lembretes" Foreground="#FFF3FBFF" FontSize="13" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Grid.Column="2" Background="#1FFFFFFF" BorderBrush="#38FFFFFF" BorderThickness="1" CornerRadius="999" Padding="12,7">
+                                <TextBlock Text="Materiais e navegador" Foreground="#FFF3FBFF" FontSize="13" FontWeight="SemiBold" />
+                            </Border>
+                        </Grid>
+
+                        <StackPanel Grid.Row="2" Spacing="10" MaxWidth="760" HorizontalAlignment="Stretch">
                             <ProgressBar x:Name="SplashProgressBar"
                                          Minimum="0"
                                          Maximum="100"
                                          Value="0"
                                          Height="8"
                                          Foreground="#FF7B61FF" />
+
                             <TextBlock x:Name="SplashStatusText"
                                        Text="Iniciando..."
-                                       Foreground="#CCFFFFFF"
-                                       FontSize="13"
+                                       Foreground="#E0ECFAFF"
+                                       FontSize="16"
                                        TextAlignment="Center"
                                        TextWrapping="WrapWholeWords" />
+
                             <TextBlock Text="Na primeira abertura, o app prepara sua base local e configura os modulos essenciais."
-                                       Foreground="#99FFFFFF"
-                                       FontSize="11"
+                                       Foreground="#A7BED9FF"
+                                       FontSize="12"
                                        TextAlignment="Center"
                                        TextWrapping="WrapWholeWords" />
                         </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </Border>
-            </StackPanel>
+            </Grid>
         </Grid>
 
         <!-- Guided tour (first run). -->
